@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('coupe_avec_poules', function (Blueprint $table) {
-            $table->foreignId('coupe_avec_poule_modele_id')->nullable()->constrained('coupe_avec_poule_modeles')->onDelete('set null');
+            $table->foreign('coupe_avec_poule_modele_id')
+                  ->references('id')
+                  ->on('coupe_avec_poule_modeles')
+                  ->onDelete('set null');
         });
     }
 
@@ -23,7 +26,6 @@ return new class extends Migration
     {
         Schema::table('coupe_avec_poules', function (Blueprint $table) {
             $table->dropForeign(['coupe_avec_poule_modele_id']);
-            $table->dropColumn('coupe_avec_poule_modele_id');
         });
     }
 };
