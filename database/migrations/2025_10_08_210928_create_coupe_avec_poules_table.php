@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('nombre_equipes');
             $table->integer('nombre_poules');
             $table->integer('qualifies_par_poule');
-            $table->foreignId('coupe_avec_poule_modele_id')->nullable()->constrained('coupe_avec_poule_modeles')->onDelete('set null');
+            $table->unsignedBigInteger('coupe_avec_poule_modele_id')->nullable();
             $table->boolean('phase_finale_generee')->default(false);
             $table->timestamps();
         });
