@@ -1,0 +1,114 @@
+/* Align Tom Select look & feel with site inputs (Tailwind theme) */
+.ts-dropdown, .ts-control, .ts-wrapper.single .ts-control, .ts-wrapper.multi .ts-control {
+  color: #111827; /* text-gray-900 */
+  background-color: #ffffff; /* bg-white */
+  border-color: #D1D5DB; /* border-gray-300 */
+}
+.dark .ts-dropdown, .dark .ts-control, .dark .ts-wrapper.single .ts-control, .dark .ts-wrapper.multi .ts-control {
+  color: #E5E7EB; /* text-gray-200 */
+  background-color: #374151; /* bg-gray-700 */
+  border-color: #4B5563; /* border-gray-600 */
+}
+.ts-dropdown {
+  z-index: 60;
+}
+.ts-wrapper .ts-control {
+  min-height: 2.5rem;
+  box-shadow: 0 0 #0000; /* remove default shadow */
+  border-width: 1px;
+  border-radius: 0.375rem; /* rounded-md */
+}
+.ts-wrapper.multi .ts-control {
+  min-height: 2.5rem;
+}
+.ts-control input {
+  color: inherit !important; /* ensure text is visible, not transparent */
+}
+.ts-control .item {
+  color: #1F2937; /* text-gray-800 */
+}
+.dark .ts-control .item {
+  color: #F3F4F6; /* text-gray-100 */
+}
+.ts-dropdown .option {
+  color: inherit; /* dropdown options text */
+}
+/* Placeholder color */
+.ts-control .ts-input::placeholder,
+.ts-wrapper .ts-control::placeholder {
+  color: #6B7280; /* text-gray-500 */
+}
+.dark .ts-control .ts-input::placeholder,
+.dark .ts-wrapper .ts-control::placeholder {
+  color: #9CA3AF; /* text-gray-400 */
+}
+/* Focus ring */
+.ts-wrapper.focus .ts-control {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border-color: #6366F1; /* indigo-500 */
+  box-shadow: 0 0 0 1px #6366F1; /* emulate focus:ring */
+}
+/* Dropdown background alignment */
+.ts-dropdown, .ts-dropdown .dropdown-content {
+  background-color: inherit;
+}
+/* Remove overly narrow height on multi */
+.ts-wrapper.multi.has-items .ts-control {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+/* Remove double border/rounded effect by making wrapper itself transparent */
+.ts-wrapper {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.ts-wrapper .ts-control {
+  background-clip: padding-box;
+}
+
+/* Selected items (pills) styling */
+.ts-wrapper.multi .ts-control .item {
+  background-color: #F3F4F6; /* bg-gray-100 */
+  border: 1px solid #D1D5DB; /* border-gray-300 */
+  color: #1F2937; /* text-gray-800 */
+  border-radius: 0.375rem; /* rounded-md */
+}
+.dark .ts-wrapper.multi .ts-control .item {
+  background-color: #4B5563; /* bg-gray-600 */
+  border-color: #6B7280; /* border-gray-500 */
+  color: #E5E7EB; /* text-gray-200 */
+}
+/* Remove button inside pill */
+.ts-wrapper.multi .ts-control .item .remove {
+  border: none;
+  color: #6B7280; /* text-gray-500 */
+}
+.dark .ts-wrapper.multi .ts-control .item .remove {
+  color: #D1D5DB; /* text-gray-300 */
+}
+.ts-wrapper.multi .ts-control .item .remove:hover {
+  color: #111827; /* text-gray-900 */
+}
+.dark .ts-wrapper.multi .ts-control .item .remove:hover {
+  color: #FFFFFF; /* white */
+}
+
+/* Dropdown option hover/active */
+.ts-dropdown .active {
+  background-color: #EEF2FF; /* indigo-50 */
+}
+.dark .ts-dropdown .active {
+  background-color: #1F2937; /* gray-800 */
+}
+
+/* Selected option in dropdown */
+.ts-dropdown .selected {
+  background-color: #E5E7EB; /* gray-200 */
+}
+.dark .ts-dropdown .selected {
+  background-color: #374151; /* gray-700 */
+}
+

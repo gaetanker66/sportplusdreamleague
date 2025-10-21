@@ -1,0 +1,16 @@
+services:
+  database:
+    image: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - ./database-container:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: spdl
+###> doctrine/doctrine-bundle ###ma
+
+volumes:
+###> doctrine/doctrine-bundle ###
+  database_data:
+###< doctrine/doctrine-bundle ###
