@@ -17,6 +17,11 @@ export default function PublicHeader() {
                 <div className="flex items-center gap-2 sm:gap-4 lg:gap-5">
                 <nav className="flex items-center gap-2 sm:gap-4 lg:gap-5 text-sm flex-wrap sm:flex-nowrap justify-center">
                     <Link href="/" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Accueil</Link>
+                    <Link href="/equipes" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Équipes</Link>
+                    <Link href="/classement" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Classement</Link>
+                    <Link href="/statistiques" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Statistiques</Link>
+                    <Link href="/calendrier" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Calendrier</Link>
+                    <Link href="/tournois" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Tournois</Link>
                     <a 
                         href="https://sportplusdreamleague.wixsite.com/sportplus/blog" 
                         target="_blank" 
@@ -25,11 +30,14 @@ export default function PublicHeader() {
                     >
                         Actu
                     </a>
-                    <Link href="/equipes" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Équipes</Link>
-                    <Link href="/classement" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Classement</Link>
-                    <Link href="/statistiques" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Statistiques</Link>
-                    <Link href="/calendrier" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Calendrier</Link>
-                    <Link href="/tournois" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Tournois</Link>
+                    <a 
+                        href="https://sportplusdreamleague.wixsite.com/sportplus/webinar-registration" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors"
+                    >
+                        Histoire
+                    </a>
                     <a 
                         href="https://www.youtube.com/channel/UCOxEYziBAz-L-O0ELeBL48A" 
                         target="_blank" 

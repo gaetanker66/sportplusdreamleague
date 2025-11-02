@@ -346,8 +346,9 @@ class PublicController extends Controller
 
     public function calendrier(Request $request)
     {
-        $ligues = Ligue::orderBy('niveau')->get(['id','nom','niveau']);
+        $ligues = Ligue::orderBy('niveau')->get(['id','nom','niveau','logo']);
         $selectedLigueId = (int)($request->query('ligue_id') ?: ($ligues->first()->id ?? 0));
+        $selectedLigue = $ligues->firstWhere('id', $selectedLigueId);
         $saisons = Saison::where('ligue_id', $selectedLigueId)
             ->orderByDesc('date_debut')
             ->get(['id','nom','date_debut','ligue_id']);
@@ -383,8 +384,21 @@ class PublicController extends Controller
             'saisons' => $saisons,
             'selectedLigueId' => $selectedLigueId,
             'selectedSaisonId' => $selectedSaisonId,
+            'selectedLigue' => $selectedLigue ? ['id' => $selectedLigue->id, 'nom' => $selectedLigue->nom, 'logo' => $selectedLigue->logo, 'niveau' => $selectedLigue->niveau] : null,
             'nextJournee' => $next,
             'pastJournees' => $past,
+        ]);
+    }
+
+    public function histoire()
+    {
+        $etapes = \App\Models\HistoireEtape::where('actif', true)
+            ->orderBy('ordre')
+            ->orderBy('date')
+            ->get(['id', 'titre', 'date_label', 'date', 'description', 'image', 'ordre', 'created_at', 'updated_at']);
+        
+        return Inertia::render('histoire', [
+            'etapes' => $etapes,
         ]);
     }
 

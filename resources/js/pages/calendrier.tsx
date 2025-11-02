@@ -1,9 +1,10 @@
 import { Head, Link } from '@inertiajs/react';
 import * as React from 'react';
 import PublicHeader from '@/components/PublicHeader';
+import LigueLogo from '@/components/ligue-logo';
 import calendrierBackground from '../../images/calendrier-background.avif';
 
-interface Ligue { id: number; nom: string; niveau: number }
+interface Ligue { id: number; nom: string; niveau: number; logo?: string | null }
 interface Saison { id: number; nom: string; date_debut: string; ligue_id: number }
 interface Equipe { id: number; nom: string; logo?: string }
 interface Match { id: number; equipe_home_id: number; equipe_away_id: number; termine: boolean; home_equipe?: Equipe; away_equipe?: Equipe; score_home: number; score_away: number }
@@ -13,11 +14,12 @@ interface Props {
   saisons: Saison[];
   selectedLigueId: number | null;
   selectedSaisonId: number | null;
+  selectedLigue?: { id: number; nom: string; logo?: string | null; niveau: number } | null;
   nextJournee: Journee | null;
   pastJournees: Journee[];
 }
 
-export default function Calendrier({ ligues = [], saisons = [], selectedLigueId, selectedSaisonId, nextJournee, pastJournees = [] }: Props) {
+export default function Calendrier({ ligues = [], saisons = [], selectedLigueId, selectedSaisonId, selectedLigue, nextJournee, pastJournees = [] }: Props) {
     const [ligueId, setLigueId] = React.useState<number | ''>(selectedLigueId || (ligues[0]?.id ?? ''));
     const [saisonId, setSaisonId] = React.useState<number | ''>(selectedSaisonId || (saisons[0]?.id ?? ''));
 
@@ -88,7 +90,19 @@ export default function Calendrier({ ligues = [], saisons = [], selectedLigueId,
             <Head title="Calendrier" />
             <PublicHeader />
             <main className="mx-auto max-w-5xl px-4 py-6 sm:py-10">
-                <h1 className="text-3xl font-bold mb-6 text-white drop-shadow-lg">Calendrier</h1>
+                <div className="flex items-center gap-4 mb-6">
+                    <h1 className="text-3xl font-bold text-white drop-shadow-lg">Calendrier</h1>
+                    {selectedLigue && (
+                        <LigueLogo
+                            ligueId={selectedLigue.id}
+                            logo={selectedLigue.logo}
+                            nom={selectedLigue.nom}
+                            size="lg"
+                            showPlaceholder={false}
+                            className="rounded-full"
+                        />
+                    )}
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div>
                         <label className="block text-sm text-white dark:text-gray-100 mb-1 drop-shadow-md">Ligue</label>
