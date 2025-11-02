@@ -34,7 +34,7 @@ const allMainNavItems: NavItem[] = [
     },
     {
         title: 'Équipes',
-        href: '/equipes',
+        href: '/dashboard/equipes',
         icon: Users2,
     },
     {

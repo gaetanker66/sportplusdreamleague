@@ -7,10 +7,19 @@ Route::get('/', function () {
     return Inertia::render('home');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
+// Pages publiques: accueil, classement, statistiques, calendrier, coupes, équipes
+Route::get('classement', [App\Http\Controllers\PublicController::class, 'classement'])->name('public.classement');
+Route::get('statistiques', [App\Http\Controllers\PublicController::class, 'statistiques'])->name('public.statistiques');
+Route::get('calendrier', [App\Http\Controllers\PublicController::class, 'calendrier'])->name('public.calendrier');
+Route::get('tournois', [App\Http\Controllers\PublicController::class, 'coupes'])->name('public.coupes');
+Route::get('equipes', [App\Http\Controllers\PublicController::class, 'equipes'])->name('public.equipes');
+Route::get('equipes/{equipe}', [App\Http\Controllers\EquipeController::class, 'show'])->name('equipes.show');
+Route::get('joueurs/{joueur}', [App\Http\Controllers\PublicController::class, 'joueur'])->name('joueurs.show');
+
+Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
+    Route::get('/', function () {
         return Inertia::render('dashboard');
-    })->name('dashboard');
+    })->name('index');
     
     // Routes pour la gestion des ligues
     Route::resource('ligues', App\Http\Controllers\LigueController::class);
@@ -23,6 +32,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('equipes/{equipe}/joueurs', [App\Http\Controllers\EquipeController::class, 'addPlayer'])->name('equipes.joueurs.store');
     Route::put('equipes/{equipe}/joueurs/{joueur}', [App\Http\Controllers\EquipeController::class, 'updatePlayer'])->name('equipes.joueurs.update');
     Route::delete('equipes/{equipe}/joueurs/{joueur}', [App\Http\Controllers\EquipeController::class, 'deletePlayer'])->name('equipes.joueurs.destroy');
+    
+    // Routes API pour les logos
     Route::post('api/equipes/logos', [App\Http\Controllers\EquipeController::class, 'getLogos'])->name('api.equipes.logos');
     Route::post('api/coupe-modeles/logos', [App\Http\Controllers\CoupeModeleController::class, 'getLogos'])->name('api.coupe-modeles.logos');
     Route::post('api/coupe-avec-poule-modeles/logos', [App\Http\Controllers\CoupeAvecPouleModeleController::class, 'getLogos'])->name('api.coupe-avec-poule-modeles.logos');
@@ -80,15 +91,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
 });
-
-// Pages publiques: accueil, classement, statistiques, calendrier, coupes
-Route::get('classement', [App\Http\Controllers\PublicController::class, 'classement'])->name('public.classement');
-Route::get('statistiques', [App\Http\Controllers\PublicController::class, 'statistiques'])->name('public.statistiques');
-Route::get('calendrier', [App\Http\Controllers\PublicController::class, 'calendrier'])->name('public.calendrier');
-Route::get('tournois', [App\Http\Controllers\PublicController::class, 'coupes'])->name('public.coupes');
-Route::get('equipes', [App\Http\Controllers\PublicController::class, 'equipes'])->name('public.equipes');
-Route::get('equipes/{equipe}', [App\Http\Controllers\EquipeController::class, 'show'])->name('equipes.show');
-Route::get('joueurs/{joueur}', [App\Http\Controllers\PublicController::class, 'joueur'])->name('joueurs.show');
 
 // Route pour servir le logo depuis resources/images
 Route::get('logo.avif', function () {

@@ -48,7 +48,7 @@ export function useCoupeAvecPouleModeleLogos(modeleIds: (number | undefined)[]) 
             return '';
         };
 
-        fetch('/api/coupe-avec-poule-modeles/logos', {
+        fetch('/dashboard/api/coupe-avec-poule-modeles/logos', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

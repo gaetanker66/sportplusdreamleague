@@ -48,7 +48,7 @@ export function useLigueLogos(ligueIds: (number | undefined)[]) {
             return '';
         };
 
-        fetch('/api/ligues/logos', {
+        fetch('/dashboard/api/ligues/logos', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

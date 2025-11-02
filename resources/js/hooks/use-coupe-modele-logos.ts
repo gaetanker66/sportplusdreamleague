@@ -48,7 +48,7 @@ export function useCoupeModeleLogos(modeleIds: (number | undefined)[]) {
             return '';
         };
 
-        fetch('/api/coupe-modeles/logos', {
+        fetch('/dashboard/api/coupe-modeles/logos', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

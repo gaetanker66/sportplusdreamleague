@@ -6,8 +6,8 @@ import { TomSelectSingle as TomSingle, TomSelectMulti as TomMulti } from '@/comp
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Équipes', href: '/equipes' },
-    { title: 'Modifier', href: '/equipes/edit' },
+    { title: 'Équipes', href: '/dashboard/equipes' },
+    { title: 'Modifier', href: '/dashboard/equipes/edit' },
 ];
 
 interface Poste { id: number; nom: string }
@@ -81,7 +81,7 @@ export default function EquipesEdit({ equipe, postes = [] as Poste[], equipes = 
     const handleAddPlayer = (e: React.FormEvent) => {
         e.preventDefault();
         if (!newPlayerName.trim()) return;
-        router.post(`/equipes/${equipe.id}/joueurs`, {
+        router.post(`/dashboard/equipes/${equipe.id}/joueurs`, {
             nom: newPlayerName,
             poste_id: newPlayerPosteId || null,
             postes_secondaires: newPlayerSecondaryIds,
@@ -102,12 +102,12 @@ export default function EquipesEdit({ equipe, postes = [] as Poste[], equipes = 
 
     const handleDeletePlayer = (joueur: Joueur) => {
         if (!confirm('Supprimer ce joueur ?')) return;
-        router.delete(`/equipes/${equipe.id}/joueurs/${joueur.id}`, { preserveScroll: true });
+        router.delete(`/dashboard/equipes/${equipe.id}/joueurs/${joueur.id}`, { preserveScroll: true });
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/equipes/${equipe.id}`);
+        put(`/dashboard/equipes/${equipe.id}`);
     };
 
     return (
@@ -119,7 +119,7 @@ export default function EquipesEdit({ equipe, postes = [] as Poste[], equipes = 
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Modifier l'équipe : {equipe.nom}</h1>
                         <p className="text-gray-600 dark:text-gray-400">Mettez à jour les informations de l'équipe</p>
                     </div>
-                    <Link href="/equipes" className="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">Retour</Link>
+                    <Link href="/dashboard/equipes" className="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">Retour</Link>
                 </div>
 
                 <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
@@ -192,7 +192,7 @@ export default function EquipesEdit({ equipe, postes = [] as Poste[], equipes = 
                             </div>
 
                             <div className="flex items-center justify-end gap-3">
-                                <Link href="/equipes" className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Annuler</Link>
+                                <Link href="/dashboard/equipes" className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Annuler</Link>
                                 <button type="submit" disabled={processing} className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">{processing ? 'Mise à jour…' : 'Mettre à jour'}</button>
                             </div>
                         </form>
@@ -316,7 +316,7 @@ function EditablePlayerRow({ joueur, equipeId, postes, onChange, onDelete }: { j
     // Sauvegarde immédiate des postes secondaires et de la description pour éviter toute perte
     React.useEffect(() => {
         // Envoi vers l'endpoint dédié de mise à jour du joueur
-        router.put(`/equipes/${equipeId}/joueurs/${joueur.id}`,
+        router.put(`/dashboard/equipes/${equipeId}/joueurs/${joueur.id}`,
             {
                 nom: name,
                 poste_id: posteId ? Number(posteId) : null,

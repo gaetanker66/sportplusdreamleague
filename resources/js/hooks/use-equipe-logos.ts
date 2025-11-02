@@ -78,7 +78,7 @@ export function useEquipeLogos(equipeIds: (number | undefined)[]) {
             return '';
         };
 
-        fetch('/api/equipes/logos', {
+        fetch('/dashboard/api/equipes/logos', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

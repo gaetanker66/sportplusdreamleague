@@ -4,8 +4,8 @@ import { Head, Link, useForm } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Équipes', href: '/equipes' },
-    { title: 'Créer', href: '/equipes/create' },
+    { title: 'Équipes', href: '/dashboard/equipes' },
+    { title: 'Créer', href: '/dashboard/equipes/create' },
 ];
 
 interface Equipe {
@@ -27,7 +27,7 @@ export default function EquipesCreate({ equipes = [] }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/equipes');
+        post('/dashboard/equipes');
     };
 
     return (
@@ -39,7 +39,7 @@ export default function EquipesCreate({ equipes = [] }: Props) {
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Nouvelle Équipe</h1>
                         <p className="text-gray-600 dark:text-gray-400">Renseignez les informations de l'équipe</p>
                     </div>
-                    <Link href="/equipes" className="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    <Link href="/dashboard/equipes" className="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
                         Retour
                     </Link>
                 </div>
@@ -111,7 +111,7 @@ export default function EquipesCreate({ equipes = [] }: Props) {
                             </div>
 
                             <div className="flex items-center justify-end gap-3">
-                                <Link href="/equipes" className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Annuler</Link>
+                                <Link href="/dashboard/equipes" className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Annuler</Link>
                                 <button type="submit" disabled={processing} className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
                                     {processing ? 'Création…' : 'Créer'}
                                 </button>
