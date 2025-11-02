@@ -10,7 +10,6 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Trophy, Users2, Briefcase, Palette, Crown, Settings, ArrowRightLeft } from 'lucide-react';
@@ -19,17 +18,17 @@ import AppLogo from './app-logo';
 const allMainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: '/dashboard',
         icon: LayoutGrid,
     },
     {
         title: 'Ligues',
-        href: '/ligues',
+        href: '/dashboard/ligues',
         icon: Trophy,
     },
     {
         title: 'Saisons',
-        href: '/saisons',
+        href: '/dashboard/saisons',
         icon: BookOpen,
     },
     {
@@ -39,37 +38,37 @@ const allMainNavItems: NavItem[] = [
     },
     {
         title: 'Postes',
-        href: '/postes',
+        href: '/dashboard/postes',
         icon: Briefcase,
     },
     {
         title: 'Transferts',
-        href: '/transferts',
+        href: '/dashboard/transferts',
         icon: ArrowRightLeft,
     },
     {
         title: 'Coupes',
-        href: '/coupes',
+        href: '/dashboard/coupes',
         icon: Trophy,
     },
     {
         title: 'Coupes avec Poules',
-        href: '/coupes-avec-poules',
+        href: '/dashboard/coupes-avec-poules',
         icon: Crown,
     },
     {
         title: 'Modèles de Coupe',
-        href: '/coupe-modeles',
+        href: '/dashboard/coupe-modeles',
         icon: Palette,
     },
     {
         title: 'Modèles Coupes Poules',
-        href: '/coupe-avec-poule-modeles',
+        href: '/dashboard/coupe-avec-poule-modeles',
         icon: Palette,
     },
     {
         title: 'Administration',
-        href: '/admin/users',
+        href: '/dashboard/admin/users',
         icon: Settings,
     },
 ];
@@ -105,7 +104,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href="/dashboard" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
