@@ -2,9 +2,10 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import * as React from 'react';
 import PublicHeader from '@/components/PublicHeader';
 import EquipeLogo from '@/components/equipe-logo';
+import LigueLogo from '@/components/ligue-logo';
 import classementBackground from '../../images/classement-background.avif';
 
-interface Ligue { id: number; nom: string; niveau: number }
+interface Ligue { id: number; nom: string; niveau: number; logo?: string | null }
 interface Saison { id: number; nom: string; date_debut: string; ligue_id: number }
 interface Standing { equipe_id: number; nom: string; logo?: string; joue: number; gagne: number; nul: number; perdu: number; bp: number; bc: number; diff: number; points: number }
 interface Equipe { id: number; nom: string; logo?: string | null }
@@ -25,11 +26,12 @@ interface Props {
     saisons: Saison[];
     selectedLigueId: number | null;
     selectedSaisonId: number | null;
+    selectedLigue?: { id: number; nom: string; logo?: string | null; niveau: number } | null;
     standings: Standing[];
     recentMatches: RecentMatch[];
 }
 
-export default function Classement({ ligues = [], saisons = [], selectedLigueId, selectedSaisonId, standings = [], recentMatches = [] }: Props) {
+export default function Classement({ ligues = [], saisons = [], selectedLigueId, selectedSaisonId, selectedLigue, standings = [], recentMatches = [] }: Props) {
     const [ligueId, setLigueId] = React.useState<number | ''>(selectedLigueId || (ligues[0]?.id ?? ''));
     const [saisonId, setSaisonId] = React.useState<number | ''>(selectedSaisonId || (saisons[0]?.id ?? ''));
 
@@ -101,7 +103,19 @@ export default function Classement({ ligues = [], saisons = [], selectedLigueId,
             <Head title="Classement" />
             <PublicHeader />
             <main className="mx-auto max-w-5xl px-4 py-6 sm:py-10">
-                <h1 className="text-3xl font-bold mb-6 text-white drop-shadow-lg">Classement</h1>
+                <div className="flex items-center gap-4 mb-6">
+                    <h1 className="text-3xl font-bold text-white drop-shadow-lg">Classement</h1>
+                    {selectedLigue && (
+                        <LigueLogo
+                            ligueId={selectedLigue.id}
+                            logo={selectedLigue.logo}
+                            nom={selectedLigue.nom}
+                            size="lg"
+                            showPlaceholder={false}
+                            className="rounded-full"
+                        />
+                    )}
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div>
                         <label className="block text-sm text-white dark:text-gray-100 mb-1 drop-shadow-md">Ligue (par niveau)</label>

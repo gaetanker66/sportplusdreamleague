@@ -1,6 +1,8 @@
 import { Head, Link, router } from '@inertiajs/react';
 import * as React from 'react';
 import PublicHeader from '@/components/PublicHeader';
+import CoupeModeleLogo from '@/components/coupe-modele-logo';
+import CoupeAvecPouleModeleLogo from '@/components/coupe-avec-poule-modele-logo';
 import tournoisBackground from '../../images/tournois-background.avif';
 
 export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: { 
@@ -427,17 +429,26 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                                     {selectedCoupe && (
                                         <div className="bg-black/40 dark:bg-black/60 backdrop-blur-sm rounded-lg shadow-2xl p-6">
                                             <div className="text-center mb-6">
-                                                <div className="flex items-center justify-center space-x-3 mb-2">
-                                                    {selectedCoupe.modele?.logo && (
-                                                        <img 
-                                                            src={selectedCoupe.modele.logo} 
-                                                            alt={`Logo ${selectedCoupe.modele.nom}`}
-                                                            className="w-12 h-12 object-contain"
-                                                            onError={(e) => {
-                                                                e.currentTarget.style.display = 'none';
-                                                            }}
+                                                <div className="flex items-center justify-center gap-3 mb-2">
+                                                    {selectedCoupe.modele && selectedCoupe.type === 'coupe_avec_poule' ? (
+                                                        <CoupeAvecPouleModeleLogo
+                                                            modeleId={selectedCoupe.modele.id}
+                                                            logo={selectedCoupe.modele.logo}
+                                                            nom={selectedCoupe.modele.nom}
+                                                            size="xl"
+                                                            showPlaceholder={false}
+                                                            className="rounded"
                                                         />
-                                                    )}
+                                                    ) : selectedCoupe.modele && selectedCoupe.type === 'coupe' ? (
+                                                        <CoupeModeleLogo
+                                                            modeleId={selectedCoupe.modele.id}
+                                                            logo={selectedCoupe.modele.logo}
+                                                            nom={selectedCoupe.modele.nom}
+                                                            size="xl"
+                                                            showPlaceholder={false}
+                                                            className="rounded"
+                                                        />
+                                                    ) : null}
                                                     <h2 className="text-2xl font-bold text-white drop-shadow-lg">
                                                         {selectedCoupe.nom}
                                                     </h2>

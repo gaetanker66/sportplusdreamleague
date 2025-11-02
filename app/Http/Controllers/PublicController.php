@@ -15,7 +15,7 @@ class PublicController extends Controller
 {
     public function classement(Request $request)
     {
-        $ligues = Ligue::orderBy('niveau')->get(['id','nom','niveau']);
+        $ligues = Ligue::orderBy('niveau')->get(['id','nom','niveau','logo']);
         if ($ligues->isEmpty()) {
             return Inertia::render('classement', [
                 'ligues' => [],
@@ -23,10 +23,12 @@ class PublicController extends Controller
                 'selectedLigueId' => null,
                 'selectedSaisonId' => null,
                 'standings' => [],
+                'selectedLigue' => null,
             ]);
         }
 
         $selectedLigueId = (int)($request->query('ligue_id') ?: $ligues->first()->id);
+        $selectedLigue = $ligues->firstWhere('id', $selectedLigueId);
         $saisons = Saison::where('ligue_id', $selectedLigueId)
             ->orderByDesc('date_debut')
             ->get(['id','nom','date_debut','date_fin','ligue_id']);
@@ -136,6 +138,7 @@ class PublicController extends Controller
             'saisons' => $saisons,
             'selectedLigueId' => $selectedLigueId,
             'selectedSaisonId' => $selectedSaisonId,
+            'selectedLigue' => $selectedLigue ? ['id' => $selectedLigue->id, 'nom' => $selectedLigue->nom, 'logo' => $selectedLigue->logo, 'niveau' => $selectedLigue->niveau] : null,
             'standings' => $standings,
             'recentMatches' => $recentMatches ?? [],
         ]);
@@ -394,9 +397,9 @@ class PublicController extends Controller
             ->unique()
             ->toArray();
         
-        // Charger les coupes normales (sans logos) en excluant les phases finales
+        // Charger les coupes normales avec les logos des modèles en excluant les phases finales
         $coupes = Coupe::with([
-                'modele' => function($q) { $q->select('id', 'nom', 'description'); },
+                'modele' => function($q) { $q->select('id', 'nom', 'description', 'logo'); },
                 'rounds.matchs.homeEquipe' => function($q) { $q->select('id', 'nom'); },
                 'rounds.matchs.awayEquipe' => function($q) { $q->select('id', 'nom'); },
                 'rounds.matchs.matchRetour.homeEquipe' => function($q) { $q->select('id', 'nom'); },
@@ -406,9 +409,9 @@ class PublicController extends Controller
             ->orderByDesc('created_at')
             ->get();
         
-        // Charger les coupes avec poules (sans logos)
+        // Charger les coupes avec poules avec les logos des modèles
         $coupesAvecPoules = \App\Models\CoupeAvecPoule::with([
-                'modele' => function($q) { $q->select('id', 'nom', 'description'); },
+                'modele' => function($q) { $q->select('id', 'nom', 'description', 'logo'); },
                 'poules.matchs.homeEquipe' => function($q) { $q->select('id', 'nom'); },
                 'poules.matchs.awayEquipe' => function($q) { $q->select('id', 'nom'); },
                 'poules.equipes' => function($q) { $q->select('equipes.id', 'equipes.nom'); },
