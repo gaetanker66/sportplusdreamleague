@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Carton extends Model
 {
-    protected $fillable = ['match_id','joueur_id','type','minute'];
+    protected $fillable = ['match_id','joueur_id','equipe_id','type','minute'];
 
     public function match()
     {

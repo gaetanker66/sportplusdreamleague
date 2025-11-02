@@ -46,7 +46,7 @@ export default function PostesIndex({ postes = [] as Poste[] }: { postes: Poste[
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div className="flex gap-2">
                                                     <Link href={`/postes/${poste.id}`} className="px-2.5 py-1.5 rounded text-white bg-blue-600 hover:bg-blue-700">Voir</Link>
-                                                    <Link href={`/postes/${poste.id}/edit`} className="px-2.5 py-1.5 rounded text-white bg-yellow-600 hover:bg-yellow-700">Modifier</Link>
+                                                    <Link href={`/postes/${poste.id}/edit`} className="px-2.5 py-1.5 rounded text-white bg-blue-600 hover:bg-blue-700">Modifier</Link>
                                                     <button onClick={() => handleDelete(poste.id)} className="px-2.5 py-1.5 rounded text-white bg-red-600 hover:bg-red-700">Supprimer</button>
                                                 </div>
                                             </td>

@@ -11,12 +11,12 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Trophy, Users2, Briefcase, Palette, Crown, Settings } from 'lucide-react';
+import { type NavItem, type SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
+import { BookOpen, Folder, LayoutGrid, Trophy, Users2, Briefcase, Palette, Crown, Settings, ArrowRightLeft } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
+const allMainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
@@ -41,6 +41,11 @@ const mainNavItems: NavItem[] = [
         title: 'Postes',
         href: '/postes',
         icon: Briefcase,
+    },
+    {
+        title: 'Transferts',
+        href: '/transferts',
+        icon: ArrowRightLeft,
     },
     {
         title: 'Coupes',
@@ -83,6 +88,17 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage<SharedData>().props;
+    const isAdmin = auth?.isAdmin ?? false;
+    
+    // Filtrer les items de navigation pour ne montrer l'administration que si l'utilisateur est admin
+    const mainNavItems = allMainNavItems.filter(item => {
+        if (item.href === '/admin/users') {
+            return isAdmin;
+        }
+        return true;
+    });
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

@@ -23,9 +23,72 @@ class PouleMatchController extends Controller
             ->where('equipe_id', $poule_match->equipe_away_id)
             ->whereHas('poste', function ($q) use ($gkNames) { $q->whereIn('nom', $gkNames); })
             ->orderBy('nom')->get(['id','nom','equipe_id','poste_id']);
+        
+        // Charger les gardiens sélectionnés dans le match même s'ils ont été transférés
+        $gardienIdsHistoriques = collect();
+        if ($poule_match->gardien_home_id) {
+            $gardienIdsHistoriques->push($poule_match->gardien_home_id);
+        }
+        if ($poule_match->gardien_away_id) {
+            $gardienIdsHistoriques->push($poule_match->gardien_away_id);
+        }
+        
+        if ($gardienIdsHistoriques->isNotEmpty()) {
+            $gardiensHistoriques = \App\Models\Joueur::with('poste')
+                ->whereIn('id', $gardienIdsHistoriques)
+                ->whereHas('poste', function ($q) use ($gkNames) {
+                    $q->whereIn('nom', $gkNames);
+                })
+                ->whereNotIn('id', $homeGardiens->pluck('id')->merge($awayGardiens->pluck('id')))
+                ->orderBy('nom')
+                ->get(['id','nom','equipe_id','poste_id']);
+            
+            foreach ($gardiensHistoriques as $gk) {
+                if ($gk->id == $poule_match->gardien_home_id && !$homeGardiens->contains('id', $gk->id)) {
+                    $homeGardiens->push($gk);
+                }
+                if ($gk->id == $poule_match->gardien_away_id && !$awayGardiens->contains('id', $gk->id)) {
+                    $awayGardiens->push($gk);
+                }
+            }
+            
+            $homeGardiens = $homeGardiens->unique('id')->sortBy('nom')->values();
+            $awayGardiens = $awayGardiens->unique('id')->sortBy('nom')->values();
+        }
 
         $homePlayers = \App\Models\Joueur::where('equipe_id', $poule_match->equipe_home_id)->orderBy('nom')->get(['id','nom']);
         $awayPlayers = \App\Models\Joueur::where('equipe_id', $poule_match->equipe_away_id)->orderBy('nom')->get(['id','nom']);
+        
+        // Récupérer tous les IDs de joueurs qui ont des buts/cartons dans ce match (même s'ils ont été transférés)
+        $joueurIdsButs = $poule_match->buts->pluck('buteur_id')->merge($poule_match->buts->pluck('passeur_id'))->filter()->unique();
+        $joueurIdsCartons = $poule_match->cartons->pluck('joueur_id')->unique();
+        $joueurIdsHistoriques = $joueurIdsButs->merge($joueurIdsCartons)->unique();
+        
+        if ($joueurIdsHistoriques->isNotEmpty()) {
+            $joueursHistoriques = \App\Models\Joueur::whereIn('id', $joueurIdsHistoriques)
+                ->orderBy('nom')
+                ->get(['id','nom']);
+            
+            foreach ($joueursHistoriques as $j) {
+                $hasButHome = $poule_match->buts->contains(function($but) use ($j, $poule_match) {
+                    return $but->equipe_id == $poule_match->equipe_home_id && ($but->buteur_id == $j->id || $but->passeur_id == $j->id);
+                });
+                $hasCartonHome = $poule_match->cartons->contains('joueur_id', $j->id);
+                if (($hasButHome || $hasCartonHome) && !$homePlayers->contains('id', $j->id)) {
+                    $homePlayers->push($j);
+                }
+                
+                $hasButAway = $poule_match->buts->contains(function($but) use ($j, $poule_match) {
+                    return $but->equipe_id == $poule_match->equipe_away_id && ($but->buteur_id == $j->id || $but->passeur_id == $j->id);
+                });
+                if ($hasButAway && !$awayPlayers->contains('id', $j->id)) {
+                    $awayPlayers->push($j);
+                }
+            }
+            
+            $homePlayers = $homePlayers->unique('id')->sortBy('nom')->values();
+            $awayPlayers = $awayPlayers->unique('id')->sortBy('nom')->values();
+        }
 
         $backUrl = route('coupes-avec-poules.show', optional($poule_match->poule)->coupe_avec_poule_id);
 
@@ -117,6 +180,14 @@ class PouleMatchController extends Controller
             'type' => 'required|in:jaune,rouge',
             'minute' => 'nullable|string|max:10',
         ]);
+        
+        // Déterminer l'équipe du joueur au moment du match en utilisant les transferts
+        $joueur = \App\Models\Joueur::findOrFail($validated['joueur_id']);
+        // Pour les matchs de poule, on utilise la date actuelle par défaut
+        // (les matchs de poule n'ont pas de date spécifique dans le modèle)
+        $equipeId = $joueur->getEquipeAtDate(\Carbon\Carbon::now());
+        $validated['equipe_id'] = $equipeId;
+        
         if ($validated['type'] === 'jaune') {
             $jaunes = $poule_match->cartons()->where('joueur_id', $validated['joueur_id'])->where('type', 'jaune')->count();
             if ($jaunes >= 1) {

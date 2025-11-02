@@ -1,6 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import * as React from 'react';
 import PublicHeader from '@/components/PublicHeader';
+import EquipeLogo from '@/components/equipe-logo';
 import classementBackground from '../../images/classement-background.avif';
 
 interface Ligue { id: number; nom: string; niveau: number }
@@ -143,8 +144,18 @@ export default function Classement({ ligues = [], saisons = [], selectedLigueId,
                                     <tr key={st.equipe_id} className="hover:bg-gray-900/50 dark:hover:bg-gray-800/50">
                                         <td className="px-3 py-2 text-xs text-white/90">{idx+1}</td>
                                         <td className="px-3 py-2 flex items-center gap-2">
-                                            {st.logo ? <img src={st.logo} className="h-6 w-6 rounded object-cover" /> : <span className="h-6 w-6 rounded bg-gray-200 dark:bg-gray-700 inline-block" />}
-                                            <span className="text-white">{st.nom}</span>
+                                            <EquipeLogo 
+                                                equipeId={st.equipe_id} 
+                                                logo={st.logo}
+                                                nom={st.nom}
+                                                size="md"
+                                            />
+                                            <Link 
+                                                href={`/equipes/${st.equipe_id}`}
+                                                className="text-white hover:text-blue-400 hover:underline transition-colors"
+                                            >
+                                                {st.nom}
+                                            </Link>
                                         </td>
                                         <td className="px-3 py-2 text-right text-white">{st.joue}</td>
                                         <td className="px-3 py-2 text-right text-white">{st.gagne}</td>
@@ -185,8 +196,18 @@ export default function Classement({ ligues = [], saisons = [], selectedLigueId,
                                                 <td className="px-3 py-2 text-xs text-white/90">
                                                     {match.journee_numero ? `J${match.journee_numero}` : '-'}
                                                 </td>
-                                                <td className="px-3 py-2 text-sm text-white">
-                                                    {match.home_equipe?.nom ?? `#${match.equipe_home_id}`}
+                                                <td className="px-3 py-2 text-sm text-white flex items-center gap-2">
+                                                    <EquipeLogo 
+                                                        equipeId={match.equipe_home_id} 
+                                                        nom={match.home_equipe?.nom}
+                                                        size="sm"
+                                                    />
+                                                    <Link 
+                                                        href={`/equipes/${match.equipe_home_id}`}
+                                                        className="hover:text-blue-400 hover:underline transition-colors"
+                                                    >
+                                                        {match.home_equipe?.nom ?? `#${match.equipe_home_id}`}
+                                                    </Link>
                                                 </td>
                                                 <td className="px-3 py-2 text-center text-sm">
                                                     <span>
@@ -195,8 +216,18 @@ export default function Classement({ ligues = [], saisons = [], selectedLigueId,
                                                         <span className={colors.awayColor}>{match.score_away}</span>
                                                     </span>
                                                 </td>
-                                                <td className="px-3 py-2 text-sm text-right text-white">
-                                                    {match.away_equipe?.nom ?? `#${match.equipe_away_id}`}
+                                                <td className="px-3 py-2 text-sm text-right text-white flex items-center gap-2 justify-end">
+                                                    <Link 
+                                                        href={`/equipes/${match.equipe_away_id}`}
+                                                        className="hover:text-blue-400 hover:underline transition-colors"
+                                                    >
+                                                        {match.away_equipe?.nom ?? `#${match.equipe_away_id}`}
+                                                    </Link>
+                                                    <EquipeLogo 
+                                                        equipeId={match.equipe_away_id} 
+                                                        nom={match.away_equipe?.nom}
+                                                        size="sm"
+                                                    />
                                                 </td>
                                             </tr>
                                         );

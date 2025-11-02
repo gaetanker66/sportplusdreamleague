@@ -49,11 +49,11 @@ class CoupeController extends Controller
     {
         // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
         $coupe->load([
-            'equipes' => function($q) { $q->select('id', 'nom'); },
-            'rounds.matchs.homeEquipe' => function($q) { $q->select('id', 'nom'); },
-            'rounds.matchs.awayEquipe' => function($q) { $q->select('id', 'nom'); },
-            'rounds.matchs.matchRetour.homeEquipe' => function($q) { $q->select('id', 'nom'); },
-            'rounds.matchs.matchRetour.awayEquipe' => function($q) { $q->select('id', 'nom'); },
+            'equipes' => function($q) { $q->select('equipes.id', 'equipes.nom'); },
+            'rounds.matchs.homeEquipe' => function($q) { $q->select('equipes.id', 'equipes.nom'); },
+            'rounds.matchs.awayEquipe' => function($q) { $q->select('equipes.id', 'equipes.nom'); },
+            'rounds.matchs.matchRetour.homeEquipe' => function($q) { $q->select('equipes.id', 'equipes.nom'); },
+            'rounds.matchs.matchRetour.awayEquipe' => function($q) { $q->select('equipes.id', 'equipes.nom'); },
         ]);
         $equipes = \App\Models\Equipe::select('id', 'nom')->orderBy('nom')->get();
         
@@ -70,7 +70,7 @@ class CoupeController extends Controller
         foreach ($coupe->rounds as $r) { $r->matchs()->delete(); }
         $coupe->rounds()->delete();
 
-        $equipes = $coupe->equipes()->pluck('equipes.id')->all();
+        $equipes = $coupe->equipes()->pluck('equipes.id', 'equipes.id')->keys()->all();
         $n = count($equipes);
         if ($n < 2) return back()->withErrors(['equipes' => 'Sélectionnez au moins 2 équipes.']);
         
@@ -273,9 +273,73 @@ class CoupeController extends Controller
             ->where('equipe_id', $match->equipe_away_id)
             ->whereHas('poste', function ($q) use ($gkNames) { $q->whereIn('nom', $gkNames); })
             ->orderBy('nom')->get(['id','nom']);
+        
+        // Charger les gardiens sélectionnés dans le match même s'ils ont été transférés
+        $gardienIdsHistoriques = collect();
+        if ($match->gardien_home_id) {
+            $gardienIdsHistoriques->push($match->gardien_home_id);
+        }
+        if ($match->gardien_away_id) {
+            $gardienIdsHistoriques->push($match->gardien_away_id);
+        }
+        
+        if ($gardienIdsHistoriques->isNotEmpty()) {
+            $gardiensHistoriques = \App\Models\Joueur::with('poste')
+                ->whereIn('id', $gardienIdsHistoriques)
+                ->whereHas('poste', function ($q) use ($gkNames) {
+                    $q->whereIn('nom', $gkNames);
+                })
+                ->whereNotIn('id', $homeGardiens->pluck('id')->merge($awayGardiens->pluck('id')))
+                ->orderBy('nom')
+                ->get(['id','nom']);
+            
+            foreach ($gardiensHistoriques as $gk) {
+                if ($gk->id == $match->gardien_home_id && !$homeGardiens->contains('id', $gk->id)) {
+                    $homeGardiens->push($gk);
+                }
+                if ($gk->id == $match->gardien_away_id && !$awayGardiens->contains('id', $gk->id)) {
+                    $awayGardiens->push($gk);
+                }
+            }
+            
+            $homeGardiens = $homeGardiens->unique('id')->sortBy('nom')->values();
+            $awayGardiens = $awayGardiens->unique('id')->sortBy('nom')->values();
+        }
+        
         // Tous les joueurs (pour buteur/passeur)
         $homePlayers = \App\Models\Joueur::where('equipe_id', $match->equipe_home_id)->orderBy('nom')->get(['id','nom']);
         $awayPlayers = \App\Models\Joueur::where('equipe_id', $match->equipe_away_id)->orderBy('nom')->get(['id','nom']);
+        
+        // Récupérer tous les IDs de joueurs qui ont des buts/cartons dans ce match (même s'ils ont été transférés)
+        $joueurIdsButs = $match->buts->pluck('buteur_id')->merge($match->buts->pluck('passeur_id'))->filter()->unique();
+        $joueurIdsCartons = $match->cartons->pluck('joueur_id')->unique();
+        $joueurIdsHistoriques = $joueurIdsButs->merge($joueurIdsCartons)->unique();
+        
+        if ($joueurIdsHistoriques->isNotEmpty()) {
+            $joueursHistoriques = \App\Models\Joueur::whereIn('id', $joueurIdsHistoriques)
+                ->orderBy('nom')
+                ->get(['id','nom']);
+            
+            foreach ($joueursHistoriques as $j) {
+                $hasButHome = $match->buts->contains(function($but) use ($j, $match) {
+                    return $but->equipe_id == $match->equipe_home_id && ($but->buteur_id == $j->id || $but->passeur_id == $j->id);
+                });
+                $hasCartonHome = $match->cartons->contains('joueur_id', $j->id);
+                if (($hasButHome || $hasCartonHome) && !$homePlayers->contains('id', $j->id)) {
+                    $homePlayers->push($j);
+                }
+                
+                $hasButAway = $match->buts->contains(function($but) use ($j, $match) {
+                    return $but->equipe_id == $match->equipe_away_id && ($but->buteur_id == $j->id || $but->passeur_id == $j->id);
+                });
+                if ($hasButAway && !$awayPlayers->contains('id', $j->id)) {
+                    $awayPlayers->push($j);
+                }
+            }
+            
+            $homePlayers = $homePlayers->unique('id')->sortBy('nom')->values();
+            $awayPlayers = $awayPlayers->unique('id')->sortBy('nom')->values();
+        }
         return Inertia::render('coupes/edit-match', [
             'match' => $match,
             'homeGardiens' => $homeGardiens,
@@ -309,6 +373,13 @@ class CoupeController extends Controller
             'type' => 'required|in:jaune,rouge',
             'minute' => 'nullable|string|max:10',
         ]);
+        
+        // Déterminer l'équipe du joueur au moment du match en utilisant les transferts
+        $joueur = \App\Models\Joueur::findOrFail($validated['joueur_id']);
+        // Pour les matchs de coupe, on utilise la date actuelle par défaut
+        // (les matchs de coupe n'ont pas de date spécifique dans le modèle)
+        $equipeId = $joueur->getEquipeAtDate(\Carbon\Carbon::now());
+        $validated['equipe_id'] = $equipeId;
         
         // Vérifier si le joueur a déjà 2 cartons jaunes
         if ($validated['type'] === 'jaune') {
@@ -634,6 +705,28 @@ class CoupeController extends Controller
         }
         
         return redirect()->route('coupes.edit', $coupe)->with('success', 'Vainqueurs recalculés.');
+    }
+
+    public function destroy(Coupe $coupe)
+    {
+        // Supprimer tous les matchs et leurs données associées
+        foreach ($coupe->rounds as $round) {
+            // Supprimer les buts
+            foreach ($round->matchs as $match) {
+                $match->buts()->delete();
+                $match->cartons()->delete();
+            }
+            // Supprimer les matchs
+            $round->matchs()->delete();
+        }
+        // Supprimer les rounds
+        $coupe->rounds()->delete();
+        // Supprimer les relations avec les équipes
+        $coupe->equipes()->detach();
+        // Supprimer la coupe
+        $coupe->delete();
+        
+        return redirect()->route('coupes.index')->with('success', 'Tournoi supprimé avec succès.');
     }
 
     /**

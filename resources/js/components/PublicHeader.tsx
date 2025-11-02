@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import logo from '../../images/logo.avif';
+import AppearanceToggleDropdown from './appearance-dropdown';
 
 export default function PublicHeader() {
     return (
@@ -13,6 +14,7 @@ export default function PublicHeader() {
                     />
                     <div className="font-extrabold tracking-tight text-xl">Sport Plus Dream League</div>
                 </div>
+                <div className="flex items-center gap-2 sm:gap-4 lg:gap-5">
                 <nav className="flex items-center gap-2 sm:gap-4 lg:gap-5 text-sm flex-wrap sm:flex-nowrap justify-center">
                     <Link href="/" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Accueil</Link>
                     <a 
@@ -23,6 +25,7 @@ export default function PublicHeader() {
                     >
                         Actu
                     </a>
+                    <Link href="/equipes" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Équipes</Link>
                     <Link href="/classement" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Classement</Link>
                     <Link href="/statistiques" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Statistiques</Link>
                     <Link href="/calendrier" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Calendrier</Link>
@@ -50,6 +53,8 @@ export default function PublicHeader() {
                         </svg>
                     </a>
                 </nav>
+                <AppearanceToggleDropdown />
+                </div>
             </div>
         </header>
     );

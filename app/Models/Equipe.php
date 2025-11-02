@@ -9,6 +9,8 @@ class Equipe extends Model
     protected $fillable = [
         'nom',
         'logo',
+        'description',
+        'rival_id',
     ];
 
     public function joueurs()
@@ -27,6 +29,16 @@ class Equipe extends Model
             'points', 'matchs_joues', 'victoires', 'nuls', 'defaites',
             'buts_pour', 'buts_contre', 'difference_buts'
         ])->withTimestamps();
+    }
+
+    public function rival()
+    {
+        return $this->belongsTo(Equipe::class, 'rival_id');
+    }
+
+    public function rivalDe()
+    {
+        return $this->hasOne(Equipe::class, 'rival_id');
     }
 }
 

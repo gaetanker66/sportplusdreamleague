@@ -18,8 +18,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Routes pour la gestion des saisons
     Route::resource('saisons', App\Http\Controllers\SaisonController::class);
 
-    // Routes pour la gestion des équipes
-    Route::resource('equipes', App\Http\Controllers\EquipeController::class);
+    // Routes pour la gestion des équipes (sauf show qui est publique)
+    Route::resource('equipes', App\Http\Controllers\EquipeController::class)->except(['show']);
     Route::post('equipes/{equipe}/joueurs', [App\Http\Controllers\EquipeController::class, 'addPlayer'])->name('equipes.joueurs.store');
     Route::put('equipes/{equipe}/joueurs/{joueur}', [App\Http\Controllers\EquipeController::class, 'updatePlayer'])->name('equipes.joueurs.update');
     Route::delete('equipes/{equipe}/joueurs/{joueur}', [App\Http\Controllers\EquipeController::class, 'deletePlayer'])->name('equipes.joueurs.destroy');
@@ -30,6 +30,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Routes pour la gestion des postes
     Route::resource('postes', App\Http\Controllers\PosteController::class);
+
+    // Routes pour la gestion des transferts
+    Route::resource('transferts', App\Http\Controllers\TransfertController::class);
 
     // Journées & matchs
     Route::post('saisons/{saison}/journees', [App\Http\Controllers\JourneeController::class, 'store'])->name('journees.store');
@@ -83,6 +86,9 @@ Route::get('classement', [App\Http\Controllers\PublicController::class, 'classem
 Route::get('statistiques', [App\Http\Controllers\PublicController::class, 'statistiques'])->name('public.statistiques');
 Route::get('calendrier', [App\Http\Controllers\PublicController::class, 'calendrier'])->name('public.calendrier');
 Route::get('tournois', [App\Http\Controllers\PublicController::class, 'coupes'])->name('public.coupes');
+Route::get('equipes', [App\Http\Controllers\PublicController::class, 'equipes'])->name('public.equipes');
+Route::get('equipes/{equipe}', [App\Http\Controllers\EquipeController::class, 'show'])->name('equipes.show');
+Route::get('joueurs/{joueur}', [App\Http\Controllers\PublicController::class, 'joueur'])->name('joueurs.show');
 
 // Route pour servir le logo depuis resources/images
 Route::get('logo.avif', function () {

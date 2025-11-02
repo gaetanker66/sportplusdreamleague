@@ -17,7 +17,7 @@ interface Match {
     score_away: number;
     termine: boolean;
     buts?: { id: number; equipe_id: number; buteur_id: number; passeur_id?: number | null; minute?: string | null; type?: string }[];
-    cartons?: { id: number; joueur_id: number; type: 'jaune' | 'rouge'; minute?: number | null }[];
+    cartons?: { id: number; joueur_id: number; equipe_id?: number | null; type: 'jaune' | 'rouge'; minute?: number | null }[];
 }
 
 interface SimplePlayer { id: number; nom: string }
@@ -59,6 +59,35 @@ export default function PouleMatchEdit({ match, homeGardiens, awayGardiens, home
         if (!id) return '';
         const p = [...homePlayers, ...awayPlayers].find(p => p.id === id);
         return p ? p.nom : `#${id}`;
+    };
+    
+    // Fonction pour déterminer si un joueur appartient à l'équipe home dans ce match
+    const isPlayerHome = (joueurId: number, cartonEquipeId?: number | null): boolean => {
+        // Si le carton a un equipe_id stocké (nouveaux cartons avec transferts), l'utiliser directement
+        if (cartonEquipeId !== undefined && cartonEquipeId !== null) {
+            return cartonEquipeId === match.equipe_home_id;
+        }
+        
+        // Vérifier si le joueur a un but pour l'équipe home
+        const hasButHome = match.buts?.some((b: any) => 
+            b.equipe_id === match.equipe_home_id && (b.buteur_id === joueurId || b.passeur_id === joueurId)
+        );
+        if (hasButHome) return true;
+        
+        // Si le joueur n'a pas de but pour l'équipe home mais a un but pour l'équipe away, il était dans l'équipe away
+        const hasButAway = match.buts?.some((b: any) => 
+            b.equipe_id === match.equipe_away_id && (b.buteur_id === joueurId || b.passeur_id === joueurId)
+        );
+        if (hasButAway) return false;
+        
+        // Vérifier s'il est gardien
+        if (match.gardien_home_id === joueurId) return true;
+        if (match.gardien_away_id === joueurId) return false;
+        
+        // Par défaut, si on ne peut pas déterminer, on suppose qu'il est dans l'équipe où il apparaît uniquement
+        const inHome = homePlayers.some(p => p.id === joueurId);
+        const inAway = awayPlayers.some(p => p.id === joueurId);
+        return inHome && !inAway;
     };
     const getTypeLabel = (type?: string) => {
         switch(type) {
@@ -299,12 +328,12 @@ export default function PouleMatchEdit({ match, homeGardiens, awayGardiens, home
                                         <label className="block text-xs text-gray-600 dark:text-gray-400">Minute</label>
                                         <input disabled={readOnly} type="number" min={0} max={130} value={cartonHome.minute as any} onChange={(e) => setCartonHome({ ...cartonHome, minute: e.target.value ? Number(e.target.value) : '' })} className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md disabled:opacity-60" />
                                     </div>
-                                    <button type="submit" disabled={readOnly} className="px-3 py-2 rounded text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50">Ajouter carton</button>
+                                    <button type="submit" disabled={readOnly} className="px-3 py-2 rounded text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50">Ajouter carton</button>
                                 </form>
                                 <div className="mt-4">
                                     <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Cartons enregistrés</h4>
                                     <ul className="space-y-1">
-                                        {match.cartons?.filter(c => homePlayers.some(p => p.id === c.joueur_id)).map(c => (
+                                        {match.cartons?.filter((c: any) => isPlayerHome(c.joueur_id, c.equipe_id)).map((c: any) => (
                                             <li key={c.id} className="flex items-center justify-between text-sm text-gray-800 dark:text-gray-200">
                                                 <span className={`${c.type === 'rouge' ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
                                                     {playerName(c.joueur_id)} - {c.type} {c.minute != null ? `(${c.minute}')` : ''}
@@ -337,12 +366,12 @@ export default function PouleMatchEdit({ match, homeGardiens, awayGardiens, home
                                         <label className="block text-xs text-gray-600 dark:text-gray-400">Minute</label>
                                         <input disabled={readOnly} type="number" min={0} max={130} value={cartonAway.minute as any} onChange={(e) => setCartonAway({ ...cartonAway, minute: e.target.value ? Number(e.target.value) : '' })} className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md disabled:opacity-60" />
                                     </div>
-                                    <button type="submit" disabled={readOnly} className="px-3 py-2 rounded text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50">Ajouter carton</button>
+                                    <button type="submit" disabled={readOnly} className="px-3 py-2 rounded text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50">Ajouter carton</button>
                                 </form>
                                 <div className="mt-4">
                                     <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Cartons enregistrés</h4>
                                     <ul className="space-y-1">
-                                        {match.cartons?.filter(c => awayPlayers.some(p => p.id === c.joueur_id)).map(c => (
+                                        {match.cartons?.filter((c: any) => !isPlayerHome(c.joueur_id, c.equipe_id)).map((c: any) => (
                                             <li key={c.id} className="flex items-center justify-between text-sm text-gray-800 dark:text-gray-200">
                                                 <span className={`${c.type === 'rouge' ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
                                                     {playerName(c.joueur_id)} - {c.type} {c.minute != null ? `(${c.minute}')` : ''}

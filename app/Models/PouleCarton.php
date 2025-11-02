@@ -9,6 +9,7 @@ class PouleCarton extends Model
     protected $fillable = [
         'poule_match_id',
         'joueur_id',
+        'equipe_id',
         'type',
         'minute'
     ];

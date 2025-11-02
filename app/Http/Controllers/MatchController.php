@@ -6,6 +6,7 @@ use App\Models\MatchModel;
 use App\Models\But;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class MatchController extends Controller
 {
@@ -28,12 +29,82 @@ class MatchController extends Controller
             })
             ->orderBy('nom')
             ->get(['id','nom','equipe_id','poste_id']);
+        
+        // Charger les gardiens sélectionnés dans le match même s'ils ont été transférés
+        $gardienIdsHistoriques = collect();
+        if ($match->gardien_home_id) {
+            $gardienIdsHistoriques->push($match->gardien_home_id);
+        }
+        if ($match->gardien_away_id) {
+            $gardienIdsHistoriques->push($match->gardien_away_id);
+        }
+        
+        if ($gardienIdsHistoriques->isNotEmpty()) {
+            $gardiensHistoriques = \App\Models\Joueur::with('poste')
+                ->whereIn('id', $gardienIdsHistoriques)
+                ->whereHas('poste', function ($q) use ($gkNames) {
+                    $q->whereIn('nom', $gkNames);
+                })
+                ->whereNotIn('id', $homeGardiens->pluck('id')->merge($awayGardiens->pluck('id')))
+                ->orderBy('nom')
+                ->get(['id','nom','equipe_id','poste_id']);
+            
+            // Ajouter aux listes appropriées
+            foreach ($gardiensHistoriques as $gk) {
+                if ($gk->id == $match->gardien_home_id && !$homeGardiens->contains('id', $gk->id)) {
+                    $homeGardiens->push($gk);
+                }
+                if ($gk->id == $match->gardien_away_id && !$awayGardiens->contains('id', $gk->id)) {
+                    $awayGardiens->push($gk);
+                }
+            }
+            
+            // Trier à nouveau
+            $homeGardiens = $homeGardiens->unique('id')->sortBy('nom')->values();
+            $awayGardiens = $awayGardiens->unique('id')->sortBy('nom')->values();
+        }
 
-        // Joueurs disponibles pour buts/passes (tous les joueurs des équipes)
+        // Joueurs disponibles pour buts/passes (tous les joueurs des équipes actuelles)
         $homePlayers = \App\Models\Joueur::where('equipe_id', $match->equipe_home_id)
             ->orderBy('nom')->get(['id','nom']);
         $awayPlayers = \App\Models\Joueur::where('equipe_id', $match->equipe_away_id)
             ->orderBy('nom')->get(['id','nom']);
+        
+        // Récupérer tous les IDs de joueurs qui ont des buts/cartons dans ce match (même s'ils ont été transférés)
+        $joueurIdsButs = $match->buts->pluck('buteur_id')->merge($match->buts->pluck('passeur_id'))->filter()->unique();
+        $joueurIdsCartons = $match->cartons->pluck('joueur_id')->unique();
+        $joueurIdsHistoriques = $joueurIdsButs->merge($joueurIdsCartons)->unique();
+        
+        // Charger ces joueurs pour l'affichage (même s'ils ne sont plus dans les équipes)
+        if ($joueurIdsHistoriques->isNotEmpty()) {
+            $joueursHistoriques = \App\Models\Joueur::whereIn('id', $joueurIdsHistoriques)
+                ->orderBy('nom')
+                ->get(['id','nom']);
+            
+            // Ajouter les joueurs historiques aux listes appropriées
+            foreach ($joueursHistoriques as $j) {
+                $hasButHome = $match->buts->contains(function($but) use ($j, $match) {
+                    return $but->equipe_id == $match->equipe_home_id && ($but->buteur_id == $j->id || $but->passeur_id == $j->id);
+                });
+                $hasCartonHome = $match->cartons->contains(function($carton) use ($j) {
+                    return $carton->joueur_id == $j->id;
+                });
+                if (($hasButHome || $hasCartonHome) && !$homePlayers->contains('id', $j->id)) {
+                    $homePlayers->push($j);
+                }
+                
+                $hasButAway = $match->buts->contains(function($but) use ($j, $match) {
+                    return $but->equipe_id == $match->equipe_away_id && ($but->buteur_id == $j->id || $but->passeur_id == $j->id);
+                });
+                if ($hasButAway && !$awayPlayers->contains('id', $j->id)) {
+                    $awayPlayers->push($j);
+                }
+            }
+            
+            // Enlever les doublons et trier
+            $homePlayers = $homePlayers->unique('id')->sortBy('nom')->values();
+            $awayPlayers = $awayPlayers->unique('id')->sortBy('nom')->values();
+        }
 
         return Inertia::render('matchs/edit', [
             'match' => $match,
@@ -86,6 +157,14 @@ class MatchController extends Controller
             'minute' => 'nullable|string|max:10',
         ]);
         
+        // Déterminer l'équipe du joueur au moment du match en utilisant les transferts
+        $joueur = \App\Models\Joueur::findOrFail($validated['joueur_id']);
+        $dateMatch = $match->journee && $match->journee->date 
+            ? Carbon::parse($match->journee->date)
+            : Carbon::now();
+        $equipeId = $joueur->getEquipeAtDate($dateMatch);
+        $validated['equipe_id'] = $equipeId;
+        
         // Vérifier si le joueur a déjà 2 cartons jaunes
         if ($validated['type'] === 'jaune') {
             $jaunesCount = $match->cartons()
@@ -106,6 +185,11 @@ class MatchController extends Controller
         }
         
         $match->cartons()->create($validated);
+        
+        // Recharger le match avec ses relations pour retourner les données à jour
+        $match->refresh();
+        $match->load(['homeEquipe', 'awayEquipe', 'buts', 'cartons', 'journee.saison']);
+        
         if ($request->boolean('stay')) {
             return redirect()->route('matchs.edit', $match)->with('success','Carton ajouté.');
         }

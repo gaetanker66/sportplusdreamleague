@@ -1,7 +1,15 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function CoupesIndex({ coupes }: { coupes: any[] }) {
+  const { delete: destroy } = useForm({});
+
+  const handleDelete = (id: number) => {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce tournoi ? Cette action est irréversible.')) {
+      destroy(`/coupes/${id}`);
+    }
+  };
+
   return (
     <AppLayout>
       <Head title="Coupes" />
@@ -49,7 +57,15 @@ export default function CoupesIndex({ coupes }: { coupes: any[] }) {
                     <span className="text-sm">{c.equipes?.length || 0}/{c.nombre_equipes || 0}</span>
                   </td>
                   <td className="px-3 py-2 text-right">
-                    <Link href={`/coupes/${c.id}/edit`} className="px-2 py-1 rounded bg-blue-600 text-white">Éditer</Link>
+                    <div className="flex gap-2 justify-end">
+                      <Link href={`/coupes/${c.id}/edit`} className="px-2 py-1 rounded bg-blue-600 text-white hover:bg-blue-700">Éditer</Link>
+                      <button
+                        onClick={() => handleDelete(c.id)}
+                        className="px-2 py-1 rounded bg-red-600 text-white hover:bg-red-700"
+                      >
+                        Supprimer
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

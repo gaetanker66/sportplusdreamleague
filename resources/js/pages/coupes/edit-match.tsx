@@ -143,12 +143,12 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
                 <label className="block text-xs text-gray-600 dark:text-gray-400">Minute</label>
                 <input type="number" min={0} max={130} value={cartonHome.minute as any} onChange={(e) => setCartonHome({ ...cartonHome, minute: e.target.value ? Number(e.target.value) : '' })} className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" />
               </div>
-              <button type="submit" className="px-3 py-2 rounded text-white bg-yellow-600 hover:bg-yellow-700">Ajouter carton</button>
+              <button type="submit" className="px-3 py-2 rounded text-white bg-blue-600 hover:bg-blue-700">Ajouter carton</button>
             </form>
             <div className="mt-4">
               <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Cartons enregistrés</h4>
               <ul className="space-y-1">
-                {match.cartons?.filter((c:any) => homePlayers.some(p => p.id === c.joueur_id)).map((c:any) => (
+                {match.cartons?.filter((c:any) => c.equipe_id === match.equipe_home_id || (!c.equipe_id && homePlayers.some(p => p.id === c.joueur_id))).map((c:any) => (
                   <li key={c.id} className="flex items-center justify-between text-sm text-gray-800 dark:text-gray-200">
                     <span className={`${c.type === 'rouge' ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
                       {playerName(c.joueur_id)} - {c.type} {c.minute != null ? `(${c.minute}')` : ''}
@@ -181,12 +181,12 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
                 <label className="block text-xs text-gray-600 dark:text-gray-400">Minute</label>
                 <input type="number" min={0} max={130} value={cartonAway.minute as any} onChange={(e) => setCartonAway({ ...cartonAway, minute: e.target.value ? Number(e.target.value) : '' })} className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" />
               </div>
-              <button type="submit" className="px-3 py-2 rounded text-white bg-yellow-600 hover:bg-yellow-700">Ajouter carton</button>
+              <button type="submit" className="px-3 py-2 rounded text-white bg-blue-600 hover:bg-blue-700">Ajouter carton</button>
             </form>
             <div className="mt-4">
               <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Cartons enregistrés</h4>
               <ul className="space-y-1">
-                {match.cartons?.filter((c:any) => awayPlayers.some(p => p.id === c.joueur_id)).map((c:any) => (
+                {match.cartons?.filter((c:any) => c.equipe_id === match.equipe_away_id || (!c.equipe_id && awayPlayers.some(p => p.id === c.joueur_id))).map((c:any) => (
                   <li key={c.id} className="flex items-center justify-between text-sm text-gray-800 dark:text-gray-200">
                     <span className={`${c.type === 'rouge' ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
                       {playerName(c.joueur_id)} - {c.type} {c.minute != null ? `(${c.minute}')` : ''}

@@ -6,7 +6,7 @@ import statsBackground from '../../images/stats-background.avif';
 interface Ligue { id: number; nom: string; niveau: number }
 interface Saison { id: number; nom: string; date_debut: string; ligue_id: number }
 interface Coupe { id: number; nom: string; created_at: string; modele?: {id: number; nom: string; logo?: string} }
-interface CoupeModele { id: number; nom: string; logo?: string }
+interface CoupeModele { id: string; nom: string; type: string; original_id: number; logo?: string }
 interface Stat { joueur_id: number; nom: string; val: number }
 interface Props {
     ligues: Ligue[];
@@ -16,7 +16,7 @@ interface Props {
     selectedLigueId: number | null;
     selectedSaisonId: number | null;
     selectedCoupeId: number | null;
-    selectedModeleId: number | null;
+    selectedModeleId: string | null;
     type: 'buteur' | 'passeur' | 'arret' | 'clean_sheet' | 'coup_franc' | 'penalty' | 'carton_jaune' | 'carton_rouge';
     stats: Stat[];
     mode: 'ligue' | 'tournois';
@@ -26,7 +26,7 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
     const [ligueId, setLigueId] = React.useState<number | ''>(selectedLigueId || (ligues[0]?.id ?? ''));
     const [saisonId, setSaisonId] = React.useState<number | ''>(selectedSaisonId || (saisons[0]?.id ?? ''));
     const [coupeId, setCoupeId] = React.useState<number | ''>(selectedCoupeId || (coupes && Array.isArray(coupes) && coupes[0]?.id ? coupes[0].id : ''));
-    const [modeleId, setModeleId] = React.useState<number | ''>(selectedModeleId || '');
+    const [modeleId, setModeleId] = React.useState<string | ''>(selectedModeleId || '');
     const [selType, setSelType] = React.useState(type);
     const [selMode, setSelMode] = React.useState(mode);
 
@@ -35,7 +35,16 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
         const grouped: {[key: string]: typeof coupes} = {};
         if (coupes && Array.isArray(coupes)) {
             coupes.forEach(coupe => {
-                const modeleKey = coupe.modele?.id?.toString() || 'sans-modele';
+                // Utiliser le modele_id avec le préfixe approprié
+                let modeleKey = 'sans-modele';
+                if (coupe.modele_type === 'coupe' && coupe.modele_id) {
+                    modeleKey = `coupe_${coupe.modele_id}`;
+                } else if (coupe.modele_type === 'coupe_avec_poule' && coupe.modele_id) {
+                    modeleKey = `coupe_avec_poule_${coupe.modele_id}`;
+                } else if (coupe.modele?.id) {
+                    // Fallback pour l'ancien format
+                    modeleKey = coupe.modele.id.toString();
+                }
                 if (!grouped[modeleKey]) {
                     grouped[modeleKey] = [];
                 }
@@ -76,7 +85,7 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
         }
     }, [modeleId, filteredCoupes]);
 
-    const go = (l?: number | '', s?: number | '', t?: string, m?: string, c?: number | '', mod?: number | '') => {
+    const go = (l?: number | '', s?: number | '', t?: string, m?: string, c?: number | '', mod?: string | '') => {
         const lid = (l === undefined ? ligueId : l) || '';
         const sid = (s === undefined ? saisonId : s) || '';
         const cid = (c === undefined ? coupeId : c) || '';
@@ -110,7 +119,7 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
     };
     const onModele = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
-        const id = value ? Number(value) : '';
+        const id = value || '';
         setModeleId(id);
         go(undefined, undefined, selType, selMode, coupeId, id);
     };
@@ -268,7 +277,14 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
                                 {stats.map((st, idx) => (
                                     <tr key={st.joueur_id} className="hover:bg-gray-900/50 dark:hover:bg-gray-800/50">
                                         <td className="px-3 py-2 text-xs text-white/90">{idx+1}</td>
-                                        <td className="px-3 py-2 text-white">{st.nom}</td>
+                                        <td className="px-3 py-2 text-white">
+                                            <Link 
+                                                href={`/joueurs/${st.joueur_id}`}
+                                                className="hover:text-blue-400 hover:underline transition-colors"
+                                            >
+                                                {st.nom}
+                                            </Link>
+                                        </td>
                                         <td className="px-3 py-2 text-right font-semibold text-white">{st.val}</td>
                                     </tr>
                                 ))}

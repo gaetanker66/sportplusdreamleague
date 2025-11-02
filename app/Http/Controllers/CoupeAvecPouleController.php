@@ -161,10 +161,11 @@ class CoupeAvecPouleController extends Controller
         }
 
         // Créer une Coupe classique et générer le bracket de phase finale
+        // Note: coupe_modele_id est NULL car les CoupeAvecPouleModele et CoupeModele sont différents
         $coupe = \App\Models\Coupe::create([
             'nom' => $coupes_avec_poule->nom . ' - Phase finale',
             'nombre_equipes' => count($pairs) * 2,
-            'coupe_modele_id' => optional($coupes_avec_poule->modele)->id,
+            'coupe_modele_id' => null,
         ]);
         // Attacher toutes les équipes qualifiées
         $equipesIds = [];
@@ -314,10 +315,54 @@ class CoupeAvecPouleController extends Controller
      */
     public function destroy(CoupeAvecPoule $coupes_avec_poule)
     {
+        // Charger les relations nécessaires
+        $coupes_avec_poule->load([
+            'coupePhaseFinale.rounds.matchs',
+            'poules.matchs',
+        ]);
+        
+        // Supprimer la phase finale si elle existe
+        if ($coupes_avec_poule->coupePhaseFinale) {
+            $phaseFinale = $coupes_avec_poule->coupePhaseFinale;
+            // Supprimer tous les matchs de la phase finale et leurs données associées
+            foreach ($phaseFinale->rounds as $round) {
+                foreach ($round->matchs as $match) {
+                    // Supprimer les buts et cartons
+                    \App\Models\CoupeBut::where('coupe_match_id', $match->id)->delete();
+                    \App\Models\CoupeCarton::where('coupe_match_id', $match->id)->delete();
+                }
+                // Supprimer les matchs
+                $round->matchs()->delete();
+            }
+            // Supprimer les rounds
+            $phaseFinale->rounds()->delete();
+            // Supprimer les relations avec les équipes
+            $phaseFinale->equipes()->detach();
+            // Supprimer la phase finale
+            $phaseFinale->delete();
+        }
+        
+        // Supprimer toutes les poules et leurs données associées
+        foreach ($coupes_avec_poule->poules as $poule) {
+            // Supprimer les matchs de poule et leurs données associées
+            foreach ($poule->matchs as $match) {
+                // Supprimer les buts et cartons
+                \App\Models\PouleBut::where('poule_match_id', $match->id)->delete();
+                \App\Models\PouleCarton::where('poule_match_id', $match->id)->delete();
+            }
+            // Supprimer les matchs
+            $poule->matchs()->delete();
+            // Supprimer les relations avec les équipes
+            $poule->equipes()->detach();
+            // Supprimer la poule
+            $poule->delete();
+        }
+        
+        // Supprimer la coupe avec poules
         $coupes_avec_poule->delete();
-
+        
         return redirect()->route('coupes-avec-poules.index')
-                        ->with('success', 'Coupe avec poules supprimée avec succès');
+                        ->with('success', 'Tournoi supprimé avec succès.');
     }
 
     /**

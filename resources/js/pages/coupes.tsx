@@ -289,10 +289,10 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                             {renderMatch(match, false)}
                             
                             {/* Match retour */}
-                            {match.match_retour && renderMatch(match.match_retour, true)}
+                            {(match.match_retour || match.matchRetour) && renderMatch(match.match_retour || match.matchRetour, true)}
                             
                             {/* Score cumulé */}
-                            {(match.termine && match.match_retour?.termine) && (
+                            {(match.termine && (match.match_retour?.termine || match.matchRetour?.termine)) && (
                                 <div className="bg-blue-900/60 dark:bg-blue-800/60 backdrop-blur-sm rounded-lg p-3 text-center border border-blue-700/50">
                                     <div className="text-xs text-blue-200 dark:text-blue-300 mb-1">Score cumulé</div>
                                     <div className="flex items-center justify-center space-x-3">
@@ -417,7 +417,6 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                                                         <span className="mr-2">🏆</span>
                                                     )}
                                                     {coupe.nom}
-                                                    {coupe.type === 'coupe_avec_poule' && ' - phase de poules'}
                                                 </option>
                                             ))}
                                         </select>
@@ -453,10 +452,75 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                                             {/* Affichage selon le type de coupe */}
                                             {selectedCoupe.type === 'coupe_avec_poule' ? (
                                                 // Affichage des poules pour les coupes avec poules
-                                                <div>
+                                                <div className="space-y-8">
+                                                    {/* Classement global fusionné (poules + phase finale) */}
+                                                    {selectedCoupe.classementGlobal && selectedCoupe.classementGlobal.length > 0 && (
+                                                        <div className="bg-gray-900/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700 dark:border-gray-600">
+                                                            <h3 className="text-xl font-semibold text-white mb-4 text-center drop-shadow-lg">
+                                                                Classement global
+                                                            </h3>
+                                                            <div className="overflow-x-auto">
+                                                                <table className="min-w-full text-xs">
+                                                                    <thead>
+                                                                        <tr className="border-b border-gray-700 dark:border-gray-600">
+                                                                            <th className="text-left py-2 px-3 text-white">#</th>
+                                                                            <th className="text-left py-2 px-3 text-white">Équipe</th>
+                                                                            <th className="text-center py-2 px-3 text-white">MJ</th>
+                                                                            <th className="text-center py-2 px-3 text-white">V</th>
+                                                                            <th className="text-center py-2 px-3 text-white">N</th>
+                                                                            <th className="text-center py-2 px-3 text-white">D</th>
+                                                                            <th className="text-center py-2 px-3 text-white">BP</th>
+                                                                            <th className="text-center py-2 px-3 text-white">BC</th>
+                                                                            <th className="text-center py-2 px-3 text-white">Diff</th>
+                                                                            <th className="text-center py-2 px-3 font-semibold text-white">Pts</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {selectedCoupe.classementGlobal.map((team: any, index: number) => (
+                                                                            <tr key={team.equipe_id} className="border-b border-gray-700 dark:border-gray-600 hover:bg-gray-800/50">
+                                                                                <td className="py-2 px-3 text-white/90">{index + 1}</td>
+                                                                                <td className="py-2 px-3">
+                                                                                    <Link 
+                                                                                        href={`/equipes/${team.equipe_id}`}
+                                                                                        className="font-medium text-white hover:text-blue-400 hover:underline transition-colors flex items-center gap-2"
+                                                                                    >
+                                                                                        {team.logo && (
+                                                                                            <img 
+                                                                                                src={team.logo} 
+                                                                                                alt={`Logo ${team.nom}`}
+                                                                                                className="w-5 h-5"
+                                                                                                onError={(e) => {
+                                                                                                    e.currentTarget.style.display = 'none';
+                                                                                                }}
+                                                                                            />
+                                                                                        )}
+                                                                                        {team.nom}
+                                                                                    </Link>
+                                                                                </td>
+                                                                                <td className="py-2 px-3 text-center text-white">{team.joue}</td>
+                                                                                <td className="py-2 px-3 text-center text-green-400">{team.gagne}</td>
+                                                                                <td className="py-2 px-3 text-center text-yellow-400">{team.nul}</td>
+                                                                                <td className="py-2 px-3 text-center text-red-400">{team.perdu}</td>
+                                                                                <td className="py-2 px-3 text-center text-white">{team.bp}</td>
+                                                                                <td className="py-2 px-3 text-center text-white">{team.bc}</td>
+                                                                                <td className="py-2 px-3 text-center text-white">{team.diff > 0 ? '+' : ''}{team.diff}</td>
+                                                                                <td className="py-2 px-3 text-center font-semibold text-white">{team.points}</td>
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    
                                                     {selectedCoupe.poules && selectedCoupe.poules.length > 0 ? (
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                                            {selectedCoupe.poules.map((poule: any) => renderPoule(poule))}
+                                                        <div>
+                                                            <h3 className="text-xl font-semibold text-white mb-4 text-center drop-shadow-lg">
+                                                                Poules
+                                                            </h3>
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                                                {selectedCoupe.poules.map((poule: any) => renderPoule(poule))}
+                                                            </div>
                                                         </div>
                                                     ) : (
                                                         <div className="text-center py-12">
