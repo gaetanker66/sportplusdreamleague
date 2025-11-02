@@ -159,20 +159,18 @@ export default function EquipesIndex({ ligues = [], equipes = [], equipesParLigu
                                         href={`/equipes/${equipe.id}`}
                                         className="bg-white/10 dark:bg-gray-700/50 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 dark:hover:bg-gray-600/50 transition-colors border border-gray-700 dark:border-gray-600 hover:border-blue-400"
                                     >
-                                        <div className="flex items-center gap-3 mb-2">
+                                        <div className="flex items-center gap-3">
                                             <EquipeLogo
-                                                equipe={equipe}
+                                                equipeId={equipe.id}
+                                                logo={equipe.logo}
+                                                nom={equipe.nom}
+                                                size="lg"
                                                 className="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0"
                                             />
                                             <h3 className="text-lg font-semibold text-white hover:text-blue-400 transition-colors">
                                                 {equipe.nom}
                                             </h3>
                                         </div>
-                                        {equipe.description && (
-                                            <p className="text-sm text-white/80 line-clamp-2">
-                                                {equipe.description}
-                                            </p>
-                                        )}
                                     </Link>
                                 ))}
                             </div>
