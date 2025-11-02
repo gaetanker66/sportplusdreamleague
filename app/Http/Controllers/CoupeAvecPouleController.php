@@ -239,8 +239,9 @@ class CoupeAvecPouleController extends Controller
      */
     public function edit(CoupeAvecPoule $coupes_avec_poule)
     {
-        $modeles = CoupeAvecPouleModele::where('actif', true)->orderBy('nom')->get();
-        $equipes = \App\Models\Equipe::orderBy('nom')->get(['id','nom','logo']);
+        // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
+        $modeles = CoupeAvecPouleModele::where('actif', true)->select('id', 'nom', 'description')->orderBy('nom')->get();
+        $equipes = \App\Models\Equipe::select('id', 'nom')->orderBy('nom')->get();
         
         // Récupérer les équipes sélectionnées via la table pivot des poules
         $pouleIds = $coupes_avec_poule->poules()->pluck('id');

@@ -24,6 +24,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('equipes/{equipe}/joueurs/{joueur}', [App\Http\Controllers\EquipeController::class, 'updatePlayer'])->name('equipes.joueurs.update');
     Route::delete('equipes/{equipe}/joueurs/{joueur}', [App\Http\Controllers\EquipeController::class, 'deletePlayer'])->name('equipes.joueurs.destroy');
     Route::post('api/equipes/logos', [App\Http\Controllers\EquipeController::class, 'getLogos'])->name('api.equipes.logos');
+    Route::post('api/coupe-modeles/logos', [App\Http\Controllers\CoupeModeleController::class, 'getLogos'])->name('api.coupe-modeles.logos');
+    Route::post('api/coupe-avec-poule-modeles/logos', [App\Http\Controllers\CoupeAvecPouleModeleController::class, 'getLogos'])->name('api.coupe-avec-poule-modeles.logos');
+    Route::post('api/ligues/logos', [App\Http\Controllers\LigueController::class, 'getLogos'])->name('api.ligues.logos');
 
     // Routes pour la gestion des postes
     Route::resource('postes', App\Http\Controllers\PosteController::class);

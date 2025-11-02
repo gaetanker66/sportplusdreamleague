@@ -13,7 +13,10 @@ class CoupeModeleController extends Controller
      */
     public function index()
     {
-        $modeles = CoupeModele::orderBy('nom')->get();
+        // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
+        $modeles = CoupeModele::select('id', 'nom', 'description', 'actif', 'created_at', 'updated_at')
+            ->orderBy('nom')
+            ->get();
         
         return Inertia::render('coupe-modeles/index', [
             'modeles' => $modeles,
@@ -97,5 +100,25 @@ class CoupeModeleController extends Controller
         $coupeModele->delete();
 
         return redirect()->route('coupe-modeles.index')->with('success', 'Modèle de coupe supprimé avec succès.');
+    }
+
+    /**
+     * API : Récupérer les logos des modèles de coupes par leurs IDs
+     */
+    public function getLogos(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:coupe_modeles,id',
+        ]);
+
+        $modeles = CoupeModele::whereIn('id', $validated['ids'])
+            ->select('id', 'logo')
+            ->get()
+            ->mapWithKeys(function ($modele) {
+                return [$modele->id => $modele->logo];
+            });
+
+        return response()->json($modeles);
     }
 }

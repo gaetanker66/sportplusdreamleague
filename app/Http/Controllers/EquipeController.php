@@ -10,7 +10,8 @@ class EquipeController extends Controller
 {
     public function index()
     {
-        $equipes = Equipe::orderBy('created_at', 'desc')->get();
+        // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
+        $equipes = Equipe::select('id', 'nom', 'created_at', 'updated_at')->orderBy('created_at', 'desc')->get();
         return Inertia::render('equipes/index', compact('equipes'));
     }
 

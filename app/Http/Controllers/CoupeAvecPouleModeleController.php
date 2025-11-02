@@ -13,7 +13,10 @@ class CoupeAvecPouleModeleController extends Controller
      */
     public function index()
     {
-        $modeles = CoupeAvecPouleModele::orderBy('nom')->get();
+        // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
+        $modeles = CoupeAvecPouleModele::select('id', 'nom', 'description', 'nombre_equipes', 'nombre_poules', 'qualifies_par_poule', 'actif', 'created_at', 'updated_at')
+            ->orderBy('nom')
+            ->get();
         
         return Inertia::render('coupe-avec-poule-modeles/index', [
             'modeles' => $modeles
@@ -115,5 +118,25 @@ class CoupeAvecPouleModeleController extends Controller
 
         return redirect()->route('coupe-avec-poule-modeles.index')
                         ->with('success', 'Modèle de coupe avec poules supprimé avec succès');
+    }
+
+    /**
+     * API : Récupérer les logos des modèles de coupes avec poules par leurs IDs
+     */
+    public function getLogos(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:coupe_avec_poule_modeles,id',
+        ]);
+
+        $modeles = CoupeAvecPouleModele::whereIn('id', $validated['ids'])
+            ->select('id', 'logo')
+            ->get()
+            ->mapWithKeys(function ($modele) {
+                return [$modele->id => $modele->logo];
+            });
+
+        return response()->json($modeles);
     }
 }

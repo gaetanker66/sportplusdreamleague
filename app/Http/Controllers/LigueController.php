@@ -13,7 +13,8 @@ class LigueController extends Controller
      */
     public function index()
     {
-        $ligues = Ligue::all();
+        // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
+        $ligues = Ligue::select('id', 'nom', 'niveau', 'nombre_equipes', 'created_at', 'updated_at')->get();
         return Inertia::render('ligues/index', compact('ligues'));
     }
 
@@ -86,5 +87,25 @@ class LigueController extends Controller
 
         return redirect()->route('ligues.index')
             ->with('success', 'Ligue supprimée avec succès.');
+    }
+
+    /**
+     * API : Récupérer les logos des ligues par leurs IDs
+     */
+    public function getLogos(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:ligues,id',
+        ]);
+
+        $ligues = Ligue::whereIn('id', $validated['ids'])
+            ->select('id', 'logo')
+            ->get()
+            ->mapWithKeys(function ($ligue) {
+                return [$ligue->id => $ligue->logo];
+            });
+
+        return response()->json($ligues);
     }
 }

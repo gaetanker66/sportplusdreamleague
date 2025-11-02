@@ -1,13 +1,12 @@
-import { useMemo } from 'react';
-import { useEquipeLogos } from '@/hooks/use-equipe-logos';
+import { useLigueLogos } from '@/hooks/use-ligue-logos';
 import { cn } from '@/lib/utils';
 
-interface EquipeLogoProps {
-    equipeId?: number;
+interface LigueLogoProps {
+    ligueId?: number;
     logo?: string | null;
     nom?: string;
     className?: string;
-    size?: 'sm' | 'md' | 'lg' | 'xl';
+    size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
     showPlaceholder?: boolean;
 }
 
@@ -16,31 +15,30 @@ const sizeClasses = {
     md: 'h-6 w-6',
     lg: 'h-10 w-10',
     xl: 'h-24 w-24',
+    full: 'w-full h-64',
 };
 
 /**
- * Composant pour afficher le logo d'une équipe avec chargement asynchrone
+ * Composant pour afficher le logo d'une ligue avec chargement asynchrone
  */
-export default function EquipeLogo({ 
-    equipeId, 
+export default function LigueLogo({ 
+    ligueId, 
     logo, 
     nom, 
     className = '',
     size = 'md',
     showPlaceholder = true 
-}: EquipeLogoProps) {
-    // Mémoriser l'array pour éviter de créer une nouvelle référence à chaque rendu
-    const equipeIds = useMemo(() => equipeId ? [equipeId] : [], [equipeId]);
-    const { getLogo } = useEquipeLogos(equipeIds);
-    const logoUrl = getLogo(equipeId, logo);
+}: LigueLogoProps) {
+    const { getLogo } = useLigueLogos(ligueId ? [ligueId] : []);
+    const logoUrl = getLogo(ligueId, logo);
 
     // Vérifier que logoUrl est une chaîne non vide (pas null, pas undefined, pas vide)
     if (logoUrl && typeof logoUrl === 'string' && logoUrl.trim().length > 0) {
         return (
             <img 
                 src={logoUrl} 
-                alt={nom || `Logo équipe ${equipeId}`} 
-                className={cn('inline-block rounded object-cover', sizeClasses[size], className)}
+                alt={nom || `Logo ligue ${ligueId}`} 
+                className={cn('inline-block rounded', sizeClasses[size], className)}
                 onError={(e) => {
                     e.currentTarget.style.display = 'none';
                     if (e.currentTarget.nextElementSibling) {
@@ -53,13 +51,15 @@ export default function EquipeLogo({
 
     if (showPlaceholder) {
         return (
-            <span 
+            <div 
                 className={cn(
-                    'inline-block rounded bg-gray-200 dark:bg-gray-700',
+                    'rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center',
                     sizeClasses[size],
                     className
                 )}
-            />
+            >
+                <span className="text-gray-400 text-lg">Aucun logo</span>
+            </div>
         );
     }
 

@@ -34,7 +34,8 @@ class PublicController extends Controller
 
         $standings = [];
         if ($selectedSaisonId) {
-            $saison = Saison::with(['equipes:id,nom,logo', 'journees.matchs'])
+            // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
+            $saison = Saison::with(['equipes' => function($q) { $q->select('id', 'nom'); }, 'journees.matchs'])
                 ->find($selectedSaisonId);
             if ($saison) {
                 // Init stats
@@ -42,7 +43,6 @@ class PublicController extends Controller
                     $standings[$equipe->id] = [
                         'equipe_id' => $equipe->id,
                         'nom' => $equipe->nom,
-                        'logo' => $equipe->logo,
                         'joue' => 0,
                         'gagne' => 0,
                         'nul' => 0,
@@ -103,14 +103,16 @@ class PublicController extends Controller
     public function statistiques()
     {
         $ligues = Ligue::orderBy('niveau')->get(['id','nom','niveau']);
-        $coupes = Coupe::with('modele')->orderByDesc('created_at')->get(['id','nom','created_at','coupe_modele_id']);
+        $coupes = Coupe::with(['modele' => function($q) { $q->select('id', 'nom'); }])
+            ->orderByDesc('created_at')
+            ->get(['id','nom','created_at','coupe_modele_id']);
         
         // Debug: vérifier les coupes et leurs modèles
         \Log::info('Coupes chargées:', $coupes->toArray());
         \Log::info('IDs de modèles trouvés:', $coupes->pluck('coupe_modele_id')->filter()->toArray());
         
-        // Essayer de charger tous les modèles de coupes disponibles
-        $coupeModeles = \App\Models\CoupeModele::orderBy('nom')->get(['id','nom','logo']);
+        // Essayer de charger tous les modèles de coupes disponibles (sans logos)
+        $coupeModeles = \App\Models\CoupeModele::select('id','nom')->orderBy('nom')->get();
         
         \Log::info('Tous les modèles de coupes:', $coupeModeles->toArray());
         
@@ -217,13 +219,24 @@ class PublicController extends Controller
 
     public function coupes(Request $request)
     {
-        // Charger les coupes normales
-        $coupes = Coupe::with(['modele', 'rounds.matchs.homeEquipe', 'rounds.matchs.awayEquipe', 'rounds.matchs.matchRetour.homeEquipe', 'rounds.matchs.matchRetour.awayEquipe'])
+        // Charger les coupes normales (sans logos)
+        $coupes = Coupe::with([
+                'modele' => function($q) { $q->select('id', 'nom', 'description'); },
+                'rounds.matchs.homeEquipe' => function($q) { $q->select('id', 'nom'); },
+                'rounds.matchs.awayEquipe' => function($q) { $q->select('id', 'nom'); },
+                'rounds.matchs.matchRetour.homeEquipe' => function($q) { $q->select('id', 'nom'); },
+                'rounds.matchs.matchRetour.awayEquipe' => function($q) { $q->select('id', 'nom'); },
+            ])
             ->orderByDesc('created_at')
             ->get();
         
-        // Charger les coupes avec poules
-        $coupesAvecPoules = \App\Models\CoupeAvecPoule::with(['modele', 'poules.matchs.homeEquipe', 'poules.matchs.awayEquipe', 'poules.equipes'])
+        // Charger les coupes avec poules (sans logos)
+        $coupesAvecPoules = \App\Models\CoupeAvecPoule::with([
+                'modele' => function($q) { $q->select('id', 'nom', 'description'); },
+                'poules.matchs.homeEquipe' => function($q) { $q->select('id', 'nom'); },
+                'poules.matchs.awayEquipe' => function($q) { $q->select('id', 'nom'); },
+                'poules.equipes' => function($q) { $q->select('id', 'nom'); },
+            ])
             ->orderByDesc('created_at')
             ->get();
         

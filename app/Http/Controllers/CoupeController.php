@@ -15,14 +15,16 @@ class CoupeController extends Controller
 {
     public function index()
     {
-        $coupes = Coupe::with('modele')->get();
+        // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
+        $coupes = Coupe::with(['modele' => function($q) { $q->select('id', 'nom', 'description'); }])->get();
         return Inertia::render('coupes/index', compact('coupes'));
     }
 
     public function create()
     {
-        $modeles = CoupeModele::where('actif', true)->orderBy('nom')->get();
-        $equipes = \App\Models\Equipe::orderBy('nom')->get(['id','nom','logo']);
+        // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
+        $modeles = CoupeModele::where('actif', true)->select('id', 'nom', 'description')->orderBy('nom')->get();
+        $equipes = \App\Models\Equipe::select('id', 'nom')->orderBy('nom')->get();
         return Inertia::render('coupes/create', compact('modeles','equipes'));
     }
 
@@ -45,8 +47,15 @@ class CoupeController extends Controller
 
     public function edit(Coupe $coupe)
     {
-        $coupe->load(['equipes','rounds.matchs.homeEquipe','rounds.matchs.awayEquipe','rounds.matchs.matchRetour.homeEquipe','rounds.matchs.matchRetour.awayEquipe']);
-        $equipes = \App\Models\Equipe::orderBy('nom')->get(['id','nom','logo']);
+        // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
+        $coupe->load([
+            'equipes' => function($q) { $q->select('id', 'nom'); },
+            'rounds.matchs.homeEquipe' => function($q) { $q->select('id', 'nom'); },
+            'rounds.matchs.awayEquipe' => function($q) { $q->select('id', 'nom'); },
+            'rounds.matchs.matchRetour.homeEquipe' => function($q) { $q->select('id', 'nom'); },
+            'rounds.matchs.matchRetour.awayEquipe' => function($q) { $q->select('id', 'nom'); },
+        ]);
+        $equipes = \App\Models\Equipe::select('id', 'nom')->orderBy('nom')->get();
         
         // Ajouter la propriété hasBracket pour savoir si l'arbre est généré
         $coupe->hasBracket = $coupe->rounds->count() > 0;
