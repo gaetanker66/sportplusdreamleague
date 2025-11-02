@@ -1,0 +1,109 @@
+import { Head, Link, router } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Users, Edit, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    created_at: string;
+}
+
+interface UsersIndexProps {
+    users: {
+        data: User[];
+        links: any[];
+        meta: any;
+    };
+}
+
+export default function UsersIndex({ users }: UsersIndexProps) {
+    const [deletingId, setDeletingId] = useState<number | null>(null);
+
+    const handleDelete = (id: number) => {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+            setDeletingId(id);
+            router.delete(route('admin.users.destroy', id), {
+                onFinish: () => setDeletingId(null),
+            });
+        }
+    };
+
+    return (
+        <>
+            <Head title="Gestion des Utilisateurs" />
+            
+            <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">Gestion des Utilisateurs</h1>
+                        <p className="text-muted-foreground">
+                            Créez et gérez les comptes utilisateurs de votre application
+                        </p>
+                    </div>
+                    <Button asChild>
+                        <Link href={route('admin.users.create')}>
+                            <Plus className="mr-2 h-4 w-4" />
+                            Nouvel Utilisateur
+                        </Link>
+                    </Button>
+                </div>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Users className="h-5 w-5" />
+                            Liste des Utilisateurs
+                        </CardTitle>
+                        <CardDescription>
+                            {users.meta.total} utilisateur{users.meta.total > 1 ? 's' : ''} au total
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {users.data.map((user) => (
+                                <div
+                                    key={user.id}
+                                    className="flex items-center justify-between p-4 border rounded-lg"
+                                >
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-semibold">{user.name}</h3>
+                                            {user.id === 1 && (
+                                                <Badge variant="default">Admin</Badge>
+                                            )}
+                                        </div>
+                                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                                        <p className="text-xs text-muted-foreground">
+                                            Créé le {new Date(user.created_at).toLocaleDateString('fr-FR')}
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Button variant="outline" size="sm" asChild>
+                                            <Link href={route('admin.users.edit', user.id)}>
+                                                <Edit className="h-4 w-4" />
+                                            </Link>
+                                        </Button>
+                                        {user.id !== 1 && (
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleDelete(user.id)}
+                                                disabled={deletingId === user.id}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        </>
+    );
+}

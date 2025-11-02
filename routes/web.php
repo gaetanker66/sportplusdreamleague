@@ -67,6 +67,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Modèles de coupes avec poules (dashboard)
     Route::resource('coupe-avec-poule-modeles', App\Http\Controllers\CoupeAvecPouleModeleController::class);
 
+    // Administration des utilisateurs (réservé aux administrateurs)
+    Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::resource('users', App\Http\Controllers\Admin\UserController::class);
+    });
+
 });
 
 // Pages publiques: accueil, classement, statistiques, calendrier, coupes

@@ -16,7 +16,7 @@ interface Match {
     score_home: number;
     score_away: number;
     termine: boolean;
-    buts?: { id: number; equipe_id: number; buteur_id: number; passeur_id?: number | null; minute?: number | null; type?: string }[];
+    buts?: { id: number; equipe_id: number; buteur_id: number; passeur_id?: number | null; minute?: string | null; type?: string }[];
     cartons?: { id: number; joueur_id: number; type: 'jaune' | 'rouge'; minute?: number | null }[];
 }
 
@@ -37,8 +37,8 @@ export default function PouleMatchEdit({ match, homeGardiens, awayGardiens, home
         put(`/poule-matchs/${match.id}`);
     };
 
-    const [butHome, setButHome] = React.useState<{ buteur_id: number | ''; passeur_id: number | ''; minute: number | ''; type: string }>({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
-    const [butAway, setButAway] = React.useState<{ buteur_id: number | ''; passeur_id: number | ''; minute: number | ''; type: string }>({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
+    const [butHome, setButHome] = React.useState<{ buteur_id: number | ''; passeur_id: number | ''; minute: string | ''; type: string }>({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
+    const [butAway, setButAway] = React.useState<{ buteur_id: number | ''; passeur_id: number | ''; minute: string | ''; type: string }>({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
     const [cartonHome, setCartonHome] = React.useState<{ joueur_id: number | ''; type: 'jaune' | 'rouge' | ''; minute: number | '' }>({ joueur_id: '', type: '', minute: '' });
     const [cartonAway, setCartonAway] = React.useState<{ joueur_id: number | ''; type: 'jaune' | 'rouge' | ''; minute: number | '' }>({ joueur_id: '', type: '', minute: '' });
 
@@ -191,7 +191,7 @@ export default function PouleMatchEdit({ match, homeGardiens, awayGardiens, home
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-600 dark:text-gray-400">Minute</label>
-                                        <input disabled={readOnly} type="number" min={0} max={130} value={butHome.minute as any} onChange={(e) => setButHome({ ...butHome, minute: e.target.value ? Number(e.target.value) : '' })} className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md disabled:opacity-60" />
+                                        <input disabled={readOnly} type="text" value={butHome.minute as any} onChange={(e) => setButHome({ ...butHome, minute: e.target.value })} className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md disabled:opacity-60" placeholder="ex: 45, 45+2, 90+3" />
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-600 dark:text-gray-400">Type de but</label>
@@ -242,7 +242,7 @@ export default function PouleMatchEdit({ match, homeGardiens, awayGardiens, home
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-600 dark:text-gray-400">Minute</label>
-                                        <input disabled={readOnly} type="number" min={0} max={130} value={butAway.minute as any} onChange={(e) => setButAway({ ...butAway, minute: e.target.value ? Number(e.target.value) : '' })} className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md disabled:opacity-60" />
+                                        <input disabled={readOnly} type="text" value={butAway.minute as any} onChange={(e) => setButAway({ ...butAway, minute: e.target.value })} className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md disabled:opacity-60" placeholder="ex: 45, 45+2, 90+3" />
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-600 dark:text-gray-400">Type de but</label>

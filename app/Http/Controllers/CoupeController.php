@@ -282,7 +282,7 @@ class CoupeController extends Controller
             'equipe_id' => 'required|exists:equipes,id',
             'buteur_id' => 'required|exists:joueurs,id',
             'passeur_id' => 'nullable|exists:joueurs,id',
-            'minute' => 'nullable|integer|min:0|max:130',
+            'minute' => 'nullable|string|max:10',
             'type' => 'nullable|in:normal,coup_franc,penalty,csc',
         ]);
         CoupeBut::create(['coupe_match_id' => $match->id] + $validated);
@@ -298,7 +298,7 @@ class CoupeController extends Controller
         $validated = $request->validate([
             'joueur_id' => 'required|exists:joueurs,id',
             'type' => 'required|in:jaune,rouge',
-            'minute' => 'nullable|integer|min:0|max:130',
+            'minute' => 'nullable|string|max:10',
         ]);
         
         // Vérifier si le joueur a déjà 2 cartons jaunes

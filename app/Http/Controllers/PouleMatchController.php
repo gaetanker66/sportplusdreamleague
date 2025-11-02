@@ -79,7 +79,7 @@ class PouleMatchController extends Controller
             'equipe_id' => 'required|exists:equipes,id',
             'buteur_id' => 'required|exists:joueurs,id',
             'passeur_id' => 'nullable|exists:joueurs,id',
-            'minute' => 'nullable|integer|min:0|max:130',
+            'minute' => 'nullable|string|max:10',
             'type' => 'nullable|in:normal,coup_franc,penalty,csc',
         ]);
         $poule_match->buts()->create($validated);
@@ -115,7 +115,7 @@ class PouleMatchController extends Controller
         $validated = $request->validate([
             'joueur_id' => 'required|exists:joueurs,id',
             'type' => 'required|in:jaune,rouge',
-            'minute' => 'nullable|integer|min:0|max:130',
+            'minute' => 'nullable|string|max:10',
         ]);
         if ($validated['type'] === 'jaune') {
             $jaunes = $poule_match->cartons()->where('joueur_id', $validated['joueur_id'])->where('type', 'jaune')->count();

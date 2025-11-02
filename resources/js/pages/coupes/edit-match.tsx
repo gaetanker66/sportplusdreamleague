@@ -205,7 +205,7 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
 
 function AddGoals({ title, teamId, matchId, players, opponentPlayers }: { title: string; teamId: number; matchId: number; players: {id:number; nom:string}[]; opponentPlayers: {id:number; nom:string}[] }) {
   const { delete: destroy } = useForm({});
-  const [form, setForm] = React.useState<{ buteur_id: number | ''; passeur_id: number | ''; minute: number | ''; type: string }>({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
+  const [form, setForm] = React.useState<{ buteur_id: number | ''; passeur_id: number | ''; minute: string | ''; type: string }>({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.buteur_id) return;
@@ -232,7 +232,7 @@ function AddGoals({ title, teamId, matchId, players, opponentPlayers }: { title:
         </div>
         <div>
           <label className="block text-xs text-gray-600 dark:text-gray-400">Minute</label>
-          <input type="number" min={0} max={130} value={form.minute as any} onChange={(e)=> setForm({ ...form, minute: e.target.value ? Number(e.target.value) : '' })} className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" />
+          <input type="text" value={form.minute as any} onChange={(e)=> setForm({ ...form, minute: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white" placeholder="ex: 45, 45+2, 90+3" />
         </div>
         <div>
           <label className="block text-xs text-gray-600 dark:text-gray-400">Type de but</label>

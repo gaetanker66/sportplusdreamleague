@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Trophy, Users2, Briefcase, Palette, Crown } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Trophy, Users2, Briefcase, Palette, Crown, Settings } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -61,6 +61,11 @@ const mainNavItems: NavItem[] = [
         title: 'Modèles Coupes Poules',
         href: '/coupe-avec-poule-modeles',
         icon: Palette,
+    },
+    {
+        title: 'Administration',
+        href: '/admin/users',
+        icon: Settings,
     },
 ];
 

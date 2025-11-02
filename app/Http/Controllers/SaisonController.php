@@ -12,7 +12,7 @@ class SaisonController extends Controller
 {
     private function computeStandingsEquipeIds(Saison $saison): array
     {
-        $saison->loadMissing(['equipes:id,nom,logo','journees.matchs']);
+        $saison->loadMissing(['equipes:id,nom','journees.matchs']);
         $stats = [];
         foreach ($saison->equipes as $e) {
             $stats[$e->id] = ['pts'=>0,'diff'=>0,'bp'=>0,'nom'=>$e->nom];
@@ -40,7 +40,10 @@ class SaisonController extends Controller
      */
     public function index()
     {
-        $saisons = Saison::with(['ligue','equipes'])->get();
+        $saisons = Saison::with([
+            'ligue:id,nom',
+            'equipes:id,nom'
+        ])->get();
         return Inertia::render('saisons/index', compact('saisons'));
     }
 
@@ -50,7 +53,7 @@ class SaisonController extends Controller
     public function create()
     {
         $ligues = Ligue::orderBy('niveau')->get();
-        $equipes = \App\Models\Equipe::orderBy('nom')->get();
+        $equipes = \App\Models\Equipe::select('id', 'nom')->orderBy('nom')->get();
         $defaultLigueId = $ligues->first()->id ?? null;
         $suggestedEquipeIds = [];
         if ($defaultLigueId) {
@@ -166,11 +169,15 @@ class SaisonController extends Controller
      */
     public function show(Saison $saison)
     {
+        // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
         $saison->load([
-            'ligue',
-            'equipes',
-            'journees.matchs.homeEquipe',
-            'journees.matchs.awayEquipe',
+            'ligue:id,nom',
+            'journees:id,saison_id,numero,date',
+            'journees.matchs' => function ($query) {
+                $query->select('id', 'journee_id', 'equipe_home_id', 'equipe_away_id', 'score_home', 'score_away', 'termine');
+            },
+            'journees.matchs.homeEquipe:id,nom',
+            'journees.matchs.awayEquipe:id,nom',
         ]);
         return Inertia::render('saisons/show', compact('saison'));
     }
@@ -181,8 +188,8 @@ class SaisonController extends Controller
     public function edit(Saison $saison)
     {
         $ligues = Ligue::all();
-        $equipes = \App\Models\Equipe::orderBy('nom')->get();
-        $saison->load('equipes');
+        $equipes = \App\Models\Equipe::select('id', 'nom')->orderBy('nom')->get();
+        $saison->load('equipes:id,nom');
         return Inertia::render('saisons/edit', compact('saison', 'ligues','equipes'));
     }
 
