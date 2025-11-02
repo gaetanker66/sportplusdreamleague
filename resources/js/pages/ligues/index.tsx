@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
+import LigueLogo from '@/components/ligue-logo';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -18,6 +19,7 @@ interface Ligue {
     nom: string;
     logo?: string;
     niveau: number;
+    nombre_equipes: number;
     created_at: string;
     updated_at: string;
 }
@@ -89,15 +91,13 @@ export default function LiguesIndex({ ligues }: Props) {
                                                 {ligue.nom}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                                {ligue.logo ? (
-                                                    <img
-                                                        src={ligue.logo}
-                                                        alt={ligue.nom}
-                                                        className="h-10 w-10 rounded-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <span className="text-gray-400">Aucun logo</span>
-                                                )}
+                                                <LigueLogo
+                                                    ligueId={ligue.id}
+                                                    logo={ligue.logo}
+                                                    nom={ligue.nom}
+                                                    size="lg"
+                                                    showPlaceholder={true}
+                                                />
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">

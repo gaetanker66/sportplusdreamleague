@@ -67,7 +67,7 @@ class CoupeAvecPouleController extends Controller
         // Générer les poules
         $this->genererPoules($coupeAvecPoule, $request->equipes);
 
-        return redirect()->route('coupes-avec-poules.index')
+        return redirect()->route('dashboard.coupes-avec-poules.index')
                         ->with('success', 'Coupe avec poules créée avec succès');
     }
 
@@ -232,7 +232,7 @@ class CoupeAvecPouleController extends Controller
             'phase_finale_generee' => true,
             'coupe_phase_finale_id' => $coupe->id
         ]);
-        return redirect()->route('coupes.edit', $coupe)->with('success', 'Phase finale générée.');
+        return redirect()->route('dashboard.coupes.edit', $coupe)->with('success', 'Phase finale générée.');
     }
 
     /**
@@ -361,7 +361,7 @@ class CoupeAvecPouleController extends Controller
         // Supprimer la coupe avec poules
         $coupes_avec_poule->delete();
         
-        return redirect()->route('coupes-avec-poules.index')
+        return redirect()->route('dashboard.coupes-avec-poules.index')
                         ->with('success', 'Tournoi supprimé avec succès.');
     }
 

@@ -65,7 +65,7 @@ class TransfertController extends Controller
         // Mettre à jour l'équipe actuelle du joueur
         $joueur->update(['equipe_id' => $validated['nouvelle_equipe_id']]);
 
-        return redirect()->route('transferts.index')->with('success', 'Transfert créé avec succès.');
+        return redirect()->route('dashboard.transferts.index')->with('success', 'Transfert créé avec succès.');
     }
 
     /**
@@ -126,7 +126,7 @@ class TransfertController extends Controller
             'date_transfert' => $validated['date_transfert'],
         ]);
 
-        return redirect()->route('transferts.index')->with('success', 'Transfert mis à jour avec succès.');
+        return redirect()->route('dashboard.transferts.index')->with('success', 'Transfert mis à jour avec succès.');
     }
 
     /**
@@ -146,6 +146,6 @@ class TransfertController extends Controller
         
         $transfert->delete();
         
-        return redirect()->route('transferts.index')->with('success', 'Transfert supprimé avec succès.');
+        return redirect()->route('dashboard.transferts.index')->with('success', 'Transfert supprimé avec succès.');
     }
 }

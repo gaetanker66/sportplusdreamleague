@@ -13,8 +13,8 @@ class LigueController extends Controller
      */
     public function index()
     {
-        // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
-        $ligues = Ligue::select('id', 'nom', 'niveau', 'nombre_equipes', 'created_at', 'updated_at')->get();
+        // Charger les ligues avec les logos pour l'affichage
+        $ligues = Ligue::select('id', 'nom', 'logo', 'niveau', 'nombre_equipes', 'created_at', 'updated_at')->get();
         return Inertia::render('ligues/index', compact('ligues'));
     }
 
@@ -40,7 +40,7 @@ class LigueController extends Controller
 
         Ligue::create($request->all());
 
-        return redirect()->route('ligues.index')
+        return redirect()->route('dashboard.ligues.index')
             ->with('success', 'Ligue créée avec succès.');
     }
 
@@ -74,7 +74,7 @@ class LigueController extends Controller
 
         $ligue->update($request->all());
 
-        return redirect()->route('ligues.index')
+        return redirect()->route('dashboard.ligues.index')
             ->with('success', 'Ligue mise à jour avec succès.');
     }
 
@@ -85,7 +85,7 @@ class LigueController extends Controller
     {
         $ligue->delete();
 
-        return redirect()->route('ligues.index')
+        return redirect()->route('dashboard.ligues.index')
             ->with('success', 'Ligue supprimée avec succès.');
     }
 

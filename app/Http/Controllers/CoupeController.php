@@ -42,7 +42,7 @@ class CoupeController extends Controller
         ]);
         $coupe = Coupe::create($request->only('nom','nombre_equipes','coupe_modele_id','matchs_aleatoires','nombre_matchs','victoire_uniquement'));
         $coupe->equipes()->sync($request->input('equipes', []));
-        return redirect()->route('coupes.edit', $coupe);
+        return redirect()->route('dashboard.coupes.edit', $coupe);
     }
 
     public function edit(Coupe $coupe)
@@ -241,7 +241,7 @@ class CoupeController extends Controller
         // Rediriger vers l'édition de la coupe
         $coupeId = optional(optional($match->round)->coupe)->id;
         if ($coupeId) {
-            return redirect()->route('coupes.edit', $coupeId)->with('success', 'Match mis à jour.');
+            return redirect()->route('dashboard.coupes.edit', $coupeId)->with('success', 'Match mis à jour.');
         }
         return back()->with('success', 'Match mis à jour.');
     }
@@ -704,7 +704,7 @@ class CoupeController extends Controller
             }
         }
         
-        return redirect()->route('coupes.edit', $coupe)->with('success', 'Vainqueurs recalculés.');
+        return redirect()->route('dashboard.coupes.edit', $coupe)->with('success', 'Vainqueurs recalculés.');
     }
 
     public function destroy(Coupe $coupe)
@@ -726,7 +726,7 @@ class CoupeController extends Controller
         // Supprimer la coupe
         $coupe->delete();
         
-        return redirect()->route('coupes.index')->with('success', 'Tournoi supprimé avec succès.');
+        return redirect()->route('dashboard.coupes.index')->with('success', 'Tournoi supprimé avec succès.');
     }
 
     /**

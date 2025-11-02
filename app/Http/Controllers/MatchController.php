@@ -121,7 +121,7 @@ class MatchController extends Controller
         // Interdit si la saison est terminée
         $saison = optional($match->journee)->saison;
         if ($saison && $saison->status === 'terminé') {
-            $url = route('saisons.show', $saison->id) . (optional($match->journee)->numero ? ('#journee-' . $match->journee->numero) : '');
+            $url = route('dashboard.saisons.show', $saison->id) . (optional($match->journee)->numero ? ('#journee-' . $match->journee->numero) : '');
             return Inertia::location($url);
         }
         $validated = $request->validate([
@@ -135,12 +135,12 @@ class MatchController extends Controller
         $match->recalculeScore();
         // Rester sur la page d'édition si demandé
         if ($request->boolean('stay')) {
-            return redirect()->route('matchs.edit', $match)->with('success', 'But enregistré.');
+            return redirect()->route('dashboard.matchs.edit', $match)->with('success', 'But enregistré.');
         }
         $numero = optional($match->journee)->numero;
         $saisonId = optional(optional($match->journee)->saison)->id;
         if ($saisonId) {
-            $url = route('saisons.show', $saisonId) . ($numero ? ('#journee-' . $numero) : '');
+            $url = route('dashboard.saisons.show', $saisonId) . ($numero ? ('#journee-' . $numero) : '');
             return Inertia::location($url);
         }
         return back()->with('success', 'But enregistré.');
@@ -191,10 +191,10 @@ class MatchController extends Controller
         $match->load(['homeEquipe', 'awayEquipe', 'buts', 'cartons', 'journee.saison']);
         
         if ($request->boolean('stay')) {
-            return redirect()->route('matchs.edit', $match)->with('success','Carton ajouté.');
+            return redirect()->route('dashboard.matchs.edit', $match)->with('success','Carton ajouté.');
         }
         $numero = optional($match->journee)->numero; $saisonId = optional(optional($match->journee)->saison)->id;
-        if ($saisonId) { return Inertia::location(route('saisons.show', $saisonId) . ($numero ? ('#journee-' . $numero) : '')); }
+        if ($saisonId) { return Inertia::location(route('dashboard.saisons.show', $saisonId) . ($numero ? ('#journee-' . $numero) : '')); }
         return back()->with('success','Carton ajouté.');
     }
 
@@ -205,10 +205,10 @@ class MatchController extends Controller
         }
         $carton->delete();
         if (request()->boolean('stay')) {
-            return redirect()->route('matchs.edit', $match)->with('success','Carton supprimé.');
+            return redirect()->route('dashboard.matchs.edit', $match)->with('success','Carton supprimé.');
         }
         $numero = optional($match->journee)->numero; $saisonId = optional(optional($match->journee)->saison)->id;
-        if ($saisonId) { return Inertia::location(route('saisons.show', $saisonId) . ($numero ? ('#journee-' . $numero) : '')); }
+        if ($saisonId) { return Inertia::location(route('dashboard.saisons.show', $saisonId) . ($numero ? ('#journee-' . $numero) : '')); }
         return back()->with('success','Carton supprimé.');
     }
 
@@ -217,19 +217,19 @@ class MatchController extends Controller
         // Interdit si la saison est terminée
         $saison = optional($match->journee)->saison;
         if ($saison && $saison->status === 'terminé') {
-            $url = route('saisons.show', $saison->id) . (optional($match->journee)->numero ? ('#journee-' . $match->journee->numero) : '');
+            $url = route('dashboard.saisons.show', $saison->id) . (optional($match->journee)->numero ? ('#journee-' . $match->journee->numero) : '');
             return Inertia::location($url);
         }
         $but->delete();
         $match->recalculeScore();
         // Si on demande explicitement de rester sur la page d'édition
         if ($request->boolean('stay')) {
-            return redirect()->route('matchs.edit', $match)->with('success', 'But supprimé.');
+            return redirect()->route('dashboard.matchs.edit', $match)->with('success', 'But supprimé.');
         }
         $numero = optional($match->journee)->numero;
         $saisonId = optional(optional($match->journee)->saison)->id;
         if ($saisonId) {
-            $url = route('saisons.show', $saisonId) . ($numero ? ('#journee-' . $numero) : '');
+            $url = route('dashboard.saisons.show', $saisonId) . ($numero ? ('#journee-' . $numero) : '');
             return Inertia::location($url);
         }
         return back()->with('success', 'But supprimé.');
@@ -240,7 +240,7 @@ class MatchController extends Controller
         // Interdit si la saison est terminée
         $saison = optional($match->journee)->saison;
         if ($saison && $saison->status === 'terminé') {
-            $url = route('saisons.show', $saison->id) . (optional($match->journee)->numero ? ('#journee-' . $match->journee->numero) : '');
+            $url = route('dashboard.saisons.show', $saison->id) . (optional($match->journee)->numero ? ('#journee-' . $match->journee->numero) : '');
             return Inertia::location($url);
         }
         $validated = $request->validate([
@@ -260,7 +260,7 @@ class MatchController extends Controller
         $saisonId = optional(optional($match->journee)->saison)->id;
         $numero = optional($match->journee)->numero;
         if ($saisonId) {
-            $url = route('saisons.show', $saisonId) . ($numero ? ('#journee-' . $numero) : '');
+            $url = route('dashboard.saisons.show', $saisonId) . ($numero ? ('#journee-' . $numero) : '');
             return Inertia::location($url);
         }
         return back()->with('success', 'Mise à jour effectuée.');

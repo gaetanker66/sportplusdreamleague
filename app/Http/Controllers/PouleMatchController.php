@@ -90,7 +90,7 @@ class PouleMatchController extends Controller
             $awayPlayers = $awayPlayers->unique('id')->sortBy('nom')->values();
         }
 
-        $backUrl = route('coupes-avec-poules.show', optional($poule_match->poule)->coupe_avec_poule_id);
+        $backUrl = route('dashboard.coupes-avec-poules.show', optional($poule_match->poule)->coupe_avec_poule_id);
 
         return Inertia::render('poule-matchs/edit', [
             'match' => [
@@ -153,7 +153,7 @@ class PouleMatchController extends Controller
         $scoreAway += (int) $poule_match->buts()->where('equipe_id', $poule_match->equipe_home_id)->where('type', 'csc')->count();
         $poule_match->update(['score_home' => $scoreHome, 'score_away' => $scoreAway]);
         if ($request->boolean('stay')) {
-            return redirect()->route('poule-matchs.edit', $poule_match)->with('success', 'But enregistré.');
+            return redirect()->route('dashboard.poule-matchs.edit', $poule_match)->with('success', 'But enregistré.');
         }
         return back()->with('success', 'But enregistré.');
     }
@@ -168,7 +168,7 @@ class PouleMatchController extends Controller
         $scoreAway += (int) $poule_match->buts()->where('equipe_id', $poule_match->equipe_home_id)->where('type', 'csc')->count();
         $poule_match->update(['score_home' => $scoreHome, 'score_away' => $scoreAway]);
         if ($request->boolean('stay')) {
-            return redirect()->route('poule-matchs.edit', $poule_match)->with('success', 'But supprimé.');
+            return redirect()->route('dashboard.poule-matchs.edit', $poule_match)->with('success', 'But supprimé.');
         }
         return back()->with('success', 'But supprimé.');
     }
@@ -197,7 +197,7 @@ class PouleMatchController extends Controller
         }
         $poule_match->cartons()->create($validated);
         if ($request->boolean('stay')) {
-            return redirect()->route('poule-matchs.edit', $poule_match)->with('success', 'Carton ajouté.');
+            return redirect()->route('dashboard.poule-matchs.edit', $poule_match)->with('success', 'Carton ajouté.');
         }
         return back()->with('success', 'Carton ajouté.');
     }
@@ -206,7 +206,7 @@ class PouleMatchController extends Controller
     {
         $carton->delete();
         if (request()->boolean('stay')) {
-            return redirect()->route('poule-matchs.edit', $poule_match)->with('success', 'Carton supprimé.');
+            return redirect()->route('dashboard.poule-matchs.edit', $poule_match)->with('success', 'Carton supprimé.');
         }
         return back()->with('success', 'Carton supprimé.');
     }

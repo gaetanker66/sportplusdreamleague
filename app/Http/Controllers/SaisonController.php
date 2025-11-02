@@ -167,7 +167,7 @@ class SaisonController extends Controller
         $saison = Saison::create($request->only('nom','date_debut','date_fin','status','ligue_id','nombre_equipes'));
         $saison->equipes()->sync($equipesToAssign);
 
-        return redirect()->route('saisons.index')
+        return redirect()->route('dashboard.saisons.index')
             ->with('success', 'Saison créée avec succès.');
     }
 
@@ -236,7 +236,7 @@ class SaisonController extends Controller
         $saison->update($request->only('nom','date_debut','date_fin','status','ligue_id','nombre_equipes'));
         $saison->equipes()->sync($request->input('equipes', []));
 
-        return redirect()->route('saisons.index')
+        return redirect()->route('dashboard.saisons.index')
             ->with('success', 'Saison mise à jour avec succès.');
     }
 
@@ -247,7 +247,7 @@ class SaisonController extends Controller
     {
         $saison->delete();
 
-        return redirect()->route('saisons.index')
+        return redirect()->route('dashboard.saisons.index')
             ->with('success', 'Saison supprimée avec succès.');
     }
 }

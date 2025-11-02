@@ -44,7 +44,7 @@ class EquipeController extends Controller
             }
         }
 
-        return redirect()->route('equipes.index')->with('success', 'Équipe créée avec succès.');
+        return redirect()->route('dashboard.equipes.index')->with('success', 'Équipe créée avec succès.');
     }
 
     public function show(Equipe $equipe)
@@ -586,13 +586,13 @@ class EquipeController extends Controller
             }
         }
 
-        return redirect()->route('equipes.index')->with('success', 'Équipe mise à jour avec succès.');
+        return redirect()->route('dashboard.equipes.index')->with('success', 'Équipe mise à jour avec succès.');
     }
 
     public function destroy(Equipe $equipe)
     {
         $equipe->delete();
-        return redirect()->route('equipes.index')->with('success', 'Équipe supprimée avec succès.');
+        return redirect()->route('dashboard.equipes.index')->with('success', 'Équipe supprimée avec succès.');
     }
 
     // Joueurs inline

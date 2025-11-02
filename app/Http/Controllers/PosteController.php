@@ -27,7 +27,7 @@ class PosteController extends Controller
 
         Poste::create($validated);
 
-        return redirect()->route('postes.index')->with('success', 'Poste créé avec succès.');
+        return redirect()->route('dashboard.postes.index')->with('success', 'Poste créé avec succès.');
     }
 
     public function show(Poste $poste)
@@ -48,13 +48,13 @@ class PosteController extends Controller
 
         $poste->update($validated);
 
-        return redirect()->route('postes.index')->with('success', 'Poste mis à jour avec succès.');
+        return redirect()->route('dashboard.postes.index')->with('success', 'Poste mis à jour avec succès.');
     }
 
     public function destroy(Poste $poste)
     {
         $poste->delete();
-        return redirect()->route('postes.index')->with('success', 'Poste supprimé avec succès.');
+        return redirect()->route('dashboard.postes.index')->with('success', 'Poste supprimé avec succès.');
     }
 }
 
