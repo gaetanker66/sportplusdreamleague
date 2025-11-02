@@ -5,14 +5,14 @@ import AppearanceToggleDropdown from './appearance-dropdown';
 export default function PublicHeader() {
     return (
         <header className="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur sticky top-0 z-10">
-            <div className="mx-auto max-w-7xl px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="mx-auto max-w-7xl px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                     <img 
                         src={logo} 
                         alt="Sport Plus Dream League" 
                         className="h-[60px] w-[120px] object-contain"
                     />
-                    <div className="font-extrabold tracking-tight text-xl">Sport Plus Dream League</div>
+                    <div className="font-extrabold tracking-tight text-lg leading-tight whitespace-normal">Sport Plus<br/>Dream League</div>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4 lg:gap-5">
                 <nav className="flex items-center gap-2 sm:gap-4 lg:gap-5 text-sm flex-wrap sm:flex-nowrap justify-center">
