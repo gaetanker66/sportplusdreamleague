@@ -34,19 +34,18 @@ class PublicController extends Controller
 
         $standings = [];
         if ($selectedSaisonId) {
-            // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
             $saison = Saison::with([
                 'equipes' => function($q) { 
-                    $q->select('equipes.id', 'equipes.nom'); 
+                    $q->select('equipes.id', 'equipes.nom', 'equipes.logo'); 
                 }, 
                 'journees.matchs' => function($query) {
                     $query->select('id', 'journee_id', 'equipe_home_id', 'equipe_away_id', 'score_home', 'score_away', 'termine');
                 },
                 'journees.matchs.homeEquipe' => function($q) {
-                    $q->select('equipes.id', 'equipes.nom');
+                    $q->select('equipes.id', 'equipes.nom', 'equipes.logo');
                 },
                 'journees.matchs.awayEquipe' => function($q) {
-                    $q->select('equipes.id', 'equipes.nom');
+                    $q->select('equipes.id', 'equipes.nom', 'equipes.logo');
                 },
             ])
                 ->find($selectedSaisonId);
@@ -56,6 +55,7 @@ class PublicController extends Controller
                     $standings[$equipe->id] = [
                         'equipe_id' => $equipe->id,
                         'nom' => $equipe->nom,
+                        'logo' => $equipe->logo,
                         'joue' => 0,
                         'gagne' => 0,
                         'nul' => 0,
@@ -112,8 +112,8 @@ class PublicController extends Controller
                                 'journee_numero' => $journee->numero,
                                 'equipe_home_id' => $match->equipe_home_id,
                                 'equipe_away_id' => $match->equipe_away_id,
-                                'home_equipe' => $match->homeEquipe ? ['id' => $match->homeEquipe->id, 'nom' => $match->homeEquipe->nom] : null,
-                                'away_equipe' => $match->awayEquipe ? ['id' => $match->awayEquipe->id, 'nom' => $match->awayEquipe->nom] : null,
+                                'home_equipe' => $match->homeEquipe ? ['id' => $match->homeEquipe->id, 'nom' => $match->homeEquipe->nom, 'logo' => $match->homeEquipe->logo] : null,
+                                'away_equipe' => $match->awayEquipe ? ['id' => $match->awayEquipe->id, 'nom' => $match->awayEquipe->nom, 'logo' => $match->awayEquipe->logo] : null,
                                 'score_home' => $match->score_home,
                                 'score_away' => $match->score_away,
                                 'termine' => $match->termine,

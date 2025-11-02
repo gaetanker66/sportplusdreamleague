@@ -7,7 +7,7 @@ import classementBackground from '../../images/classement-background.avif';
 interface Ligue { id: number; nom: string; niveau: number }
 interface Saison { id: number; nom: string; date_debut: string; ligue_id: number }
 interface Standing { equipe_id: number; nom: string; logo?: string; joue: number; gagne: number; nul: number; perdu: number; bp: number; bc: number; diff: number; points: number }
-interface Equipe { id: number; nom: string }
+interface Equipe { id: number; nom: string; logo?: string | null }
 interface RecentMatch {
     id: number;
     journee_numero?: number;
@@ -199,6 +199,7 @@ export default function Classement({ ligues = [], saisons = [], selectedLigueId,
                                                 <td className="px-3 py-2 text-sm text-white flex items-center gap-2">
                                                     <EquipeLogo 
                                                         equipeId={match.equipe_home_id} 
+                                                        logo={match.home_equipe?.logo}
                                                         nom={match.home_equipe?.nom}
                                                         size="sm"
                                                     />
@@ -225,6 +226,7 @@ export default function Classement({ ligues = [], saisons = [], selectedLigueId,
                                                     </Link>
                                                     <EquipeLogo 
                                                         equipeId={match.equipe_away_id} 
+                                                        logo={match.away_equipe?.logo}
                                                         nom={match.away_equipe?.nom}
                                                         size="sm"
                                                     />
