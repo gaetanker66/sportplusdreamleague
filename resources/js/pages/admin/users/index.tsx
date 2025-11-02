@@ -4,6 +4,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Plus, Users, Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+
+// Helper function pour générer les routes
+const route = (name: string, ...params: (string | number)[]): string => {
+    const routes: Record<string, string | ((id: number) => string)> = {
+        'admin.users.index': '/admin/users',
+        'admin.users.create': '/admin/users/create',
+        'admin.users.edit': (id: number) => `/admin/users/${id}/edit`,
+        'admin.users.destroy': (id: number) => `/admin/users/${id}`,
+    };
+    
+    const routePattern = routes[name];
+    if (typeof routePattern === 'function' && params.length > 0) {
+        return routePattern(params[0] as number);
+    }
+    return (typeof routePattern === 'string' ? routePattern : `/${name.replace('.', '/')}`) as string;
+};
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Dashboard', href: '/dashboard' },
+    { title: 'Administration', href: '/admin/users' },
+    { title: 'Utilisateurs', href: '/admin/users' },
+];
 
 interface User {
     id: number;
@@ -13,10 +37,14 @@ interface User {
 }
 
 interface UsersIndexProps {
-    users: {
+    users?: {
         data: User[];
         links: any[];
-        meta: any;
+        meta: {
+            total: number;
+            current_page: number;
+            last_page: number;
+        };
     };
 }
 
@@ -32,11 +60,15 @@ export default function UsersIndex({ users }: UsersIndexProps) {
         }
     };
 
+    // Valeurs par défaut si users n'est pas défini
+    const usersData = users?.data || [];
+    const usersMeta = users?.meta || { total: 0, current_page: 1, last_page: 1 };
+
     return (
-        <>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gestion des Utilisateurs" />
-            
-            <div className="space-y-6">
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">Gestion des Utilisateurs</h1>
@@ -59,12 +91,13 @@ export default function UsersIndex({ users }: UsersIndexProps) {
                             Liste des Utilisateurs
                         </CardTitle>
                         <CardDescription>
-                            {users.meta.total} utilisateur{users.meta.total > 1 ? 's' : ''} au total
+                            {usersMeta.total} utilisateur{usersMeta.total > 1 ? 's' : ''} au total
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {users.data.map((user) => (
+                            {usersData.length > 0 ? (
+                                usersData.map((user) => (
                                 <div
                                     key={user.id}
                                     className="flex items-center justify-between p-4 border rounded-lg"
@@ -99,11 +132,17 @@ export default function UsersIndex({ users }: UsersIndexProps) {
                                         )}
                                     </div>
                                 </div>
-                            ))}
+                                ))
+                            ) : (
+                                <p className="text-sm text-muted-foreground text-center py-4">
+                                    Aucun utilisateur trouvé.
+                                </p>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
+                </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

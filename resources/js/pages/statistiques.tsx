@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import * as React from 'react';
 import PublicHeader from '@/components/PublicHeader';
+import statsBackground from '../../images/stats-background.avif';
 
 interface Ligue { id: number; nom: string; niveau: number }
 interface Saison { id: number; nom: string; date_debut: string; ligue_id: number }
@@ -139,15 +140,28 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
         return labels[type] || 'total';
     };
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
+        <div 
+            className="min-h-screen text-gray-900 dark:text-white relative"
+            style={{
+                backgroundImage: `url(${statsBackground})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundAttachment: 'fixed'
+            }}
+        >
+            {/* Overlay pour améliorer la lisibilité du texte */}
+            <div className="absolute inset-0 bg-black/30 dark:bg-black/50"></div>
+            
+            <div className="relative z-10">
             <Head title="Statistiques" />
             <PublicHeader />
             <main className="mx-auto max-w-5xl px-4 py-6 sm:py-10">
-                <h1 className="text-3xl font-bold mb-6">Statistiques</h1>
+                <h1 className="text-3xl font-bold mb-6 text-white drop-shadow-lg">Statistiques</h1>
                 
                 {/* Mode Selection */}
-                <div className="mb-6">
-                    <label className="block text-sm text-gray-600 dark:text-gray-400 mb-2">Mode</label>
+                <div className="mb-6 bg-black/40 dark:bg-black/60 backdrop-blur-sm rounded-lg p-4 shadow-2xl">
+                    <label className="block text-sm text-white dark:text-gray-100 mb-2 drop-shadow-md">Mode</label>
                     <div className="flex space-x-4">
                         <label className="flex items-center">
                             <input
@@ -158,7 +172,7 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
                                 onChange={onMode}
                                 className="mr-2"
                             />
-                            <span className="text-sm">Ligue</span>
+                            <span className="text-sm text-white">Ligue</span>
                         </label>
                         <label className="flex items-center">
                             <input
@@ -169,7 +183,7 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
                                 onChange={onMode}
                                 className="mr-2"
                             />
-                            <span className="text-sm">Tournois</span>
+                            <span className="text-sm text-white">Tournois</span>
                         </label>
                     </div>
                 </div>
@@ -179,16 +193,16 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
                     {selMode === 'ligue' ? (
                         <>
                             <div>
-                                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Ligue</label>
-                                <select value={ligueId as any} onChange={onLigue} className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-800">
+                                <label className="block text-sm text-white dark:text-gray-100 mb-1 drop-shadow-md">Ligue</label>
+                                <select value={ligueId as any} onChange={onLigue} className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-800 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
                                     {ligues?.sort((a,b)=>a.niveau-b.niveau).map(l => (
                                         <option key={l.id} value={l.id}>{`Niv ${l.niveau} - ${l.nom}`}</option>
                                     ))}
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Saison</label>
-                                <select value={saisonId as any} onChange={onSaison} className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-800">
+                                <label className="block text-sm text-white dark:text-gray-100 mb-1 drop-shadow-md">Saison</label>
+                                <select value={saisonId as any} onChange={onSaison} className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-800 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
                                     {saisons?.map(s => (
                                         <option key={s.id} value={s.id}>{s.nom}</option>
                                     ))}
@@ -198,11 +212,11 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
                     ) : (
                         <>
                             <div>
-                                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Modèle de coupe</label>
+                                <label className="block text-sm text-white dark:text-gray-100 mb-1 drop-shadow-md">Modèle de coupe</label>
                                 <select 
                                     value={modeleId} 
                                     onChange={onModele}
-                                    className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-800"
+                                    className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-800 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm"
                                 >
                                     <option value="">Tous les modèles</option>
                                     {modeles.map(modele => (
@@ -213,8 +227,8 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Tournoi</label>
-                                <select value={coupeId as any} onChange={onCoupe} className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-800">
+                                <label className="block text-sm text-white dark:text-gray-100 mb-1 drop-shadow-md">Tournoi</label>
+                                <select value={coupeId as any} onChange={onCoupe} className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-800 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
                                     {filteredCoupes?.map(c => (
                                         <option key={c.id} value={c.id}>
                                             {c.modele?.logo ? '🏆 ' : ''}{c.nom}
@@ -225,8 +239,8 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
                         </>
                     )}
                     <div>
-                        <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Type</label>
-                        <select value={selType} onChange={onType} className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-800">
+                        <label className="block text-sm text-white dark:text-gray-100 mb-1 drop-shadow-md">Type</label>
+                        <select value={selType} onChange={onType} className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-800 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
                             <option value="buteur">Buteur</option>
                             <option value="passeur">Passeur</option>
                             <option value="arret">Arrêt</option>
@@ -240,22 +254,22 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
                 </div>
 
                 {stats?.length ? (
-                    <div className="overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
+                    <div className="overflow-hidden rounded-md border border-gray-200 dark:border-gray-700 bg-black/40 dark:bg-black/60 backdrop-blur-sm shadow-2xl">
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead className="bg-gray-50 dark:bg-gray-800">
+                            <thead className="bg-gray-900/50 dark:bg-gray-800/50">
                                 <tr>
-                                    <th className="px-3 py-2 text-left text-xs font-semibold">#</th>
-                                    <th className="px-3 py-2 text-left text-xs font-semibold">Joueur</th>
-                                    <th className="px-3 py-2 text-right text-xs font-semibold">{getStatLabel(selType)}</th>
+                                    <th className="px-3 py-2 text-left text-xs font-semibold text-white">#</th>
+                                    <th className="px-3 py-2 text-left text-xs font-semibold text-white">Joueur</th>
+                                    <th className="px-3 py-2 text-right text-xs font-semibold text-white">{getStatLabel(selType)}</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            <tbody className="divide-y divide-gray-700 dark:divide-gray-600">
                                 {stats.map((st, idx) => (
-                                    <tr key={st.joueur_id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                                        <td className="px-3 py-2 text-xs text-gray-500">{idx+1}</td>
-                                        <td className="px-3 py-2">{st.nom}</td>
-                                        <td className="px-3 py-2 text-right font-semibold">{st.val}</td>
+                                    <tr key={st.joueur_id} className="hover:bg-gray-900/50 dark:hover:bg-gray-800/50">
+                                        <td className="px-3 py-2 text-xs text-white/90">{idx+1}</td>
+                                        <td className="px-3 py-2 text-white">{st.nom}</td>
+                                        <td className="px-3 py-2 text-right font-semibold text-white">{st.val}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -263,10 +277,13 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
                     </div>
                     </div>
                 ) : (
-                    <p className="text-gray-600 dark:text-gray-400">Aucune statistique.</p>
+                    <p className="text-white dark:text-gray-100 drop-shadow-md">Aucune statistique.</p>
                 )}
             </main>
-            <footer className="mx-auto max-w-5xl px-4 py-6 text-xs text-gray-500">© {new Date().getFullYear()} SPDL</footer>
+            <footer className="mx-auto max-w-5xl px-4 py-6 text-xs text-gray-300 dark:text-gray-400 text-center">
+                © {new Date().getFullYear()} SPDL
+            </footer>
+            </div>
         </div>
     );
 }

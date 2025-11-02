@@ -35,7 +35,20 @@ class PublicController extends Controller
         $standings = [];
         if ($selectedSaisonId) {
             // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
-            $saison = Saison::with(['equipes' => function($q) { $q->select('id', 'nom'); }, 'journees.matchs'])
+            $saison = Saison::with([
+                'equipes' => function($q) { 
+                    $q->select('equipes.id', 'equipes.nom'); 
+                }, 
+                'journees.matchs' => function($query) {
+                    $query->select('id', 'journee_id', 'equipe_home_id', 'equipe_away_id', 'score_home', 'score_away', 'termine');
+                },
+                'journees.matchs.homeEquipe' => function($q) {
+                    $q->select('equipes.id', 'equipes.nom');
+                },
+                'journees.matchs.awayEquipe' => function($q) {
+                    $q->select('equipes.id', 'equipes.nom');
+                },
+            ])
                 ->find($selectedSaisonId);
             if ($saison) {
                 // Init stats
@@ -88,7 +101,34 @@ class PublicController extends Controller
                     if ($a['bp'] !== $b['bp']) return $b['bp'] <=> $a['bp'];
                     return strcmp($a['nom'], $b['nom']);
                 });
+
+                // Récupérer les derniers matchs terminés (10 derniers)
+                $recentMatches = [];
+                foreach ($saison->journees as $journee) {
+                    foreach ($journee->matchs as $match) {
+                        if ($match->termine) {
+                            $recentMatches[] = [
+                                'id' => $match->id,
+                                'journee_numero' => $journee->numero,
+                                'equipe_home_id' => $match->equipe_home_id,
+                                'equipe_away_id' => $match->equipe_away_id,
+                                'home_equipe' => $match->homeEquipe ? ['id' => $match->homeEquipe->id, 'nom' => $match->homeEquipe->nom] : null,
+                                'away_equipe' => $match->awayEquipe ? ['id' => $match->awayEquipe->id, 'nom' => $match->awayEquipe->nom] : null,
+                                'score_home' => $match->score_home,
+                                'score_away' => $match->score_away,
+                                'termine' => $match->termine,
+                            ];
+                        }
+                    }
+                }
+                // Trier par date de journée (plus récent d'abord) et limiter à 10
+                usort($recentMatches, function($a, $b) {
+                    return ($b['journee_numero'] ?? 0) <=> ($a['journee_numero'] ?? 0);
+                });
+                $recentMatches = array_slice($recentMatches, 0, 10);
             }
+        } else {
+            $recentMatches = [];
         }
 
         return Inertia::render('classement', [
@@ -97,6 +137,7 @@ class PublicController extends Controller
             'selectedLigueId' => $selectedLigueId,
             'selectedSaisonId' => $selectedSaisonId,
             'standings' => $standings,
+            'recentMatches' => $recentMatches ?? [],
         ]);
     }
 
@@ -235,7 +276,7 @@ class PublicController extends Controller
                 'modele' => function($q) { $q->select('id', 'nom', 'description'); },
                 'poules.matchs.homeEquipe' => function($q) { $q->select('id', 'nom'); },
                 'poules.matchs.awayEquipe' => function($q) { $q->select('id', 'nom'); },
-                'poules.equipes' => function($q) { $q->select('id', 'nom'); },
+                'poules.equipes' => function($q) { $q->select('equipes.id', 'equipes.nom'); },
             ])
             ->orderByDesc('created_at')
             ->get();

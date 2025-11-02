@@ -84,5 +84,14 @@ Route::get('statistiques', [App\Http\Controllers\PublicController::class, 'stati
 Route::get('calendrier', [App\Http\Controllers\PublicController::class, 'calendrier'])->name('public.calendrier');
 Route::get('tournois', [App\Http\Controllers\PublicController::class, 'coupes'])->name('public.coupes');
 
+// Route pour servir le logo depuis resources/images
+Route::get('logo.avif', function () {
+    $logoPath = resource_path('images/logo.avif');
+    if (file_exists($logoPath)) {
+        return response()->file($logoPath, ['Content-Type' => 'image/avif']);
+    }
+    abort(404);
+})->name('logo');
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

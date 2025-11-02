@@ -5,6 +5,32 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, UserPlus } from 'lucide-react';
 import { Link } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+
+// Helper function pour générer les routes
+const route = (name: string, ...params: (string | number)[]): string => {
+    const routes: Record<string, string | ((id: number) => string)> = {
+        'admin.users.index': '/admin/users',
+        'admin.users.create': '/admin/users/create',
+        'admin.users.store': '/admin/users',
+        'admin.users.edit': (id: number) => `/admin/users/${id}/edit`,
+        'admin.users.destroy': (id: number) => `/admin/users/${id}`,
+    };
+    
+    const routePattern = routes[name];
+    if (typeof routePattern === 'function' && params.length > 0) {
+        return routePattern(params[0] as number);
+    }
+    return (typeof routePattern === 'string' ? routePattern : `/${name.replace('.', '/')}`) as string;
+};
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Dashboard', href: '/dashboard' },
+    { title: 'Administration', href: '/admin/users' },
+    { title: 'Utilisateurs', href: '/admin/users' },
+    { title: 'Créer', href: '/admin/users/create' },
+];
 
 export default function CreateUser() {
     const { data, setData, post, processing, errors } = useForm({
@@ -20,10 +46,10 @@ export default function CreateUser() {
     };
 
     return (
-        <>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Créer un Utilisateur" />
-            
-            <div className="space-y-6">
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                <div className="space-y-6">
                 <div className="flex items-center gap-4">
                     <Button variant="outline" size="sm" asChild>
                         <Link href={route('admin.users.index')}>
@@ -121,7 +147,8 @@ export default function CreateUser() {
                         </form>
                     </CardContent>
                 </Card>
+                </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

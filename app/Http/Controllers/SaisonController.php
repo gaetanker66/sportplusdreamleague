@@ -12,7 +12,12 @@ class SaisonController extends Controller
 {
     private function computeStandingsEquipeIds(Saison $saison): array
     {
-        $saison->loadMissing(['equipes:id,nom','journees.matchs']);
+        $saison->loadMissing([
+            'equipes' => function ($query) {
+                $query->select('equipes.id', 'equipes.nom');
+            },
+            'journees.matchs'
+        ]);
         $stats = [];
         foreach ($saison->equipes as $e) {
             $stats[$e->id] = ['pts'=>0,'diff'=>0,'bp'=>0,'nom'=>$e->nom];
@@ -42,7 +47,9 @@ class SaisonController extends Controller
     {
         $saisons = Saison::with([
             'ligue:id,nom',
-            'equipes:id,nom'
+            'equipes' => function ($query) {
+                $query->select('equipes.id', 'equipes.nom');
+            }
         ])->get();
         return Inertia::render('saisons/index', compact('saisons'));
     }
@@ -189,7 +196,11 @@ class SaisonController extends Controller
     {
         $ligues = Ligue::all();
         $equipes = \App\Models\Equipe::select('id', 'nom')->orderBy('nom')->get();
-        $saison->load('equipes:id,nom');
+        $saison->load([
+            'equipes' => function ($query) {
+                $query->select('equipes.id', 'equipes.nom');
+            }
+        ]);
         return Inertia::render('saisons/edit', compact('saison', 'ligues','equipes'));
     }
 

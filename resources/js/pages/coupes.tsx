@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import * as React from 'react';
 import PublicHeader from '@/components/PublicHeader';
+import tournoisBackground from '../../images/tournois-background.avif';
 
 export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: { 
     coupes: {id:number; nom:string; created_at:string; modele?: {id:number; nom:string; logo?:string}; type?: string}[];
@@ -89,8 +90,8 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
         const awayLogo = match.away_equipe?.logo;
         
         return (
-            <div key={`${match.id}-${isRetour ? 'retour' : 'aller'}`} className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border border-gray-200 dark:border-gray-700">
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+            <div key={`${match.id}-${isRetour ? 'retour' : 'aller'}`} className="bg-black/40 dark:bg-black/60 backdrop-blur-sm rounded-lg p-3 shadow-2xl border border-gray-200 dark:border-gray-700">
+                <div className="text-xs text-white/80 dark:text-gray-200 mb-2">
                     {isRetour ? 'Retour' : 'Aller'}
                 </div>
                 
@@ -107,17 +108,17 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                                 }}
                             />
                         )}
-                        <span className="font-medium">{homeTeam}</span>
+                        <span className="font-medium text-white">{homeTeam}</span>
                     </div>
                     
                     <div className="text-center">
-                        <span className="text-lg font-bold">
+                        <span className="text-lg font-bold text-white">
                             {match.termine ? `${match.score_home || 0} - ${match.score_away || 0}` : '-'}
                         </span>
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                        <span className="font-medium">{awayTeam}</span>
+                        <span className="font-medium text-white">{awayTeam}</span>
                         {awayLogo && (
                             <img 
                                 src={awayLogo} 
@@ -133,7 +134,7 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                 
                 {/* Tirs au but */}
                 {match.termine && isRetour && match.tirs_au_but_home !== null && match.tirs_au_but_away !== null && (
-                    <div className="text-xs text-gray-500 text-center">
+                    <div className="text-xs text-white/80 text-center">
                         TAB: {match.tirs_au_but_home} - {match.tirs_au_but_away}
                     </div>
                 )}
@@ -173,43 +174,43 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
         });
 
         return (
-            <div key={poule.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 text-center">
+            <div key={poule.id} className="bg-black/40 dark:bg-black/60 backdrop-blur-sm rounded-lg p-4 shadow-2xl border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-white mb-4 text-center drop-shadow-lg">
                     {poule.nom}
                 </h3>
                 
                 {/* Classement */}
                 <div className="mb-4">
-                    <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Classement</h4>
+                    <h4 className="text-sm font-medium text-white dark:text-gray-100 mb-2 drop-shadow-md">Classement</h4>
                     <div className="overflow-x-auto">
                         <table className="min-w-full text-xs">
                             <thead>
-                                <tr className="border-b border-gray-200 dark:border-gray-700">
-                                    <th className="text-left py-1">#</th>
-                                    <th className="text-left py-1">Équipe</th>
-                                    <th className="text-center py-1">MJ</th>
-                                    <th className="text-center py-1">V</th>
-                                    <th className="text-center py-1">N</th>
-                                    <th className="text-center py-1">D</th>
-                                    <th className="text-center py-1">BP</th>
-                                    <th className="text-center py-1">BC</th>
-                                    <th className="text-center py-1">Diff</th>
-                                    <th className="text-center py-1 font-semibold">Pts</th>
+                                <tr className="border-b border-gray-700 dark:border-gray-600">
+                                    <th className="text-left py-1 text-white">#</th>
+                                    <th className="text-left py-1 text-white">Équipe</th>
+                                    <th className="text-center py-1 text-white">MJ</th>
+                                    <th className="text-center py-1 text-white">V</th>
+                                    <th className="text-center py-1 text-white">N</th>
+                                    <th className="text-center py-1 text-white">D</th>
+                                    <th className="text-center py-1 text-white">BP</th>
+                                    <th className="text-center py-1 text-white">BC</th>
+                                    <th className="text-center py-1 text-white">Diff</th>
+                                    <th className="text-center py-1 font-semibold text-white">Pts</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {classement.map((team: any, index: number) => (
-                                    <tr key={team.team.id} className="border-b border-gray-100 dark:border-gray-700">
-                                        <td className="py-1 text-gray-500">{index + 1}</td>
-                                        <td className="py-1 font-medium">{team.team.nom}</td>
-                                        <td className="py-1 text-center">{team.mj}</td>
-                                        <td className="py-1 text-center text-green-600">{team.v}</td>
-                                        <td className="py-1 text-center text-yellow-600">{team.n}</td>
-                                        <td className="py-1 text-center text-red-600">{team.d}</td>
-                                        <td className="py-1 text-center">{team.bp}</td>
-                                        <td className="py-1 text-center">{team.bc}</td>
-                                        <td className="py-1 text-center">{team.diff > 0 ? '+' : ''}{team.diff}</td>
-                                        <td className="py-1 text-center font-semibold">{team.pts}</td>
+                                    <tr key={team.team.id} className="border-b border-gray-700 dark:border-gray-600">
+                                        <td className="py-1 text-white/90">{index + 1}</td>
+                                        <td className="py-1 font-medium text-white">{team.team.nom}</td>
+                                        <td className="py-1 text-center text-white">{team.mj}</td>
+                                        <td className="py-1 text-center text-green-400">{team.v}</td>
+                                        <td className="py-1 text-center text-yellow-400">{team.n}</td>
+                                        <td className="py-1 text-center text-red-400">{team.d}</td>
+                                        <td className="py-1 text-center text-white">{team.bp}</td>
+                                        <td className="py-1 text-center text-white">{team.bc}</td>
+                                        <td className="py-1 text-center text-white">{team.diff > 0 ? '+' : ''}{team.diff}</td>
+                                        <td className="py-1 text-center font-semibold text-white">{team.pts}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -219,10 +220,10 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                 
                 {/* Matchs */}
                 <div>
-                    <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Matchs</h4>
+                    <h4 className="text-sm font-medium text-white dark:text-gray-100 mb-2 drop-shadow-md">Matchs</h4>
                     <div className="space-y-2">
                         {(poule.matchs || []).map((match: any) => (
-                            <div key={match.id} className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                            <div key={match.id} className="bg-gray-900/50 dark:bg-gray-800/50 rounded p-2 backdrop-blur-sm">
                                 <div className="flex items-center justify-between text-sm">
                                     <div className="flex items-center space-x-2">
                                         {match.home_equipe?.logo && (
@@ -235,22 +236,22 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                                                 }}
                                             />
                                         )}
-                                        <span className="font-medium">{match.home_equipe?.nom || `Équipe ${match.equipe_home_id}`}</span>
+                                        <span className="font-medium text-white">{match.home_equipe?.nom || `Équipe ${match.equipe_home_id}`}</span>
                                     </div>
                                     
                                     <div className="text-center">
-                                        <span className="font-bold">
+                                        <span className="font-bold text-white">
                                             {match.termine ? `${match.score_home || 0} - ${match.score_away || 0}` : '-'}
                                         </span>
                                         {match.termine && (
-                                            <div className="text-xs text-gray-500">
+                                            <div className="text-xs text-white/70">
                                                 J{match.journee}
                                             </div>
                                         )}
                                     </div>
                                     
                                     <div className="flex items-center space-x-2">
-                                        <span className="font-medium">{match.away_equipe?.nom || `Équipe ${match.equipe_away_id}`}</span>
+                                        <span className="font-medium text-white">{match.away_equipe?.nom || `Équipe ${match.equipe_away_id}`}</span>
                                         {match.away_equipe?.logo && (
                                             <img 
                                                 src={match.away_equipe.logo} 
@@ -277,7 +278,7 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
         return (
             <div key={round.id} className="flex flex-col space-y-4">
                 <div className="text-center">
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                    <h3 className="text-lg font-semibold text-white drop-shadow-lg">
                         {round.label || `Round ${round.numero}`}
                     </h3>
                 </div>
@@ -292,8 +293,8 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                             
                             {/* Score cumulé */}
                             {(match.termine && match.match_retour?.termine) && (
-                                <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-3 text-center">
-                                    <div className="text-xs text-blue-600 dark:text-blue-300 mb-1">Score cumulé</div>
+                                <div className="bg-blue-900/60 dark:bg-blue-800/60 backdrop-blur-sm rounded-lg p-3 text-center border border-blue-700/50">
+                                    <div className="text-xs text-blue-200 dark:text-blue-300 mb-1">Score cumulé</div>
                                     <div className="flex items-center justify-center space-x-3">
                                         <div className="flex items-center space-x-1">
                                             {match.home_equipe?.logo && (
@@ -306,13 +307,13 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                                                     }}
                                                 />
                                             )}
-                                            <span className="text-sm font-semibold text-blue-800 dark:text-blue-200">
+                                            <span className="text-sm font-semibold text-blue-200 dark:text-blue-100">
                                                 {match.score_cumule_home || 0}
                                             </span>
                                         </div>
-                                        <span className="text-blue-800 dark:text-blue-200">-</span>
+                                        <span className="text-blue-200 dark:text-blue-100">-</span>
                                         <div className="flex items-center space-x-1">
-                                            <span className="text-sm font-semibold text-blue-800 dark:text-blue-200">
+                                            <span className="text-sm font-semibold text-blue-200 dark:text-blue-100">
                                                 {match.score_cumule_away || 0}
                                             </span>
                                             {match.away_equipe?.logo && (
@@ -339,23 +340,36 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
     return (
         <>
             <Head title="Tournois" />
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+            <div 
+                className="min-h-screen text-gray-900 dark:text-white relative"
+                style={{
+                    backgroundImage: `url(${tournoisBackground})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundAttachment: 'fixed'
+                }}
+            >
+                {/* Overlay pour améliorer la lisibilité du texte */}
+                <div className="absolute inset-0 bg-black/30 dark:bg-black/50"></div>
+                
+                <div className="relative z-10">
                 <PublicHeader />
 
                 {/* Content */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
                     {coupes.length === 0 ? (
                         <div className="text-center py-12">
-                            <p className="text-gray-500 dark:text-gray-400">Aucune coupe disponible</p>
+                            <p className="text-white dark:text-gray-100 drop-shadow-md">Aucune coupe disponible</p>
                         </div>
                     ) : (
                         <div className="space-y-6">
                             {/* Sélection des modèles et coupes */}
-                            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6">
+                            <div className="bg-black/40 dark:bg-black/60 backdrop-blur-sm rounded-lg shadow-2xl p-4 sm:p-6">
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                     {/* Sélection du modèle */}
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        <label className="block text-sm font-medium text-white dark:text-gray-100 mb-2 drop-shadow-md">
                                             Modèle de coupe
                                         </label>
                                         <select 
@@ -370,7 +384,7 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                                                     handleModeleChange(Number(value));
                                                 }
                                             }}
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                         >
                                             <option value="">Tous les modèles</option>
                                             {modeles.map(modele => (
@@ -389,13 +403,13 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
 
                                     {/* Sélection du tournoi */}
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        <label className="block text-sm font-medium text-white dark:text-gray-100 mb-2 drop-shadow-md">
                                             Tournoi
                                         </label>
                                         <select 
                                             value={selectedCoupeIdState} 
                                             onChange={(e) => handleCoupeChange(Number(e.target.value))}
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                         >
                                             {filteredCoupes.map(coupe => (
                                                 <option key={coupe.id} value={coupe.id}>
@@ -412,7 +426,7 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                             </div>
 
                                     {selectedCoupe && (
-                                        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                                        <div className="bg-black/40 dark:bg-black/60 backdrop-blur-sm rounded-lg shadow-2xl p-6">
                                             <div className="text-center mb-6">
                                                 <div className="flex items-center justify-center space-x-3 mb-2">
                                                     {selectedCoupe.modele?.logo && (
@@ -425,12 +439,12 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                                                             }}
                                                         />
                                                     )}
-                                                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                                    <h2 className="text-2xl font-bold text-white drop-shadow-lg">
                                                         {selectedCoupe.nom}
                                                     </h2>
                                                 </div>
                                                 {selectedCoupe.modele?.description && (
-                                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                    <p className="text-sm text-white/90 dark:text-gray-100 drop-shadow-md">
                                                         {selectedCoupe.modele.description}
                                                     </p>
                                                 )}
@@ -446,7 +460,7 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                                                         </div>
                                                     ) : (
                                                         <div className="text-center py-12">
-                                                            <p className="text-gray-500 dark:text-gray-400">
+                                                            <p className="text-white dark:text-gray-100 drop-shadow-md">
                                                                 Cette coupe avec poules n'a pas encore de poules générées
                                                             </p>
                                                         </div>
@@ -455,7 +469,7 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                                                     {/* Phase finale si elle existe */}
                                                     {selectedCoupe.rounds && selectedCoupe.rounds.length > 0 && (
                                                         <div className="mt-8">
-                                                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 text-center">
+                                                            <h3 className="text-xl font-semibold text-white mb-4 text-center drop-shadow-lg">
                                                                 Phase finale
                                                             </h3>
                                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -473,7 +487,7 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                                                         </div>
                                                     ) : (
                                                         <div className="text-center py-12">
-                                                            <p className="text-gray-500 dark:text-gray-400">
+                                                            <p className="text-white dark:text-gray-100 drop-shadow-md">
                                                                 Cette coupe n'a pas encore d'arbre généré
                                                             </p>
                                                         </div>
@@ -485,6 +499,7 @@ export default function Coupes({ coupes, selectedCoupeId, selectedCoupe }: {
                         </div>
                     )}
                 </div>
+            </div>
             </div>
         </>
     );

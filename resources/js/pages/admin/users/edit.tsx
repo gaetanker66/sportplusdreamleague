@@ -5,6 +5,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, User } from 'lucide-react';
 import { Link } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+
+// Helper function pour générer les routes
+const route = (name: string, ...params: (string | number)[]): string => {
+    const routes: Record<string, string | ((id: number) => string)> = {
+        'admin.users.index': '/admin/users',
+        'admin.users.create': '/admin/users/create',
+        'admin.users.edit': (id: number) => `/admin/users/${id}/edit`,
+        'admin.users.update': (id: number) => `/admin/users/${id}`,
+        'admin.users.destroy': (id: number) => `/admin/users/${id}`,
+    };
+    
+    const routePattern = routes[name];
+    if (typeof routePattern === 'function' && params.length > 0) {
+        return routePattern(params[0] as number);
+    }
+    return (typeof routePattern === 'string' ? routePattern : `/${name.replace('.', '/')}`) as string;
+};
 
 interface User {
     id: number;
@@ -30,11 +49,18 @@ export default function EditUser({ user }: EditUserProps) {
         put(route('admin.users.update', user.id));
     };
 
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Administration', href: '/admin/users' },
+        { title: 'Utilisateurs', href: '/admin/users' },
+        { title: `Modifier ${user.name}`, href: `/admin/users/${user.id}/edit` },
+    ];
+
     return (
-        <>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Modifier ${user.name}`} />
-            
-            <div className="space-y-6">
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                <div className="space-y-6">
                 <div className="flex items-center gap-4">
                     <Button variant="outline" size="sm" asChild>
                         <Link href={route('admin.users.index')}>
@@ -129,7 +155,8 @@ export default function EditUser({ user }: EditUserProps) {
                         </form>
                     </CardContent>
                 </Card>
+                </div>
             </div>
-        </>
+        </AppLayout>
     );
 }
