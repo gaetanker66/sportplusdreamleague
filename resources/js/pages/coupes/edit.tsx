@@ -48,7 +48,7 @@ export default function CoupeEdit({ coupe, equipes }: {
               </div>
             )}
           </div>
-          <Link href="/coupes" className="px-3 py-2 rounded bg-gray-600 text-white">Retour</Link>
+          <Link href="/dashboard/coupes" className="px-3 py-2 rounded bg-gray-600 text-white">Retour</Link>
         </div>
         {!coupe.rounds?.length ? (
         <div className="space-y-4">

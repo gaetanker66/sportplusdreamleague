@@ -9,7 +9,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: 'Saisons',
-        href: '/saisons',
+        href: '/dashboard/saisons',
     },
 ];
 
@@ -37,7 +37,7 @@ interface Props {
 export default function SaisonsIndex({ saisons }: Props) {
     const handleDelete = (id: number) => {
         if (confirm('Êtes-vous sûr de vouloir supprimer cette saison ?')) {
-            router.delete(`/saisons/${id}`);
+            router.delete(`/dashboard/saisons/${id}`);
         }
     };
 
@@ -51,7 +51,7 @@ export default function SaisonsIndex({ saisons }: Props) {
                         <p className="text-gray-600 dark:text-gray-400">Créez et gérez vos saisons</p>
                     </div>
                     <Link
-                        href="/saisons/create"
+                        href="/dashboard/saisons/create"
                         className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
                     >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,7 +128,7 @@ export default function SaisonsIndex({ saisons }: Props) {
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div className="flex space-x-2">
                                                     <Link
-                                                        href={`/saisons/${saison.id}`}
+                                                        href={`/dashboard/saisons/${saison.id}`}
                                                         className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                                     >
                                                         <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +138,7 @@ export default function SaisonsIndex({ saisons }: Props) {
                                                         Voir
                                                     </Link>
                                                     <Link
-                                                        href={`/saisons/${saison.id}/edit`}
+                                                        href={`/dashboard/saisons/${saison.id}/edit`}
                                                         className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                                     >
                                                         <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -171,7 +171,7 @@ export default function SaisonsIndex({ saisons }: Props) {
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Commencez par créer une nouvelle saison.</p>
                             <div className="mt-6">
                                 <Link
-                                    href="/saisons/create"
+                                    href="/dashboard/saisons/create"
                                     className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                 >
                                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

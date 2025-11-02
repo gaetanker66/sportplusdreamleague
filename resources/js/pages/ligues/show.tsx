@@ -9,7 +9,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: 'Ligues',
-        href: '/ligues',
+        href: '/dashboard/ligues',
     },
     {
         title: 'Détails',
@@ -42,7 +42,7 @@ export default function LiguesShow({ ligue }: Props) {
                     </div>
                     <div className="flex space-x-2">
                         <Link
-                            href={`/ligues/${ligue.id}/edit`}
+                            href={`/dashboard/ligues/${ligue.id}/edit`}
                             className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
                         >
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,7 +51,7 @@ export default function LiguesShow({ ligue }: Props) {
                             Modifier
                         </Link>
                         <Link
-                            href="/ligues"
+                            href="/dashboard/ligues"
                             className="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150"
                         >
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

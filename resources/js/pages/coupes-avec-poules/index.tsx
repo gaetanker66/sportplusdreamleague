@@ -29,7 +29,7 @@ export default function CoupesAvecPoulesIndex({ coupesAvecPoules }: Props) {
 
     const handleDelete = (id: number) => {
         if (confirm('Êtes-vous sûr de vouloir supprimer cette coupe avec poules ?')) {
-            destroy(`/coupes-avec-poules/${id}`);
+            destroy(`/dashboard/coupes-avec-poules/${id}`);
         }
     };
 
@@ -47,7 +47,7 @@ export default function CoupesAvecPoulesIndex({ coupesAvecPoules }: Props) {
                             Modèles
                         </Link>
                         <Link 
-                            href="/coupes-avec-poules/create" 
+                            href="/dashboard/coupes-avec-poules/create" 
                             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
                         >
                             Nouvelle Coupe
@@ -125,13 +125,13 @@ export default function CoupesAvecPoulesIndex({ coupesAvecPoules }: Props) {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div className="flex space-x-2">
                                             <Link
-                                                href={`/coupes-avec-poules/${coupe.id}`}
+                                                href={`/dashboard/coupes-avec-poules/${coupe.id}`}
                                                 className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
                                             >
                                                 Voir
                                             </Link>
                                             <Link
-                                                href={`/coupes-avec-poules/${coupe.id}/edit`}
+                                                href={`/dashboard/coupes-avec-poules/${coupe.id}/edit`}
                                                 className="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700"
                                             >
                                                 Modifier

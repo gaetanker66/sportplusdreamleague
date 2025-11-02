@@ -9,7 +9,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: 'Ligues',
-        href: '/ligues',
+        href: '/dashboard/ligues',
     },
 ];
 
@@ -29,7 +29,7 @@ interface Props {
 export default function LiguesIndex({ ligues }: Props) {
     const handleDelete = (id: number) => {
         if (confirm('Êtes-vous sûr de vouloir supprimer cette ligue ?')) {
-            router.delete(`/ligues/${id}`);
+            router.delete(`/dashboard/ligues/${id}`);
         }
     };
 
@@ -43,7 +43,7 @@ export default function LiguesIndex({ ligues }: Props) {
                         <p className="text-gray-600 dark:text-gray-400">Créez et gérez vos ligues</p>
                     </div>
                     <Link
-                        href="/ligues/create"
+                        href="/dashboard/ligues/create"
                         className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
                     >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,7 +112,7 @@ export default function LiguesIndex({ ligues }: Props) {
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div className="flex space-x-2">
                                                     <Link
-                                                        href={`/ligues/${ligue.id}`}
+                                                        href={`/dashboard/ligues/${ligue.id}`}
                                                         className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                                     >
                                                         <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,7 +122,7 @@ export default function LiguesIndex({ ligues }: Props) {
                                                         Voir
                                                     </Link>
                                                     <Link
-                                                        href={`/ligues/${ligue.id}/edit`}
+                                                        href={`/dashboard/ligues/${ligue.id}/edit`}
                                                         className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                                     >
                                                         <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -155,7 +155,7 @@ export default function LiguesIndex({ ligues }: Props) {
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Commencez par créer une nouvelle ligue.</p>
                             <div className="mt-6">
                                 <Link
-                                    href="/ligues/create"
+                                    href="/dashboard/ligues/create"
                                     className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                 >
                                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

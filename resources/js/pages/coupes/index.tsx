@@ -6,7 +6,7 @@ export default function CoupesIndex({ coupes }: { coupes: any[] }) {
 
   const handleDelete = (id: number) => {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce tournoi ? Cette action est irréversible.')) {
-      destroy(`/coupes/${id}`);
+      destroy(`/dashboard/coupes/${id}`);
     }
   };
 
@@ -16,7 +16,7 @@ export default function CoupesIndex({ coupes }: { coupes: any[] }) {
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold">Coupes</h1>
-          <Link href="/coupes/create" className="px-3 py-2 rounded bg-indigo-600 text-white">Nouvelle coupe</Link>
+          <Link href="/dashboard/coupes/create" className="px-3 py-2 rounded bg-indigo-600 text-white">Nouvelle coupe</Link>
         </div>
         <div className="overflow-hidden rounded border border-gray-200 dark:border-gray-700">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -58,7 +58,7 @@ export default function CoupesIndex({ coupes }: { coupes: any[] }) {
                   </td>
                   <td className="px-3 py-2 text-right">
                     <div className="flex gap-2 justify-end">
-                      <Link href={`/coupes/${c.id}/edit`} className="px-2 py-1 rounded bg-blue-600 text-white hover:bg-blue-700">Éditer</Link>
+                      <Link href={`/dashboard/coupes/${c.id}/edit`} className="px-2 py-1 rounded bg-blue-600 text-white hover:bg-blue-700">Éditer</Link>
                       <button
                         onClick={() => handleDelete(c.id)}
                         className="px-2 py-1 rounded bg-red-600 text-white hover:bg-red-700"

@@ -62,7 +62,7 @@ export default function SaisonsCreate({ ligues, equipes, suggestedEquipeIds = []
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/saisons');
+        post('/dashboard/saisons');
     };
 
     return (
@@ -75,7 +75,7 @@ export default function SaisonsCreate({ ligues, equipes, suggestedEquipeIds = []
                         <p className="text-gray-600 dark:text-gray-400">Renseignez les informations de la saison</p>
                     </div>
                     <Link
-                        href="/saisons"
+                        href="/dashboard/saisons"
                         className="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150"
                     >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,7 +257,7 @@ export default function SaisonsCreate({ ligues, equipes, suggestedEquipeIds = []
 
                             <div className="flex items-center justify-end space-x-3">
                                 <Link
-                                    href="/saisons"
+                                    href="/dashboard/saisons"
                                     className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                 >
                                     Annuler

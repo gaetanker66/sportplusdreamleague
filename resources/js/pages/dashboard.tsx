@@ -22,7 +22,7 @@ export default function Dashboard() {
                 
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-3">
                     <Link 
-                        href="/ligues" 
+                        href="/dashboard/ligues" 
                         className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 p-6 flex flex-col justify-center items-center text-center"
                     >
                         <div className="text-4xl mb-4">🏆</div>
@@ -47,7 +47,7 @@ export default function Dashboard() {
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Actions rapides</h3>
                     <div className="grid gap-3 md:grid-cols-2">
                         <Link 
-                            href="/ligues/create" 
+                            href="/dashboard/ligues/create" 
                             className="flex items-center p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
                         >
                             <div className="text-2xl mr-3">➕</div>
@@ -58,7 +58,7 @@ export default function Dashboard() {
                         </Link>
                         
                         <Link 
-                            href="/ligues" 
+                            href="/dashboard/ligues" 
                             className="flex items-center p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
                         >
                             <div className="text-2xl mr-3">📋</div>

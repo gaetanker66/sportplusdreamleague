@@ -105,7 +105,7 @@ export default function CoupesAvecPoulesShow({ coupeAvecPoule }: Props) {
                                 Voir la phase finale
                             </Link>
                         )}
-                        <Link href="/coupes-avec-poules" className="px-3 py-2 rounded bg-gray-600 text-white">
+                        <Link href="/dashboard/coupes-avec-poules" className="px-3 py-2 rounded bg-gray-600 text-white">
                             Retour
                         </Link>
                     </div>
