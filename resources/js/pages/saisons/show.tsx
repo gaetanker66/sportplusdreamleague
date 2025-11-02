@@ -1,6 +1,8 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useMemo } from 'react';
+import EquipeLogo from '@/components/equipe-logo';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -36,6 +38,20 @@ interface Props { saison: Saison }
 
 export default function SaisonShow({ saison }: Props) {
     const { processing } = useForm({});
+
+    // Extraire tous les IDs d'équipes uniques des matchs pour préchargement
+    const equipeIds = useMemo(() => {
+        const ids = new Set<number>();
+        saison.journees?.forEach(journee => {
+            journee.matchs?.forEach(match => {
+                if (match.home_equipe?.id) ids.add(match.home_equipe.id);
+                if (match.away_equipe?.id) ids.add(match.away_equipe.id);
+                if (match.equipe_home_id && !match.home_equipe) ids.add(match.equipe_home_id);
+                if (match.equipe_away_id && !match.away_equipe) ids.add(match.equipe_away_id);
+            });
+        });
+        return Array.from(ids);
+    }, [saison]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -80,18 +96,26 @@ export default function SaisonShow({ saison }: Props) {
                                                     {j.matchs.map(m => (
                                                         <tr key={m.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                                                             <td className="px-4 py-2 text-sm">
-                                                                {m.home_equipe?.logo ? (
-                                                                    <img src={m.home_equipe.logo} alt={m.home_equipe.nom} className="h-6 w-6 inline-block mr-2 rounded object-cover" />
-                                                                ) : <span className="inline-block h-6 w-6 mr-2 rounded bg-gray-200 dark:bg-gray-700" />}
+                                                                <EquipeLogo 
+                                                                    equipeId={m.equipe_home_id} 
+                                                                    logo={m.home_equipe?.logo}
+                                                                    nom={m.home_equipe?.nom}
+                                                                    size="md"
+                                                                    className="mr-2"
+                                                                />
                                                                 <span className="text-gray-900 dark:text-gray-100">{m.home_equipe?.nom ?? `#${m.equipe_home_id}`}</span>
                                                             </td>
                                                             <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
                                                                 {m.score_home} - {m.score_away}
                                                             </td>
                                                             <td className="px-4 py-2 text-sm">
-                                                                {m.away_equipe?.logo ? (
-                                                                    <img src={m.away_equipe.logo} alt={m.away_equipe.nom} className="h-6 w-6 inline-block mr-2 rounded object-cover" />
-                                                                ) : <span className="inline-block h-6 w-6 mr-2 rounded bg-gray-200 dark:bg-gray-700" />}
+                                                                <EquipeLogo 
+                                                                    equipeId={m.equipe_away_id} 
+                                                                    logo={m.away_equipe?.logo}
+                                                                    nom={m.away_equipe?.nom}
+                                                                    size="md"
+                                                                    className="mr-2"
+                                                                />
                                                                 <span className="text-gray-900 dark:text-gray-100">{m.away_equipe?.nom ?? `#${m.equipe_away_id}`}</span>
                                                             </td>
                                                             <td className="px-4 py-2 text-sm">

@@ -136,6 +136,26 @@ class EquipeController extends Controller
         $joueur->delete();
         return back()->with('success', 'Joueur supprimé.');
     }
+
+    /**
+     * API : Récupérer les logos des équipes par leurs IDs
+     */
+    public function getLogos(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:equipes,id',
+        ]);
+
+        $equipes = Equipe::whereIn('id', $validated['ids'])
+            ->select('id', 'logo')
+            ->get()
+            ->mapWithKeys(function ($equipe) {
+                return [$equipe->id => $equipe->logo];
+            });
+
+        return response()->json($equipes);
+    }
 }
 
 

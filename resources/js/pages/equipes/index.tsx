@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
+import EquipeLogo from '@/components/equipe-logo';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -49,11 +50,12 @@ export default function EquipesIndex({ equipes = [] as Equipe[] }: { equipes: Eq
                                     {equipes.map((equipe) => (
                                         <tr key={equipe.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                {equipe.logo ? (
-                                                    <img src={equipe.logo} alt={equipe.nom} className="h-10 w-10 rounded object-cover" />
-                                                ) : (
-                                                    <div className="h-10 w-10 rounded bg-gray-200 dark:bg-gray-700" />
-                                                )}
+                                                <EquipeLogo 
+                                                    equipeId={equipe.id} 
+                                                    logo={equipe.logo}
+                                                    nom={equipe.nom}
+                                                    size="lg"
+                                                />
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{equipe.nom}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import EquipeLogo from '@/components/equipe-logo';
 
 const breadcrumbsBase: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -28,11 +29,12 @@ export default function EquipesShow({ equipe }: { equipe: Equipe }) {
                     <Link href={`/equipes/${equipe.id}/edit`} className="inline-flex items-center px-4 py-2 rounded-md text-white bg-yellow-600 hover:bg-yellow-700">Modifier</Link>
                 </div>
                 <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden p-6 flex items-center gap-6">
-                    {equipe.logo ? (
-                        <img src={equipe.logo} alt={equipe.nom} className="h-24 w-24 rounded" />
-                    ) : (
-                        <div className="h-24 w-24 rounded bg-gray-200 dark:bg-gray-700" />
-                    )}
+                    <EquipeLogo 
+                        equipeId={equipe.id} 
+                        logo={equipe.logo}
+                        nom={equipe.nom}
+                        size="xl"
+                    />
                     <div>
                         <p className="text-gray-600 dark:text-gray-400">Nom</p>
                         <p className="text-lg text-gray-900 dark:text-gray-100">{equipe.nom}</p>

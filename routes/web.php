@@ -23,6 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('equipes/{equipe}/joueurs', [App\Http\Controllers\EquipeController::class, 'addPlayer'])->name('equipes.joueurs.store');
     Route::put('equipes/{equipe}/joueurs/{joueur}', [App\Http\Controllers\EquipeController::class, 'updatePlayer'])->name('equipes.joueurs.update');
     Route::delete('equipes/{equipe}/joueurs/{joueur}', [App\Http\Controllers\EquipeController::class, 'deletePlayer'])->name('equipes.joueurs.destroy');
+    Route::post('api/equipes/logos', [App\Http\Controllers\EquipeController::class, 'getLogos'])->name('api.equipes.logos');
 
     // Routes pour la gestion des postes
     Route::resource('postes', App\Http\Controllers\PosteController::class);
