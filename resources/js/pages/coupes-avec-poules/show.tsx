@@ -87,7 +87,7 @@ export default function CoupesAvecPoulesShow({ coupeAvecPoule }: Props) {
                             <button
                                 onClick={() => {
                                     if (confirm('Voulez-vous vraiment terminer les poules ?')) {
-                                        router.post(`/coupes-avec-poules/${coupeAvecPoule.id}/finaliser`);
+                                        router.post(`/dashboard/coupes-avec-poules/${coupeAvecPoule.id}/finaliser`);
                                     }
                                 }}
                                 className="px-3 py-2 rounded bg-green-600 text-white hover:bg-green-700"
@@ -237,7 +237,7 @@ export default function CoupesAvecPoulesShow({ coupeAvecPoule }: Props) {
                                                                     </td>
                                                                     <td className="px-3 py-2 text-sm text-right text-gray-900 dark:text-gray-100">{away?.nom ?? '—'}</td>
                                                                     <td className="px-3 py-2 text-sm text-right">
-                                                                        <a href={`/poule-matchs/${m.id}/edit`} className="inline-flex items-center px-2.5 py-1.5 rounded bg-indigo-600 text-white hover:bg-indigo-700">
+                                                                        <a href={`/dashboard/poule-matchs/${m.id}/edit`} className="inline-flex items-center px-2.5 py-1.5 rounded bg-indigo-600 text-white hover:bg-indigo-700">
                                                                             Modifier
                                                                         </a>
                                                                     </td>

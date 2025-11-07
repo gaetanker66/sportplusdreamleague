@@ -1,5 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, useForm, router } from '@inertiajs/react';
+import { toast } from 'sonner';
 import * as React from 'react';
 
 interface Equipe { id: number; nom: string }
@@ -34,7 +35,14 @@ export default function PouleMatchEdit({ match, homeGardiens, awayGardiens, home
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/poule-matchs/${match.id}`);
+        put(`/dashboard/poule-matchs/${match.id}`, {
+            onSuccess: () => {
+                toast.success('Match enregistré avec succès.');
+            },
+            onError: () => {
+                toast.error('Erreur lors de l\'enregistrement du match.');
+            }
+        });
     };
 
     const [butHome, setButHome] = React.useState<{ buteur_id: number | ''; passeur_id: number | ''; minute: string | ''; type: string }>({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
@@ -45,14 +53,32 @@ export default function PouleMatchEdit({ match, homeGardiens, awayGardiens, home
     const addButHome = (e: React.FormEvent) => {
         e.preventDefault();
         if (!butHome.buteur_id) return;
-        router.post(`/poule-matchs/${match.id}/buts`, { equipe_id: match.equipe_home_id, buteur_id: butHome.buteur_id, passeur_id: butHome.passeur_id || null, minute: butHome.minute || null, type: butHome.type, stay: true }, { preserveScroll: true, only: ['match'] });
-        setButHome({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
+        router.post(`/dashboard/poule-matchs/${match.id}/buts`, { equipe_id: match.equipe_home_id, buteur_id: butHome.buteur_id, passeur_id: butHome.passeur_id || null, minute: butHome.minute || null, type: butHome.type, stay: true }, { 
+            preserveScroll: true, 
+            only: ['match'],
+            onSuccess: () => {
+                toast.success('But ajouté avec succès.');
+                setButHome({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
+            },
+            onError: () => {
+                toast.error('Erreur lors de l\'ajout du but.');
+            }
+        });
     };
     const addButAway = (e: React.FormEvent) => {
         e.preventDefault();
         if (!butAway.buteur_id) return;
-        router.post(`/poule-matchs/${match.id}/buts`, { equipe_id: match.equipe_away_id, buteur_id: butAway.buteur_id, passeur_id: butAway.passeur_id || null, minute: butAway.minute || null, type: butAway.type, stay: true }, { preserveScroll: true, only: ['match'] });
-        setButAway({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
+        router.post(`/dashboard/poule-matchs/${match.id}/buts`, { equipe_id: match.equipe_away_id, buteur_id: butAway.buteur_id, passeur_id: butAway.passeur_id || null, minute: butAway.minute || null, type: butAway.type, stay: true }, { 
+            preserveScroll: true, 
+            only: ['match'],
+            onSuccess: () => {
+                toast.success('But ajouté avec succès.');
+                setButAway({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
+            },
+            onError: () => {
+                toast.error('Erreur lors de l\'ajout du but.');
+            }
+        });
     };
 
     const playerName = (id?: number | null) => {
@@ -99,24 +125,62 @@ export default function PouleMatchEdit({ match, homeGardiens, awayGardiens, home
     };
 
     const removeBut = (butId: number) => {
-        router.delete(`/poule-matchs/${match.id}/buts/${butId}`, { data: { stay: true }, preserveScroll: true, only: ['match'] });
+        router.delete(`/dashboard/poule-matchs/${match.id}/buts/${butId}`, { 
+            data: { stay: true }, 
+            preserveScroll: true, 
+            only: ['match'],
+            onSuccess: () => {
+                toast.success('But supprimé avec succès.');
+            },
+            onError: () => {
+                toast.error('Erreur lors de la suppression du but.');
+            }
+        });
     };
 
     const addCartonHome = (e: React.FormEvent) => {
         e.preventDefault();
         if (!cartonHome.joueur_id || !cartonHome.type) return;
-        router.post(`/poule-matchs/${match.id}/cartons`, { joueur_id: cartonHome.joueur_id, type: cartonHome.type, minute: cartonHome.minute || null, stay: true }, { preserveScroll: true, only: ['match'] });
-        setCartonHome({ joueur_id: '', type: '', minute: '' });
+        router.post(`/dashboard/poule-matchs/${match.id}/cartons`, { joueur_id: cartonHome.joueur_id, type: cartonHome.type, minute: cartonHome.minute || null, stay: true }, { 
+            preserveScroll: true, 
+            only: ['match'],
+            onSuccess: () => {
+                toast.success('Carton ajouté avec succès.');
+                setCartonHome({ joueur_id: '', type: '', minute: '' });
+            },
+            onError: () => {
+                toast.error('Erreur lors de l\'ajout du carton.');
+            }
+        });
     };
     const addCartonAway = (e: React.FormEvent) => {
         e.preventDefault();
         if (!cartonAway.joueur_id || !cartonAway.type) return;
-        router.post(`/poule-matchs/${match.id}/cartons`, { joueur_id: cartonAway.joueur_id, type: cartonAway.type, minute: cartonAway.minute || null, stay: true }, { preserveScroll: true, only: ['match'] });
-        setCartonAway({ joueur_id: '', type: '', minute: '' });
+        router.post(`/dashboard/poule-matchs/${match.id}/cartons`, { joueur_id: cartonAway.joueur_id, type: cartonAway.type, minute: cartonAway.minute || null, stay: true }, { 
+            preserveScroll: true, 
+            only: ['match'],
+            onSuccess: () => {
+                toast.success('Carton ajouté avec succès.');
+                setCartonAway({ joueur_id: '', type: '', minute: '' });
+            },
+            onError: () => {
+                toast.error('Erreur lors de l\'ajout du carton.');
+            }
+        });
     };
 
     const removeCarton = (cartonId: number) => {
-        router.delete(`/poule-matchs/${match.id}/cartons/${cartonId}`, { data: { stay: true }, preserveScroll: true, only: ['match'] });
+        router.delete(`/dashboard/poule-matchs/${match.id}/cartons/${cartonId}`, { 
+            data: { stay: true }, 
+            preserveScroll: true, 
+            only: ['match'],
+            onSuccess: () => {
+                toast.success('Carton supprimé avec succès.');
+            },
+            onError: () => {
+                toast.error('Erreur lors de la suppression du carton.');
+            }
+        });
     };
 
     return (

@@ -126,7 +126,7 @@ export default function SaisonShow({ saison }: Props) {
                                                             <td className="px-4 py-2 text-right text-sm">
                                                                 <div className="flex items-center gap-2 justify-end">
                                                                     <Link
-                                                                        href={`/matchs/${m.id}/edit`}
+                                                                        href={`/dashboard/matchs/${m.id}/edit`}
                                                                         className="px-2.5 py-1.5 rounded text-white bg-blue-600 hover:bg-blue-700"
                                                                     >
                                                                         Modifier

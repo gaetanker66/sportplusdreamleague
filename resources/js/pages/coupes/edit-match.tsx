@@ -1,5 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, useForm, router } from '@inertiajs/react';
+import { toast } from 'sonner';
 import * as React from 'react';
 
 export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens = [], homePlayers = [], awayPlayers = [] }: { match: any; homeGardiens?: {id:number; nom:string}[]; awayGardiens?: {id:number; nom:string}[]; homePlayers?: {id:number; nom:string}[]; awayPlayers?: {id:number; nom:string}[] }) {
@@ -18,18 +19,43 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
   const addCartonHome = (e: React.FormEvent) => {
     e.preventDefault();
     if (!cartonHome.joueur_id || !cartonHome.type) return;
-    router.post(`/coupe-matchs/${match.id}/cartons`, { joueur_id: cartonHome.joueur_id, type: cartonHome.type, minute: cartonHome.minute || null, stay: true }, { preserveScroll: true });
-    setCartonHome({ joueur_id: '', type: '', minute: '' });
+    router.post(`/dashboard/coupe-matchs/${match.id}/cartons`, { joueur_id: cartonHome.joueur_id, type: cartonHome.type, minute: cartonHome.minute || null, stay: true }, { 
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success('Carton ajouté avec succès.');
+        setCartonHome({ joueur_id: '', type: '', minute: '' });
+      },
+      onError: () => {
+        toast.error('Erreur lors de l\'ajout du carton.');
+      }
+    });
   };
   const addCartonAway = (e: React.FormEvent) => {
     e.preventDefault();
     if (!cartonAway.joueur_id || !cartonAway.type) return;
-    router.post(`/coupe-matchs/${match.id}/cartons`, { joueur_id: cartonAway.joueur_id, type: cartonAway.type, minute: cartonAway.minute || null, stay: true }, { preserveScroll: true });
-    setCartonAway({ joueur_id: '', type: '', minute: '' });
+    router.post(`/dashboard/coupe-matchs/${match.id}/cartons`, { joueur_id: cartonAway.joueur_id, type: cartonAway.type, minute: cartonAway.minute || null, stay: true }, { 
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success('Carton ajouté avec succès.');
+        setCartonAway({ joueur_id: '', type: '', minute: '' });
+      },
+      onError: () => {
+        toast.error('Erreur lors de l\'ajout du carton.');
+      }
+    });
   };
 
   const removeCarton = (cartonId: number) => {
-    router.delete(`/coupe-matchs/${match.id}/cartons/${cartonId}`, { data: { stay: true }, preserveScroll: true });
+    router.delete(`/dashboard/coupe-matchs/${match.id}/cartons/${cartonId}`, { 
+      data: { stay: true }, 
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success('Carton supprimé avec succès.');
+      },
+      onError: () => {
+        toast.error('Erreur lors de la suppression du carton.');
+      }
+    });
   };
 
   const handleSubmit = (e: React.FormEvent)=> {
@@ -44,7 +70,15 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
       tirs_au_but_home: data.tirs_au_but_home === null || data.tirs_au_but_home === '' ? null : Number(data.tirs_au_but_home),
       tirs_au_but_away: data.tirs_au_but_away === null || data.tirs_au_but_away === '' ? null : Number(data.tirs_au_but_away),
     }));
-    form.put(`/coupe-matchs/${match.id}`, { preserveScroll: true });
+    form.put(`/dashboard/coupe-matchs/${match.id}`, { 
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success('Match enregistré avec succès.');
+      },
+      onError: () => {
+        toast.error('Erreur lors de l\'enregistrement du match.');
+      }
+    });
   };
   const playerName = (id?: number | null) => {
     if (!id) return '';
@@ -57,7 +91,7 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
       <div className="p-4 space-y-4">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">{match.home_equipe?.nom} vs {match.away_equipe?.nom}</h1>
-          <Link href={`/coupes/${match.round?.coupe?.id}/edit`} className="px-3 py-2 rounded bg-gray-600 text-white">Retour</Link>
+          <Link href={`/dashboard/coupes/${match.round?.coupe?.id}/edit`} className="px-3 py-2 rounded bg-gray-600 text-white">Retour</Link>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -117,8 +151,16 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
           <AddGoals title={`Ajouter but - ${match.away_equipe?.nom}`} teamId={match.equipe_away_id} matchId={match.id} players={awayPlayers} opponentPlayers={homePlayers} />
         </div>
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <GoalList title={`Buts ${match.home_equipe?.nom}`} goals={(match.buts||[]).filter((b:any)=> b.equipe_id === match.equipe_home_id)} onRemove={(id:number)=> router.delete(`/coupe-matchs/${match.id}/buts/${id}`, { preserveScroll: true })} players={[...homePlayers, ...awayPlayers]} />
-          <GoalList title={`Buts ${match.away_equipe?.nom}`} goals={(match.buts||[]).filter((b:any)=> b.equipe_id === match.equipe_away_id)} onRemove={(id:number)=> router.delete(`/coupe-matchs/${match.id}/buts/${id}`, { preserveScroll: true })} players={[...homePlayers, ...awayPlayers]} />
+          <GoalList title={`Buts ${match.home_equipe?.nom}`} goals={(match.buts||[]).filter((b:any)=> b.equipe_id === match.equipe_home_id)} onRemove={(id:number)=> router.delete(`/dashboard/coupe-matchs/${match.id}/buts/${id}`, { 
+            preserveScroll: true,
+            onSuccess: () => toast.success('But supprimé avec succès.'),
+            onError: () => toast.error('Erreur lors de la suppression du but.')
+          })} players={[...homePlayers, ...awayPlayers]} />
+          <GoalList title={`Buts ${match.away_equipe?.nom}`} goals={(match.buts||[]).filter((b:any)=> b.equipe_id === match.equipe_away_id)} onRemove={(id:number)=> router.delete(`/dashboard/coupe-matchs/${match.id}/buts/${id}`, { 
+            preserveScroll: true,
+            onSuccess: () => toast.success('But supprimé avec succès.'),
+            onError: () => toast.error('Erreur lors de la suppression du but.')
+          })} players={[...homePlayers, ...awayPlayers]} />
         </div>
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -209,8 +251,16 @@ function AddGoals({ title, teamId, matchId, players, opponentPlayers }: { title:
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.buteur_id) return;
-    router.post(`/coupe-matchs/${matchId}/buts`, { equipe_id: teamId, buteur_id: form.buteur_id, passeur_id: form.passeur_id || null, minute: form.minute || null, type: form.type }, { preserveScroll: true });
-    setForm({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
+    router.post(`/dashboard/coupe-matchs/${matchId}/buts`, { equipe_id: teamId, buteur_id: form.buteur_id, passeur_id: form.passeur_id || null, minute: form.minute || null, type: form.type }, { 
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success('But ajouté avec succès.');
+        setForm({ buteur_id: '', passeur_id: '', minute: '', type: 'normal' });
+      },
+      onError: () => {
+        toast.error('Erreur lors de l\'ajout du but.');
+      }
+    });
   };
   return (
     <div>

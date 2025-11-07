@@ -8,16 +8,16 @@ export default function CoupeEdit({ coupe, equipes }: {
   equipes: {id:number; nom:string; logo?:string}[];
 }) {
   const { post, processing, put } = useForm({});
-  const generate = (e: React.FormEvent)=>{ e.preventDefault(); post(`/coupes/${coupe.id}/generate`, { preserveScroll: true }); };
+  const generate = (e: React.FormEvent)=>{ e.preventDefault(); post(`/dashboard/coupes/${coupe.id}/generate`, { preserveScroll: true }); };
   const [selection, setSelection] = React.useState<number[]>(coupe.equipes?.map((e:any)=>e.id) || []);
   const toggleEquipe = (id: number) => {
     setSelection((prev)=> prev.includes(id) ? prev.filter(x=>x!==id) : (prev.length >= (coupe.nombre_equipes || 0) ? prev : [...prev, id]));
   };
   const saveSelection = () => {
-    router.put(`/coupes/${coupe.id}`, { equipes: selection }, { preserveScroll: true });
+    router.put(`/dashboard/coupes/${coupe.id}`, { equipes: selection }, { preserveScroll: true });
   };
   const recalculer = () => {
-    router.post(`/coupes/${coupe.id}/recalculer`, {}, { preserveScroll: true });
+    router.post(`/dashboard/coupes/${coupe.id}/recalculer`, {}, { preserveScroll: true });
   };
   const [addSelection, setAddSelection] = React.useState<number | ''>('');
   const notSelectedOptions = React.useMemo(() => (
@@ -126,7 +126,7 @@ export default function CoupeEdit({ coupe, equipes }: {
                               {m.termine ? (
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Terminé</span>
                               ) : null}
-                              <Link href={`/coupe-matchs/${m.id}/edit`} className="px-2 py-1 rounded bg-blue-600 text-white">Modifier</Link>
+                              <Link href={`/dashboard/coupe-matchs/${m.id}/edit`} className="px-2 py-1 rounded bg-blue-600 text-white">Modifier</Link>
                             </div>
                           </td>
                           <td className="px-3 py-2 text-right">
@@ -152,7 +152,7 @@ export default function CoupeEdit({ coupe, equipes }: {
                                   {m.match_retour.termine ? (
                                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Terminé</span>
                                   ) : null}
-                                  <Link href={`/coupe-matchs/${m.match_retour.id}/edit`} className="px-2 py-1 rounded bg-blue-600 text-white">Modifier</Link>
+                                  <Link href={`/dashboard/coupe-matchs/${m.match_retour.id}/edit`} className="px-2 py-1 rounded bg-blue-600 text-white">Modifier</Link>
                                 </div>
                               </td>
                               <td className="px-3 py-2 text-right">

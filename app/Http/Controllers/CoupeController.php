@@ -42,7 +42,7 @@ class CoupeController extends Controller
         ]);
         $coupe = Coupe::create($request->only('nom','nombre_equipes','coupe_modele_id','matchs_aleatoires','nombre_matchs','victoire_uniquement'));
         $coupe->equipes()->sync($request->input('equipes', []));
-        return redirect()->route('dashboard.coupes.edit', $coupe);
+        return redirect()->route('dashboard.coupes.edit', $coupe)->with('success', 'Coupe créée avec succès.');
     }
 
     public function edit(Coupe $coupe)

@@ -257,13 +257,15 @@ class MatchController extends Controller
             'arrets_away' => $validated['arrets_away'] ?? $match->arrets_away,
             'termine' => array_key_exists('termine', $validated) ? (bool)$validated['termine'] : $match->termine,
         ]);
+        
+        // Si on veut rester sur la page (preserveScroll), retourner back() avec le message
+        // Sinon, rediriger vers la page de la saison
         $saisonId = optional(optional($match->journee)->saison)->id;
         $numero = optional($match->journee)->numero;
-        if ($saisonId) {
-            $url = route('dashboard.saisons.show', $saisonId) . ($numero ? ('#journee-' . $numero) : '');
-            return Inertia::location($url);
-        }
-        return back()->with('success', 'Mise à jour effectuée.');
+        
+        // Toujours retourner back() avec le message pour que les callbacks fonctionnent
+        // Inertia gérera la redirection si nécessaire
+        return back()->with('success', 'Match enregistré avec succès.');
     }
 }
 

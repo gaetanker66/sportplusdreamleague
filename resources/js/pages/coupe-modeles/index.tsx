@@ -9,7 +9,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: 'Modèles de Coupe',
-        href: '/coupe-modeles',
+        href: '/dashboard/coupe-modeles',
     },
 ];
 
@@ -30,7 +30,7 @@ interface Props {
 export default function CoupeModeleIndex({ modeles }: Props) {
     const handleDelete = (id: number) => {
         if (confirm('Êtes-vous sûr de vouloir supprimer ce modèle ?')) {
-            router.delete(`/coupe-modeles/${id}`);
+            router.delete(`/dashboard/coupe-modeles/${id}`);
         }
     };
 
@@ -44,7 +44,7 @@ export default function CoupeModeleIndex({ modeles }: Props) {
                         <p className="text-gray-600 dark:text-gray-400">Gérez les modèles de coupe disponibles</p>
                     </div>
                     <Link
-                        href="/coupe-modeles/create"
+                        href="/dashboard/coupe-modeles/create"
                         className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
                     >
                         <span className="mr-2">➕</span>
@@ -58,7 +58,7 @@ export default function CoupeModeleIndex({ modeles }: Props) {
                         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Aucun modèle de coupe</h3>
                         <p className="text-gray-600 dark:text-gray-400 mb-4">Commencez par créer votre premier modèle de coupe</p>
                         <Link
-                            href="/coupe-modeles/create"
+                            href="/dashboard/coupe-modeles/create"
                             className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
                         >
                             Créer un modèle
@@ -106,7 +106,7 @@ export default function CoupeModeleIndex({ modeles }: Props) {
                                 <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                                     <div className="flex space-x-2">
                                         <Link
-                                            href={`/coupe-modeles/${modele.id}/edit`}
+                                            href={`/dashboard/coupe-modeles/${modele.id}/edit`}
                                             className="inline-flex items-center px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800 transition-colors"
                                         >
                                             Modifier

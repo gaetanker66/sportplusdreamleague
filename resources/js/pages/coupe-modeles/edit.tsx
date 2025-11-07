@@ -55,7 +55,7 @@ export default function CoupeModeleEdit({ modele }: Props) {
                         <p className="text-gray-600 dark:text-gray-400">Modifiez les informations du modèle "{modele.nom}"</p>
                     </div>
                     <Link
-                        href="/coupe-modeles"
+                        href="/dashboard/coupe-modeles"
                         className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
                     >
                         Retour
@@ -145,7 +145,7 @@ export default function CoupeModeleEdit({ modele }: Props) {
 
                         <div className="flex items-center justify-end space-x-4">
                             <Link
-                                href="/coupe-modeles"
+                                href="/dashboard/coupe-modeles"
                                 className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                             >
                                 Annuler
