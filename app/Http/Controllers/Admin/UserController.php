@@ -49,7 +49,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route('dashboard.admin.users.index')
             ->with('success', 'Utilisateur créé avec succès.');
     }
 
@@ -95,7 +95,7 @@ class UserController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route('dashboard.admin.users.index')
             ->with('success', 'Utilisateur mis à jour avec succès.');
     }
 
@@ -106,7 +106,7 @@ class UserController extends Controller
     {
         $user->delete();
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route('dashboard.admin.users.index')
             ->with('success', 'Utilisateur supprimé avec succès.');
     }
 }
