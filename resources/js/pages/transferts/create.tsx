@@ -5,8 +5,8 @@ import * as React from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Transferts', href: '/transferts' },
-    { title: 'Créer', href: '/transferts/create' },
+    { title: 'Transferts', href: '/dashboard/transferts' },
+    { title: 'Créer', href: '/dashboard/transferts/create' },
 ];
 
 interface Joueur {

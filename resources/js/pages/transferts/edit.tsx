@@ -5,7 +5,7 @@ import * as React from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Transferts', href: '/transferts' },
+    { title: 'Transferts', href: '/dashboard/transferts' },
     { title: 'Modifier', href: '#' },
 ];
 
@@ -40,7 +40,7 @@ export default function TransfertsEdit({ transfert, joueurs = [], equipes = [] }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/transferts/${transfert.id}`);
+        put(`/dashboard/transferts/${transfert.id}`);
     };
 
     return (

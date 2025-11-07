@@ -6,8 +6,8 @@ import * as React from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Saisons', href: '/saisons' },
-    { title: 'Match', href: '/matchs/edit' },
+    { title: 'Saisons', href: '/dashboard/saisons' },
+    { title: 'Match', href: '/dashboard/matchs/edit' },
 ];
 
 interface Equipe { id: number; nom: string }

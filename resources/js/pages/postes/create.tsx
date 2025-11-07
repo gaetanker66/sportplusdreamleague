@@ -4,8 +4,8 @@ import { Head, Link, useForm } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Postes', href: '/postes' },
-    { title: 'Créer', href: '/postes/create' },
+    { title: 'Postes', href: '/dashboard/postes' },
+    { title: 'Créer', href: '/dashboard/postes/create' },
 ];
 
 export default function PostesCreate() {

@@ -4,8 +4,8 @@ import { Head, Link, useForm } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Postes', href: '/postes' },
-    { title: 'Modifier', href: '/postes/edit' },
+    { title: 'Postes', href: '/dashboard/postes' },
+    { title: 'Modifier', href: '/dashboard/postes/edit' },
 ];
 
 interface Poste { id: number; nom: string; }
@@ -15,7 +15,7 @@ export default function PostesEdit({ poste }: { poste: Poste }) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/postes/${poste.id}`);
+        put(`/dashboard/postes/${poste.id}`);
     };
 
     return (

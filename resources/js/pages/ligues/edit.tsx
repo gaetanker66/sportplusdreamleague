@@ -13,7 +13,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: 'Modifier',
-        href: '/ligues/edit',
+        href: '/dashboard/ligues/edit',
     },
 ];
 

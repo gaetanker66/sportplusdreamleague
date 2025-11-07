@@ -10,11 +10,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: 'Modèles de Coupe',
-        href: '/coupe-modeles',
+        href: '/dashboard/coupe-modeles',
     },
     {
         title: 'Modifier',
-        href: '/coupe-modeles/edit',
+        href: '/dashboard/coupe-modeles/edit',
     },
 ];
 
@@ -42,7 +42,7 @@ export default function CoupeModeleEdit({ modele }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/coupe-modeles/${modele.id}`);
+        put(`/dashboard/coupe-modeles/${modele.id}`);
     };
 
     return (

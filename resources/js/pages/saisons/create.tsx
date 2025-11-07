@@ -12,11 +12,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: 'Saisons',
-        href: '/saisons',
+        href: '/dashboard/saisons',
     },
     {
         title: 'Créer',
-        href: '/saisons/create',
+        href: '/dashboard/saisons/create',
     },
 ];
 

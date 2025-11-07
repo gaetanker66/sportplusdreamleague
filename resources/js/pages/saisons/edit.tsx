@@ -16,7 +16,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: 'Modifier',
-        href: '/saisons/edit',
+        href: '/dashboard/saisons/edit',
     },
 ];
 
