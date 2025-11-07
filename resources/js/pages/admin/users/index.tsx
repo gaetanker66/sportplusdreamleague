@@ -10,23 +10,23 @@ import { type BreadcrumbItem } from '@/types';
 // Helper function pour générer les routes
 const route = (name: string, ...params: (string | number)[]): string => {
     const routes: Record<string, string | ((id: number) => string)> = {
-        'admin.users.index': '/admin/users',
-        'admin.users.create': '/admin/users/create',
-        'admin.users.edit': (id: number) => `/admin/users/${id}/edit`,
-        'admin.users.destroy': (id: number) => `/admin/users/${id}`,
+        'admin.users.index': '/dashboard/admin/users',
+        'admin.users.create': '/dashboard/admin/users/create',
+        'admin.users.edit': (id: number) => `/dashboard/admin/users/${id}/edit`,
+        'admin.users.destroy': (id: number) => `/dashboard/admin/users/${id}`,
     };
     
     const routePattern = routes[name];
     if (typeof routePattern === 'function' && params.length > 0) {
         return routePattern(params[0] as number);
     }
-    return (typeof routePattern === 'string' ? routePattern : `/${name.replace('.', '/')}`) as string;
+    return (typeof routePattern === 'string' ? routePattern : `/dashboard/${name.replace('.', '/')}`) as string;
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Administration', href: '/admin/users' },
-    { title: 'Utilisateurs', href: '/admin/users' },
+    { title: 'Administration', href: '/dashboard/admin/users' },
+    { title: 'Utilisateurs', href: '/dashboard/admin/users' },
 ];
 
 interface User {

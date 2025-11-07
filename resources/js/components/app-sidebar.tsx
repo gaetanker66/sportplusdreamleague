@@ -92,7 +92,7 @@ export function AppSidebar() {
     
     // Filtrer les items de navigation pour ne montrer l'administration que si l'utilisateur est admin
     const mainNavItems = allMainNavItems.filter(item => {
-        if (item.href === '/admin/users') {
+        if (item.href === '/dashboard/admin/users') {
             return isAdmin;
         }
         return true;
