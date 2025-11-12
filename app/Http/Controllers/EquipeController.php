@@ -28,18 +28,25 @@ class EquipeController extends Controller
             'nom' => 'required|string|max:255',
             'logo' => 'nullable|string',
             'description' => 'nullable|string',
-            'rival_id' => 'nullable|exists:equipes,id',
+            'rivales' => 'nullable|array',
+            'rivales.*' => 'exists:equipes,id',
         ]);
 
         $equipe = Equipe::create($validated);
 
-        // Synchronisation bidirectionnelle du rival
-        if ($validated['rival_id']) {
-            $rival = Equipe::find($validated['rival_id']);
-            if ($rival) {
-                // Si le rival n'a pas déjà un rival, on définit cette équipe comme son rival
-                if (!$rival->rival_id) {
-                    $rival->update(['rival_id' => $equipe->id]);
+        // Synchroniser les rivales (relation bidirectionnelle)
+        if (!empty($validated['rivales'])) {
+            $rivalesIds = array_filter($validated['rivales'], function($id) use ($equipe) {
+                return $id != $equipe->id; // Empêcher qu'une équipe soit rivale d'elle-même
+            });
+            
+            $equipe->rivales()->sync($rivalesIds);
+            
+            // Créer les relations inverses (si A est rivale de B, alors B est aussi rivale de A)
+            foreach ($rivalesIds as $rivaleId) {
+                $rivale = Equipe::find($rivaleId);
+                if ($rivale) {
+                    $rivale->rivales()->syncWithoutDetaching([$equipe->id]);
                 }
             }
         }
@@ -49,7 +56,7 @@ class EquipeController extends Controller
 
     public function show(Equipe $equipe)
     {
-        $equipe->load(['joueurs.poste', 'rival']);
+        $equipe->load(['joueurs.poste', 'rivales']);
         
         // Calculer les palmarès
         $palmares = $this->calculerPalmares($equipe);
@@ -508,9 +515,9 @@ class EquipeController extends Controller
 
     public function edit(Equipe $equipe)
     {
-        $equipe->load(['joueurs.poste', 'joueurs.postesSecondaires', 'rival']);
+        $equipe->load(['joueurs.poste', 'joueurs.postesSecondaires', 'rivales']);
         $postes = \App\Models\Poste::orderBy('nom')->get();
-        // Charger toutes les équipes pour le sélecteur de rival (sans logos pour optimiser), exclure l'équipe actuelle
+        // Charger toutes les équipes pour le sélecteur de rivales (sans logos pour optimiser), exclure l'équipe actuelle
         $equipes = Equipe::select('id', 'nom')->where('id', '!=', $equipe->id)->orderBy('nom')->get();
         return Inertia::render('equipes/edit', compact('equipe', 'postes', 'equipes'));
     }
@@ -521,7 +528,8 @@ class EquipeController extends Controller
             'nom' => 'required|string|max:255',
             'logo' => 'nullable|string',
             'description' => 'nullable|string',
-            'rival_id' => 'nullable|exists:equipes,id',
+            'rivales' => 'nullable|array',
+            'rivales.*' => 'exists:equipes,id',
             'players' => 'array',
             'players.*.id' => 'required|exists:joueurs,id',
             'players.*.nom' => 'required|string|max:255',
@@ -532,40 +540,37 @@ class EquipeController extends Controller
             'players.*.postes_secondaires.*' => 'exists:postes,id',
         ]);
 
-        // Récupérer l'ancien rival avant la mise à jour
-        $ancienRivalId = $equipe->rival_id;
+        // Récupérer les anciennes rivales avant la mise à jour
+        $anciennesRivalesIds = $equipe->rivales->pluck('id')->toArray();
 
-        $equipe->update($request->only('nom', 'logo', 'description', 'rival_id'));
+        $equipe->update($request->only('nom', 'logo', 'description'));
 
-        // Gestion de la synchronisation bidirectionnelle du rival
-        $nouveauRivalId = $validated['rival_id'];
+        // Gestion de la synchronisation des rivales (relation bidirectionnelle)
+        $nouvellesRivalesIds = !empty($validated['rivales']) 
+            ? array_filter($validated['rivales'], function($id) use ($equipe) {
+                return $id != $equipe->id; // Empêcher qu'une équipe soit rivale d'elle-même
+            })
+            : [];
 
-        // Si l'équipe avait un rival et qu'on le change ou le supprime
-        if ($ancienRivalId && $ancienRivalId !== $nouveauRivalId) {
-            $ancienRival = Equipe::find($ancienRivalId);
-            if ($ancienRival && $ancienRival->rival_id === $equipe->id) {
-                // L'ancien rival avait cette équipe comme rival, on le supprime
-                $ancienRival->update(['rival_id' => null]);
+        // Synchroniser les rivales
+        $equipe->rivales()->sync($nouvellesRivalesIds);
+
+        // Gérer les relations inverses
+        // Supprimer les relations inverses pour les anciennes rivales qui ne sont plus rivales
+        $rivalesSupprimees = array_diff($anciennesRivalesIds, $nouvellesRivalesIds);
+        foreach ($rivalesSupprimees as $rivaleId) {
+            $rivale = Equipe::find($rivaleId);
+            if ($rivale) {
+                $rivale->rivales()->detach($equipe->id);
             }
         }
 
-        // Si un nouveau rival est défini
-        if ($nouveauRivalId) {
-            $nouveauRival = Equipe::find($nouveauRivalId);
-            if ($nouveauRival) {
-                // Si le nouveau rival a déjà un rival différent, on le remplace
-                // Sinon, on définit cette équipe comme son rival
-                if ($nouveauRival->rival_id !== $equipe->id) {
-                    // Si le nouveau rival avait un autre rival, on le supprime d'abord
-                    if ($nouveauRival->rival_id) {
-                        $ancienRivalDuNouveau = Equipe::find($nouveauRival->rival_id);
-                        if ($ancienRivalDuNouveau && $ancienRivalDuNouveau->rival_id === $nouveauRival->id) {
-                            $ancienRivalDuNouveau->update(['rival_id' => null]);
-                        }
-                    }
-                    // Définir cette équipe comme le rival du nouveau rival
-                    $nouveauRival->update(['rival_id' => $equipe->id]);
-                }
+        // Ajouter les relations inverses pour les nouvelles rivales
+        $nouvellesRivales = array_diff($nouvellesRivalesIds, $anciennesRivalesIds);
+        foreach ($nouvellesRivales as $rivaleId) {
+            $rivale = Equipe::find($rivaleId);
+            if ($rivale) {
+                $rivale->rivales()->syncWithoutDetaching([$equipe->id]);
             }
         }
 

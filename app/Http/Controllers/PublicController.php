@@ -356,7 +356,20 @@ class PublicController extends Controller
 
         $next = null; $past = [];
         if ($selectedSaisonId) {
-            $saison = Saison::with(['journees.matchs.homeEquipe','journees.matchs.awayEquipe'])
+            $saison = Saison::with([
+                'journees.matchs.homeEquipe' => function($q) {
+                    $q->select('equipes.id', 'equipes.nom', 'equipes.logo');
+                },
+                'journees.matchs.awayEquipe' => function($q) {
+                    $q->select('equipes.id', 'equipes.nom', 'equipes.logo');
+                },
+                'journees.matchs.homeEquipe.rivales' => function($q) {
+                    $q->select('equipes.id');
+                },
+                'journees.matchs.awayEquipe.rivales' => function($q) {
+                    $q->select('equipes.id');
+                }
+            ])
                 ->find($selectedSaisonId);
             if ($saison) {
                 // Trouver la prochaine journée: plus petit numero ayant au moins un match non terminé

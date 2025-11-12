@@ -28,8 +28,7 @@ interface Equipe {
     nom: string;
     logo?: string;
     description?: string;
-    rival_id?: number | null;
-    rival?: { id: number; nom: string } | null;
+    rivales?: { id: number; nom: string }[];
     joueurs?: Joueur[];
 }
 
@@ -46,7 +45,7 @@ type FormData = {
     nom: string;
     logo: string;
     description: string;
-    rival_id: number | null;
+    rivales: number[];
     players: PlayerForm[];
 };
 
@@ -61,7 +60,7 @@ export default function EquipesEdit({ equipe, postes = [] as Poste[], equipes = 
         nom: equipe.nom,
         logo: equipe.logo || '',
         description: equipe.description || '',
-        rival_id: equipe.rival_id || null,
+        rivales: (equipe.rivales ?? []).map(r => r.id),
         players: (equipe.joueurs ?? []).map((j): PlayerForm => ({
             id: j.id,
             nom: j.nom,
@@ -151,24 +150,14 @@ export default function EquipesEdit({ equipe, postes = [] as Poste[], equipes = 
                             </div>
 
                             <div>
-                                <label htmlFor="rival_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Équipe rivale</label>
-                                <select
-                                    id="rival_id"
-                                    value={data.rival_id || ''}
-                                    onChange={(e) => setData('rival_id', e.target.value ? Number(e.target.value) : null)}
-                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                >
-                                    <option value="">Aucune équipe rivale</option>
-                                    {equipes.map(e => (
-                                        <option key={e.id} value={e.id}>{e.nom}</option>
-                                    ))}
-                                </select>
-                                {equipe.rival && (
-                                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                        Cette équipe est actuellement le rival de : <strong>{equipe.rival.nom}</strong>
-                                    </p>
-                                )}
-                                {errors.rival_id && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.rival_id}</p>}
+                                <label htmlFor="rivales" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Équipes rivales</label>
+                                <TomMulti
+                                    options={equipes.map(e => ({ value: e.id, label: e.nom }))}
+                                    values={data.rivales}
+                                    placeholder="Sélectionnez une ou plusieurs équipes rivales"
+                                    onChange={(vals) => setData('rivales', vals)}
+                                />
+                                {errors.rivales && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.rivales}</p>}
                             </div>
 
                             <div>

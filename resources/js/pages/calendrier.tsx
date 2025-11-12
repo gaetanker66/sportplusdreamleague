@@ -6,7 +6,7 @@ import calendrierBackground from '../../images/calendrier-background.avif';
 
 interface Ligue { id: number; nom: string; niveau: number; logo?: string | null }
 interface Saison { id: number; nom: string; date_debut: string; ligue_id: number }
-interface Equipe { id: number; nom: string; logo?: string }
+interface Equipe { id: number; nom: string; logo?: string; rivales?: { id: number }[] }
 interface Match { id: number; equipe_home_id: number; equipe_away_id: number; termine: boolean; home_equipe?: Equipe; away_equipe?: Equipe; score_home: number; score_away: number }
 interface Journee { id: number; numero?: number; date?: string | null; matchs: Match[] }
 interface Props {
@@ -71,6 +71,12 @@ export default function Calendrier({ ligues = [], saisons = [], selectedLigueId,
         setSaisonId(id);
         const lid = ligueId || selectedLigueId;
         window.location.href = `/calendrier?ligue_id=${lid}&saison_id=${id}`;
+    };
+
+    // Fonction pour vérifier si deux équipes sont rivales
+    const sontRivales = (equipe1: Equipe | undefined, equipe2: Equipe | undefined): boolean => {
+        if (!equipe1 || !equipe2) return false;
+        return equipe1.rivales?.some(r => r.id === equipe2.id) || false;
     };
     return (
         <div 
@@ -138,16 +144,20 @@ export default function Calendrier({ ligues = [], saisons = [], selectedLigueId,
                                                 {m.termine ? (
                                                     (() => {
                                                         const colors = getScoreColorClasses(m);
+                                                        const isRivalry = sontRivales(m.home_equipe, m.away_equipe);
                                                         return (
                                                             <span>
                                                                 <span className={colors.homeColor}>{m.score_home}</span>
-                                                                <span className="mx-1">-</span>
+                                                                <span className="mx-1">{isRivalry ? '🔥' : '-'}</span>
                                                                 <span className={colors.awayColor}>{m.score_away}</span>
                                                             </span>
                                                         );
                                                     })()
                                                 ) : (
-                                                    <span>-</span>
+                                                    (() => {
+                                                        const isRivalry = sontRivales(m.home_equipe, m.away_equipe);
+                                                        return <span>{isRivalry ? '🔥' : '-'}</span>;
+                                                    })()
                                                 )}
                                             </td>
                                             <td className="px-3 py-2 text-right text-white">
@@ -181,10 +191,11 @@ export default function Calendrier({ ligues = [], saisons = [], selectedLigueId,
                                                     <td className="px-3 py-2 text-center w-24">
                                                         {(() => {
                                                             const colors = getScoreColorClasses(m);
+                                                            const isRivalry = sontRivales(m.home_equipe, m.away_equipe);
                                                             return (
                                                                 <span>
                                                                     <span className={colors.homeColor}>{m.score_home}</span>
-                                                                    <span className="mx-1">-</span>
+                                                                    <span className="mx-1">{isRivalry ? '🔥' : '-'}</span>
                                                                     <span className={colors.awayColor}>{m.score_away}</span>
                                                                 </span>
                                                             );

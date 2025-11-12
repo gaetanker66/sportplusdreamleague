@@ -42,7 +42,7 @@ interface Equipe {
     description?: string;
     created_at: string;
     joueurs?: Joueur[];
-    rival?: Rival;
+    rivales?: Rival[];
 }
 
 interface Props {
@@ -208,25 +208,32 @@ export default function EquipesShow({ equipe, palmares }: Props) {
                         </div>
                     )}
 
-                    {/* Rival historique */}
-                    {equipe.rival && (
+                    {/* Rivales historiques */}
+                    {equipe.rivales && equipe.rivales.length > 0 && (
                         <div className="bg-black/40 dark:bg-black/60 backdrop-blur-sm shadow-2xl rounded-lg overflow-hidden p-6 border border-gray-200 dark:border-gray-700">
-                            <h2 className="text-xl font-semibold text-white mb-4">Rival historique</h2>
-                            <Link 
-                                href={`/equipes/${equipe.rival.id}`}
-                                className="flex items-center gap-4 hover:bg-gray-900/50 dark:hover:bg-gray-800/50 rounded-lg p-4 transition-colors"
-                            >
-                                <EquipeLogo 
-                                    equipeId={equipe.rival.id} 
-                                    logo={equipe.rival.logo}
-                                    nom={equipe.rival.nom}
-                                    size="lg"
-                                    className="rounded-lg"
-                                />
-                                <div>
-                                    <p className="text-lg font-semibold text-white">{equipe.rival.nom}</p>
-                                </div>
-                            </Link>
+                            <h2 className="text-xl font-semibold text-white mb-4">
+                                {equipe.rivales.length === 1 ? 'Rivale historique' : 'Rivales historiques'}
+                            </h2>
+                            <div className="space-y-3">
+                                {equipe.rivales.map((rivale) => (
+                                    <Link 
+                                        key={rivale.id}
+                                        href={`/equipes/${rivale.id}`}
+                                        className="flex items-center gap-4 hover:bg-gray-900/50 dark:hover:bg-gray-800/50 rounded-lg p-4 transition-colors"
+                                    >
+                                        <EquipeLogo 
+                                            equipeId={rivale.id} 
+                                            logo={rivale.logo}
+                                            nom={rivale.nom}
+                                            size="lg"
+                                            className="rounded-lg"
+                                        />
+                                        <div>
+                                            <p className="text-lg font-semibold text-white">{rivale.nom}</p>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </main>

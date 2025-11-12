@@ -28,7 +28,10 @@ class TransfertController extends Controller
      */
     public function create()
     {
-        $joueurs = Joueur::with('equipe:id,nom')->orderBy('nom')->get();
+        $joueurs = Joueur::select('id', 'nom', 'equipe_id')
+            ->with('equipe:id,nom')
+            ->orderBy('nom')
+            ->get();
         $equipes = Equipe::select('id', 'nom')->orderBy('nom')->get();
         
         return Inertia::render('transferts/create', compact('joueurs', 'equipes'));
@@ -83,7 +86,10 @@ class TransfertController extends Controller
     public function edit(Transfert $transfert)
     {
         $transfert->load(['joueur', 'ancienneEquipe', 'nouvelleEquipe']);
-        $joueurs = Joueur::with('equipe:id,nom')->orderBy('nom')->get();
+        $joueurs = Joueur::select('id', 'nom', 'equipe_id')
+            ->with('equipe:id,nom')
+            ->orderBy('nom')
+            ->get();
         $equipes = Equipe::select('id', 'nom')->orderBy('nom')->get();
         
         return Inertia::render('transferts/edit', compact('transfert', 'joueurs', 'equipes'));

@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { TomSelectMulti } from '@/components/tomselect';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -22,7 +23,7 @@ export default function EquipesCreate({ equipes = [] }: Props) {
         nom: '',
         logo: '',
         description: '',
-        rival_id: null as number | null,
+        rivales: [] as number[],
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -73,19 +74,14 @@ export default function EquipesCreate({ equipes = [] }: Props) {
                             </div>
 
                             <div>
-                                <label htmlFor="rival_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Équipe rivale</label>
-                                <select
-                                    id="rival_id"
-                                    value={data.rival_id || ''}
-                                    onChange={(e) => setData('rival_id', e.target.value ? Number(e.target.value) : null)}
-                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                >
-                                    <option value="">Aucune équipe rivale</option>
-                                    {equipes.map(equipe => (
-                                        <option key={equipe.id} value={equipe.id}>{equipe.nom}</option>
-                                    ))}
-                                </select>
-                                {errors.rival_id && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.rival_id}</p>}
+                                <label htmlFor="rivales" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Équipes rivales</label>
+                                <TomSelectMulti
+                                    options={equipes.map(e => ({ value: e.id, label: e.nom }))}
+                                    values={data.rivales}
+                                    placeholder="Sélectionnez une ou plusieurs équipes rivales"
+                                    onChange={(vals) => setData('rivales', vals)}
+                                />
+                                {errors.rivales && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.rivales}</p>}
                             </div>
 
                             <div>

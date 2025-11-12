@@ -10,7 +10,6 @@ class Equipe extends Model
         'nom',
         'logo',
         'description',
-        'rival_id',
     ];
 
     public function joueurs()
@@ -31,14 +30,10 @@ class Equipe extends Model
         ])->withTimestamps();
     }
 
-    public function rival()
+    public function rivales()
     {
-        return $this->belongsTo(Equipe::class, 'rival_id');
-    }
-
-    public function rivalDe()
-    {
-        return $this->hasOne(Equipe::class, 'rival_id');
+        return $this->belongsToMany(Equipe::class, 'equipe_rivale', 'equipe_id', 'rivale_id')
+            ->withTimestamps();
     }
 }
 
