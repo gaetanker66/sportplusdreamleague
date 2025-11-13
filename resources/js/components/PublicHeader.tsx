@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import logo from '../../images/logo.avif';
+import logo from '../../images/logo.svg';
 import AppearanceToggleDropdown from './appearance-dropdown';
 
 export default function PublicHeader() {

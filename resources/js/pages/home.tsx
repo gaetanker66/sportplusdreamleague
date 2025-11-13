@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import PublicHeader from '@/components/PublicHeader';
-import logo from '../../images/logo.avif';
+import logo from '../../images/logo.svg';
 import homeBackground from '../../images/home-backgroud.avif';
 
 export default function Home() {

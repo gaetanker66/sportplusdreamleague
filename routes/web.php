@@ -97,10 +97,10 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
 });
 
 // Route pour servir le logo depuis resources/images
-Route::get('logo.avif', function () {
-    $logoPath = resource_path('images/logo.avif');
+Route::get('logo.svg', function () {
+    $logoPath = resource_path('images/logo.svg');
     if (file_exists($logoPath)) {
-        return response()->file($logoPath, ['Content-Type' => 'image/avif']);
+        return response()->file($logoPath, ['Content-Type' => 'image/svg+xml']);
     }
     abort(404);
 })->name('logo');

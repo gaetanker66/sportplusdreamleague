@@ -33,7 +33,7 @@
         <title inertia>{{ config('app.name', 'Sport Plus Dream League') }}</title>
 
         {{-- Utiliser le logo depuis resources/images via une route Laravel --}}
-        <link rel="icon" href="{{ route('logo') }}" type="image/avif">
+        <link rel="icon" href="{{ route('logo') }}" type="image/svg+xml">
         <link rel="apple-touch-icon" href="{{ route('logo') }}">
 
         <link rel="preconnect" href="https://fonts.bunny.net">

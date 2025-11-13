@@ -1,4 +1,4 @@
-import logo from '../../images/logo.avif';
+import logo from '../../images/logo.svg';
 
 export default function AppLogo() {
     return (
