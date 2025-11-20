@@ -191,6 +191,7 @@ class CoupeController extends Controller
             'is_fake' => 'nullable|boolean',
             'tirs_au_but_home' => 'nullable|integer|min:0',
             'tirs_au_but_away' => 'nullable|integer|min:0',
+            'homme_du_match_id' => 'nullable|exists:joueurs,id',
         ]);
         // Gestion des cas 0/1 équipe
         $homeId = $match->equipe_home_id; $awayId = $match->equipe_away_id;
@@ -209,6 +210,7 @@ class CoupeController extends Controller
             'is_fake' => array_key_exists('is_fake', $validated) ? (bool)$validated['is_fake'] : ($match->is_fake ?? false),
             'tirs_au_but_home' => array_key_exists('tirs_au_but_home', $validated) ? ($validated['tirs_au_but_home'] ?: null) : $match->tirs_au_but_home,
             'tirs_au_but_away' => array_key_exists('tirs_au_but_away', $validated) ? ($validated['tirs_au_but_away'] ?: null) : $match->tirs_au_but_away,
+            'homme_du_match_id' => array_key_exists('homme_du_match_id', $validated) ? $validated['homme_du_match_id'] : $match->homme_du_match_id,
         ];
 
         if (($homeId && !$awayId) || ($awayId && !$homeId)) {
@@ -313,7 +315,12 @@ class CoupeController extends Controller
         // Récupérer tous les IDs de joueurs qui ont des buts/cartons dans ce match (même s'ils ont été transférés)
         $joueurIdsButs = $match->buts->pluck('buteur_id')->merge($match->buts->pluck('passeur_id'))->filter()->unique();
         $joueurIdsCartons = $match->cartons->pluck('joueur_id')->unique();
-        $joueurIdsHistoriques = $joueurIdsButs->merge($joueurIdsCartons)->unique();
+        // Ajouter l'homme du match s'il existe
+        $joueurIdsHistoriques = $joueurIdsButs->merge($joueurIdsCartons);
+        if ($match->homme_du_match_id) {
+            $joueurIdsHistoriques->push($match->homme_du_match_id);
+        }
+        $joueurIdsHistoriques = $joueurIdsHistoriques->unique();
         
         if ($joueurIdsHistoriques->isNotEmpty()) {
             $joueursHistoriques = \App\Models\Joueur::whereIn('id', $joueurIdsHistoriques)

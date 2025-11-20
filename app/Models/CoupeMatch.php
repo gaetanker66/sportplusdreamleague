@@ -26,6 +26,7 @@ class CoupeMatch extends Model
         'score_cumule_away',
         'tirs_au_but_home',
         'tirs_au_but_away',
+        'homme_du_match_id',
     ];
     protected $casts = ['termine' => 'boolean', 'is_fake' => 'boolean', 'is_aller' => 'boolean'];
 
@@ -62,6 +63,11 @@ class CoupeMatch extends Model
     public function matchAller()
     {
         return $this->hasOne(CoupeMatch::class, 'match_retour_id');
+    }
+
+    public function hommeDuMatch()
+    {
+        return $this->belongsTo(Joueur::class, 'homme_du_match_id');
     }
 }
 

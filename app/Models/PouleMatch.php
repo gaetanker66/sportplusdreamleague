@@ -19,7 +19,8 @@ class PouleMatch extends Model
         'gardien_home_id',
         'gardien_away_id',
         'arrets_home',
-        'arrets_away'
+        'arrets_away',
+        'homme_du_match_id'
     ];
 
     protected $casts = [
@@ -59,5 +60,10 @@ class PouleMatch extends Model
     public function cartons()
     {
         return $this->hasMany(PouleCarton::class);
+    }
+
+    public function hommeDuMatch()
+    {
+        return $this->belongsTo(Joueur::class, 'homme_du_match_id');
     }
 }

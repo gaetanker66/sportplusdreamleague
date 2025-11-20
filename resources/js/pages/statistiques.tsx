@@ -17,7 +17,7 @@ interface Props {
     selectedSaisonId: number | null;
     selectedCoupeId: number | null;
     selectedModeleId: string | null;
-    type: 'buteur' | 'passeur' | 'arret' | 'clean_sheet' | 'coup_franc' | 'penalty' | 'carton_jaune' | 'carton_rouge';
+    type: 'buteur' | 'passeur' | 'arret' | 'clean_sheet' | 'coup_franc' | 'penalty' | 'carton_jaune' | 'carton_rouge' | 'homme_du_match';
     stats: Stat[];
     mode: 'ligue' | 'tournois';
 }
@@ -144,7 +144,8 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
             'coup_franc': 'coups francs',
             'penalty': 'penalties',
             'carton_jaune': 'cartons jaunes',
-            'carton_rouge': 'cartons rouges'
+            'carton_rouge': 'cartons rouges',
+            'homme_du_match': 'hommes du match'
         };
         return labels[type] || 'total';
     };
@@ -258,6 +259,7 @@ export default function Statistiques({ ligues = [], saisons = [], coupes = [], c
                             <option value="penalty">Penalty</option>
                             <option value="carton_jaune">Carton jaune</option>
                             <option value="carton_rouge">Carton rouge</option>
+                            <option value="homme_du_match">Homme du match</option>
                         </select>
                     </div>
                 </div>

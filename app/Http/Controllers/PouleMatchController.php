@@ -62,7 +62,12 @@ class PouleMatchController extends Controller
         // Récupérer tous les IDs de joueurs qui ont des buts/cartons dans ce match (même s'ils ont été transférés)
         $joueurIdsButs = $poule_match->buts->pluck('buteur_id')->merge($poule_match->buts->pluck('passeur_id'))->filter()->unique();
         $joueurIdsCartons = $poule_match->cartons->pluck('joueur_id')->unique();
-        $joueurIdsHistoriques = $joueurIdsButs->merge($joueurIdsCartons)->unique();
+        // Ajouter l'homme du match s'il existe
+        $joueurIdsHistoriques = $joueurIdsButs->merge($joueurIdsCartons);
+        if ($poule_match->homme_du_match_id) {
+            $joueurIdsHistoriques->push($poule_match->homme_du_match_id);
+        }
+        $joueurIdsHistoriques = $joueurIdsHistoriques->unique();
         
         if ($joueurIdsHistoriques->isNotEmpty()) {
             $joueursHistoriques = \App\Models\Joueur::whereIn('id', $joueurIdsHistoriques)
@@ -106,6 +111,7 @@ class PouleMatchController extends Controller
                 'score_home' => (int)($poule_match->score_home ?? 0),
                 'score_away' => (int)($poule_match->score_away ?? 0),
                 'termine' => (bool)$poule_match->termine,
+                'homme_du_match_id' => $poule_match->homme_du_match_id,
                 'buts' => $poule_match->buts()->get(['id','equipe_id','buteur_id','passeur_id','minute','type']),
                 'cartons' => $poule_match->cartons()->get(['id','joueur_id','type','minute']),
             ],
@@ -125,6 +131,7 @@ class PouleMatchController extends Controller
             'arrets_home' => 'nullable|integer|min:0',
             'arrets_away' => 'nullable|integer|min:0',
             'termine' => 'nullable|boolean',
+            'homme_du_match_id' => 'nullable|exists:joueurs,id',
         ]);
         $poule_match->update([
             'gardien_home_id' => $validated['gardien_home_id'] ?? $poule_match->gardien_home_id,
@@ -132,6 +139,7 @@ class PouleMatchController extends Controller
             'arrets_home' => $validated['arrets_home'] ?? $poule_match->arrets_home,
             'arrets_away' => $validated['arrets_away'] ?? $poule_match->arrets_away,
             'termine' => array_key_exists('termine', $validated) ? (bool)$validated['termine'] : $poule_match->termine,
+            'homme_du_match_id' => $validated['homme_du_match_id'] ?? $poule_match->homme_du_match_id,
         ]);
         return back()->with('success', 'Mise à jour effectuée.');
     }

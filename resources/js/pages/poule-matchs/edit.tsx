@@ -17,6 +17,7 @@ interface Match {
     score_home: number;
     score_away: number;
     termine: boolean;
+    homme_du_match_id?: number | null;
     buts?: { id: number; equipe_id: number; buteur_id: number; passeur_id?: number | null; minute?: string | null; type?: string }[];
     cartons?: { id: number; joueur_id: number; equipe_id?: number | null; type: 'jaune' | 'rouge'; minute?: number | null }[];
 }
@@ -31,6 +32,7 @@ export default function PouleMatchEdit({ match, homeGardiens, awayGardiens, home
         arrets_home: match.arrets_home ?? 0,
         arrets_away: match.arrets_away ?? 0,
         termine: match.termine ?? false,
+        homme_du_match_id: match.homme_du_match_id ?? '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -251,6 +253,24 @@ export default function PouleMatchEdit({ match, homeGardiens, awayGardiens, home
                                     <input type="checkbox" checked={!!data.termine} onChange={(e) => setData('termine', e.target.checked)} disabled={readOnly} />
                                     Match terminé
                                 </label>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Homme du match (optionnel)</label>
+                                <select
+                                    value={data.homme_du_match_id as any}
+                                    onChange={(e) => setData('homme_du_match_id', e.target.value ? Number(e.target.value) : '')}
+                                    disabled={readOnly}
+                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:opacity-60"
+                                >
+                                    <option value="">Aucun</option>
+                                    {[...homePlayers, ...awayPlayers].map(j => (
+                                        <option key={j.id} value={j.id}>{j.nom}</option>
+                                    ))}
+                                </select>
+                                {errors.homme_du_match_id && (
+                                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.homme_du_match_id as any}</p>
+                                )}
                             </div>
 
                             <div className="flex items-center justify-end gap-3">

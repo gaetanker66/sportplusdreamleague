@@ -56,7 +56,7 @@ class CoupeAvecPouleModeleController extends Controller
             'actif' => $request->actif ?? true
         ]);
 
-        return redirect()->route('coupe-avec-poule-modeles.index')
+        return redirect()->route('dashboard.coupe-avec-poule-modeles.index')
                         ->with('success', 'Modèle de coupe avec poules créé avec succès');
     }
 
@@ -105,7 +105,7 @@ class CoupeAvecPouleModeleController extends Controller
             'actif' => $request->actif ?? true
         ]);
 
-        return redirect()->route('coupe-avec-poule-modeles.index')
+        return redirect()->route('dashboard.coupe-avec-poule-modeles.index')
                         ->with('success', 'Modèle de coupe avec poules mis à jour avec succès');
     }
 
@@ -116,7 +116,7 @@ class CoupeAvecPouleModeleController extends Controller
     {
         $coupeAvecPouleModele->delete();
 
-        return redirect()->route('coupe-avec-poule-modeles.index')
+        return redirect()->route('dashboard.coupe-avec-poule-modeles.index')
                         ->with('success', 'Modèle de coupe avec poules supprimé avec succès');
     }
 

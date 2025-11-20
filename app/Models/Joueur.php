@@ -67,4 +67,9 @@ class Joueur extends Model
         // Retourner l'équipe actuelle (ou initiale si aucun transfert ou en cas d'erreur)
         return $this->equipe_id;
     }
+
+    public function actualites()
+    {
+        return $this->belongsToMany(Actualite::class, 'actualite_joueur')->withTimestamps();
+    }
 }

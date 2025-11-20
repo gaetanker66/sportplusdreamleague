@@ -73,7 +73,12 @@ class MatchController extends Controller
         // Récupérer tous les IDs de joueurs qui ont des buts/cartons dans ce match (même s'ils ont été transférés)
         $joueurIdsButs = $match->buts->pluck('buteur_id')->merge($match->buts->pluck('passeur_id'))->filter()->unique();
         $joueurIdsCartons = $match->cartons->pluck('joueur_id')->unique();
-        $joueurIdsHistoriques = $joueurIdsButs->merge($joueurIdsCartons)->unique();
+        // Ajouter l'homme du match s'il existe
+        $joueurIdsHistoriques = $joueurIdsButs->merge($joueurIdsCartons);
+        if ($match->homme_du_match_id) {
+            $joueurIdsHistoriques->push($match->homme_du_match_id);
+        }
+        $joueurIdsHistoriques = $joueurIdsHistoriques->unique();
         
         // Charger ces joueurs pour l'affichage (même s'ils ne sont plus dans les équipes)
         if ($joueurIdsHistoriques->isNotEmpty()) {
@@ -249,6 +254,7 @@ class MatchController extends Controller
             'arrets_home' => 'nullable|integer|min:0',
             'arrets_away' => 'nullable|integer|min:0',
             'termine' => 'nullable|boolean',
+            'homme_du_match_id' => 'nullable|exists:joueurs,id',
         ]);
         $match->update([
             'gardien_home_id' => $validated['gardien_home_id'] ?? $match->gardien_home_id,
@@ -256,6 +262,7 @@ class MatchController extends Controller
             'arrets_home' => $validated['arrets_home'] ?? $match->arrets_home,
             'arrets_away' => $validated['arrets_away'] ?? $match->arrets_away,
             'termine' => array_key_exists('termine', $validated) ? (bool)$validated['termine'] : $match->termine,
+            'homme_du_match_id' => $validated['homme_du_match_id'] ?? $match->homme_du_match_id,
         ]);
         
         // Si on veut rester sur la page (preserveScroll), retourner back() avec le message

@@ -34,6 +34,7 @@ interface StatsCompetition {
     matchs_gardien: number;
     arrets: number;
     clean_sheets: number;
+    homme_du_match: number;
 }
 
 interface Stats {
@@ -44,6 +45,7 @@ interface Stats {
     matchs_gardien: number;
     arrets: number;
     clean_sheets: number;
+    homme_du_match: number;
     competitions: StatsCompetition[];
 }
 
@@ -150,7 +152,7 @@ export default function JoueursShow({ joueur, stats }: Props) {
 
                     {/* Statistiques globales */}
                     {(stats.buts > 0 || stats.passes_decisives > 0 || stats.matchs_gardien > 0 || 
-                      stats.cartons_jaunes > 0 || stats.cartons_rouges > 0) && (
+                      stats.cartons_jaunes > 0 || stats.cartons_rouges > 0 || stats.homme_du_match > 0) && (
                         <div className="bg-black/40 dark:bg-black/60 backdrop-blur-sm shadow-2xl rounded-lg overflow-hidden p-6 border border-gray-200 dark:border-gray-700">
                             <h2 className="text-xl font-semibold text-white mb-4">Statistiques actuelles</h2>
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -196,6 +198,12 @@ export default function JoueursShow({ joueur, stats }: Props) {
                                     <div className="bg-gray-900/50 rounded-lg p-4 text-center">
                                         <p className="text-2xl font-bold text-red-400">{stats.cartons_rouges}</p>
                                         <p className="text-sm text-white/80">Cartons rouges</p>
+                                    </div>
+                                )}
+                                {stats.homme_du_match > 0 && (
+                                    <div className="bg-gray-900/50 rounded-lg p-4 text-center">
+                                        <p className="text-2xl font-bold text-yellow-300">{stats.homme_du_match}</p>
+                                        <p className="text-sm text-white/80">Hommes du match</p>
                                     </div>
                                 )}
                             </div>
@@ -258,6 +266,12 @@ export default function JoueursShow({ joueur, stats }: Props) {
                                                 <div className="text-center">
                                                     <p className="text-xl font-bold text-red-400">{competition.cartons_rouges}</p>
                                                     <p className="text-xs text-white/80">Cartons rouges</p>
+                                                </div>
+                                            )}
+                                            {competition.homme_du_match > 0 && (
+                                                <div className="text-center">
+                                                    <p className="text-xl font-bold text-yellow-300">{competition.homme_du_match}</p>
+                                                    <p className="text-xs text-white/80">Hommes du match</p>
                                                 </div>
                                             )}
                                         </div>

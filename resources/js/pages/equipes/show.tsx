@@ -40,6 +40,9 @@ interface Equipe {
     nom: string;
     logo?: string;
     description?: string;
+    maillot_domicile?: string;
+    maillot_exterieur?: string;
+    maillot_3eme?: string;
     created_at: string;
     joueurs?: Joueur[];
     rivales?: Rival[];
@@ -111,6 +114,45 @@ export default function EquipesShow({ equipe, palmares }: Props) {
                         </div>
                     </div>
                 </div>
+
+                    {/* Maillots */}
+                    {(equipe.maillot_domicile || equipe.maillot_exterieur || equipe.maillot_3eme) && (
+                        <div className="bg-black/40 dark:bg-black/60 backdrop-blur-sm shadow-2xl rounded-lg overflow-hidden p-6 border border-gray-200 dark:border-gray-700">
+                            <h2 className="text-xl font-semibold text-white mb-4">Maillots</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                                {equipe.maillot_domicile && (
+                                    <div className="text-center">
+                                        <p className="text-sm font-medium text-white/80 drop-shadow-md mb-2">Domicile</p>
+                                        <img 
+                                            src={equipe.maillot_domicile} 
+                                            alt="Maillot domicile" 
+                                            className="w-full max-w-xs mx-auto h-auto rounded-lg shadow-lg object-contain"
+                                        />
+                                    </div>
+                                )}
+                                {equipe.maillot_exterieur && (
+                                    <div className="text-center">
+                                        <p className="text-sm font-medium text-white/80 drop-shadow-md mb-2">Extérieur</p>
+                                        <img 
+                                            src={equipe.maillot_exterieur} 
+                                            alt="Maillot extérieur" 
+                                            className="w-full max-w-xs mx-auto h-auto rounded-lg shadow-lg object-contain"
+                                        />
+                                    </div>
+                                )}
+                                {equipe.maillot_3eme && (
+                                    <div className="text-center">
+                                        <p className="text-sm font-medium text-white/80 drop-shadow-md mb-2">3ème maillot</p>
+                                        <img 
+                                            src={equipe.maillot_3eme} 
+                                            alt="Maillot 3ème" 
+                                            className="w-full max-w-xs mx-auto h-auto rounded-lg shadow-lg object-contain"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Palmarès */}
                     {totalTitres > 0 && (

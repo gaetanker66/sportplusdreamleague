@@ -22,6 +22,7 @@ export default function PublicHeader() {
                     <Link href="/statistiques" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Statistiques</Link>
                     <Link href="/calendrier" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Calendrier</Link>
                     <Link href="/tournois" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Tournois</Link>
+                    <Link href="/actualites-mercato" className="hover:text-white px-2 py-1 rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors">Mercato</Link>
                     <a 
                         href="https://sportplusdreamleague.wixsite.com/sportplus/blog" 
                         target="_blank" 

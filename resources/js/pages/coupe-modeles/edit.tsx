@@ -40,6 +40,21 @@ export default function CoupeModeleEdit({ modele }: Props) {
         actif: modele.actif,
     });
 
+    const [logoPreview, setLogoPreview] = React.useState<string>(modele.logo || '');
+
+    const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const result = event.target?.result as string;
+                setData('logo', result);
+                setLogoPreview(result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         put(`/dashboard/coupe-modeles/${modele.id}`);
@@ -101,31 +116,25 @@ export default function CoupeModeleEdit({ modele }: Props) {
 
                                 <div>
                                     <label htmlFor="logo" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        Logo (Base64 ou URL)
+                                        Logo (optionnel)
                                     </label>
-                                    <textarea
-                                        id="logo"
-                                        value={data.logo}
-                                        onChange={(e) => setData('logo', e.target.value)}
-                                        rows={4}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                                        placeholder="Collez ici l'URL du logo ou le code Base64..."
-                                    />
-                                    {errors.logo && <p className="mt-1 text-sm text-red-600">{errors.logo}</p>}
-                                    
-                                    {data.logo && (
-                                        <div className="mt-2">
-                                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Aperçu du logo :</p>
+                                    <div className="mt-1 flex items-center space-x-4">
+                                        <input
+                                            type="file"
+                                            id="logo"
+                                            accept="image/*"
+                                            onChange={handleLogoChange}
+                                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-700 dark:file:text-gray-300"
+                                        />
+                                        {logoPreview && (
                                             <img 
-                                                src={data.logo} 
+                                                src={logoPreview} 
                                                 alt="Aperçu du logo"
                                                 className="w-16 h-16 object-contain border border-gray-300 dark:border-gray-600 rounded"
-                                                onError={(e) => {
-                                                    e.currentTarget.style.display = 'none';
-                                                }}
                                             />
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
+                                    {errors.logo && <p className="mt-1 text-sm text-red-600">{errors.logo}</p>}
                                 </div>
 
                                 <div className="flex items-center">

@@ -10,6 +10,9 @@ class Equipe extends Model
         'nom',
         'logo',
         'description',
+        'maillot_domicile',
+        'maillot_exterieur',
+        'maillot_3eme',
     ];
 
     public function joueurs()
@@ -34,6 +37,11 @@ class Equipe extends Model
     {
         return $this->belongsToMany(Equipe::class, 'equipe_rivale', 'equipe_id', 'rivale_id')
             ->withTimestamps();
+    }
+
+    public function actualites()
+    {
+        return $this->belongsToMany(Actualite::class, 'actualite_equipe')->withTimestamps();
     }
 }
 

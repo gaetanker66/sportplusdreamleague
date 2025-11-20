@@ -23,7 +23,7 @@ export default function CoupeAvecPouleModelesIndex({ modeles }: Props) {
 
     const handleDelete = (id: number) => {
         if (confirm('Êtes-vous sûr de vouloir supprimer ce modèle de coupe avec poules ?')) {
-            destroy(`/coupe-avec-poule-modeles/${id}`);
+            destroy(`/dashboard/coupe-avec-poule-modeles/${id}`);
         }
     };
 
@@ -34,7 +34,7 @@ export default function CoupeAvecPouleModelesIndex({ modeles }: Props) {
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Modèles de Coupes avec Poules</h1>
                     <Link 
-                        href="/coupe-avec-poule-modeles/create" 
+                        href="/dashboard/coupe-avec-poule-modeles/create" 
                         className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
                     >
                         Nouveau Modèle
@@ -114,13 +114,13 @@ export default function CoupeAvecPouleModelesIndex({ modeles }: Props) {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div className="flex space-x-2">
                                             <Link
-                                                href={`/coupe-avec-poule-modeles/${modele.id}`}
+                                                href={`/dashboard/coupe-avec-poule-modeles/${modele.id}`}
                                                 className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
                                             >
                                                 Voir
                                             </Link>
                                             <Link
-                                                href={`/coupe-avec-poule-modeles/${modele.id}/edit`}
+                                                href={`/dashboard/coupe-avec-poule-modeles/${modele.id}/edit`}
                                                 className="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700"
                                             >
                                                 Modifier

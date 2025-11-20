@@ -218,7 +218,7 @@ class PublicController extends Controller
         $selectedLigueId = (int)request('ligue_id', $ligues->first()->id ?? 0);
         $selectedCoupeId = (int)request('coupe_id', $allCoupes->first()->id ?? 0);
         $selectedModeleId = request('modele_id');
-        $type = request('type', 'buteur'); // buteur | passeur | arret | clean_sheet | coup_franc | penalty | carton_jaune | carton_rouge
+        $type = request('type', 'buteur'); // buteur | passeur | arret | clean_sheet | coup_franc | penalty | carton_jaune | carton_rouge | homme_du_match
 
         $stats = [];
         $saisons = [];
@@ -605,6 +605,22 @@ class PublicController extends Controller
             foreach ($agg as $row) { 
                 $stats[] = ['joueur_id'=>$row->joueur_id, 'nom'=>$idToName[$row->joueur_id] ?? ('#'.$row->joueur_id), 'val'=>$row->total]; 
             }
+        } elseif ($type === 'homme_du_match') {
+            // Statistiques des hommes du match
+            $matchQuery = \App\Models\MatchModel::query()
+                ->whereHas('journee', function($q) use ($saisonId) {
+                    $q->where('saison_id', $saisonId);
+                })
+                ->where('termine', true)
+                ->whereNotNull('homme_du_match_id');
+            
+            $agg = $matchQuery->selectRaw('homme_du_match_id as joueur_id, COUNT(*) as total')
+                ->groupBy('homme_du_match_id')->orderByDesc('total')->limit(200)->get();
+            $joueurs = Joueur::whereIn('id', $agg->pluck('joueur_id'))->get(['id','nom']);
+            $idToName = $joueurs->pluck('nom', 'id');
+            foreach ($agg as $row) { 
+                $stats[] = ['joueur_id'=>$row->joueur_id, 'nom'=>$idToName[$row->joueur_id] ?? ('#'.$row->joueur_id), 'val'=>$row->total]; 
+            }
         }
         
         return $stats;
@@ -815,6 +831,38 @@ class PublicController extends Controller
             foreach ($cartonCounts as $joueurId => $count) {
                 $stats[] = ['joueur_id'=>$joueurId, 'nom'=>$idToName[$joueurId] ?? ('#'.$joueurId), 'val'=>$count]; 
             }
+        } elseif ($type === 'homme_du_match') {
+            // Statistiques des hommes du match pour les coupes
+            $coupeMatches = \App\Models\CoupeMatch::whereHas('round', function($q) use ($coupeId) {
+                $q->where('coupe_id', $coupeId);
+            })->where('termine', true)->whereNotNull('homme_du_match_id')->get();
+            
+            // Coupes avec poules (groupes + phase finale)
+            $pouleMatches = \App\Models\PouleMatch::whereHas('poule', function($q) use ($coupeId) {
+                $q->where('coupe_avec_poule_id', $coupeId);
+            })->where('termine', true)->whereNotNull('homme_du_match_id')->get();
+            
+            // Ajouter les matchs de la phase finale si elle existe
+            $phaseFinaleMatches = collect();
+            if ($coupeAvecPoule && $coupeAvecPoule->coupePhaseFinale) {
+                $phaseFinaleMatches = \App\Models\CoupeMatch::whereHas('round', function($q) use ($coupeAvecPoule) {
+                    $q->where('coupe_id', $coupeAvecPoule->coupePhaseFinale->id);
+                })->where('termine', true)->whereNotNull('homme_du_match_id')->get();
+            }
+            
+            // Combiner toutes les statistiques
+            $allMatches = $coupeMatches->concat($pouleMatches)->concat($phaseFinaleMatches);
+            
+            $hommeDuMatchCounts = $allMatches->groupBy('homme_du_match_id')->map(function($matches) {
+                return $matches->count();
+            })->sortDesc()->take(200);
+            
+            $joueurs = Joueur::whereIn('id', $hommeDuMatchCounts->keys())->get(['id','nom']);
+            $idToName = $joueurs->pluck('nom', 'id');
+            
+            foreach ($hommeDuMatchCounts as $joueurId => $count) {
+                $stats[] = ['joueur_id'=>$joueurId, 'nom'=>$idToName[$joueurId] ?? ('#'.$joueurId), 'val'=>$count]; 
+            }
         }
         
         return $stats;
@@ -846,6 +894,7 @@ class PublicController extends Controller
             'matchs_gardien' => 0,
             'arrets' => 0,
             'clean_sheets' => 0,
+            'homme_du_match' => 0,
             'competitions' => [],
         ];
 
@@ -866,6 +915,7 @@ class PublicController extends Controller
                 'matchs_gardien' => 0,
                 'arrets' => 0,
                 'clean_sheets' => 0,
+                'homme_du_match' => 0,
             ];
 
             // Buts et passes décisives dans les matchs de ligue
@@ -927,7 +977,7 @@ class PublicController extends Controller
 
             if ($statsCompetition['buts'] > 0 || $statsCompetition['passes_decisives'] > 0 || 
                 $statsCompetition['cartons_jaunes'] > 0 || $statsCompetition['cartons_rouges'] > 0 ||
-                $statsCompetition['matchs_gardien'] > 0) {
+                $statsCompetition['matchs_gardien'] > 0 || $statsCompetition['homme_du_match'] > 0) {
                 $stats['competitions'][] = $statsCompetition;
             }
         }
@@ -958,6 +1008,7 @@ class PublicController extends Controller
                 'matchs_gardien' => 0,
                 'arrets' => 0,
                 'clean_sheets' => 0,
+                'homme_du_match' => 0,
             ];
 
             foreach ($coupe->rounds as $round) {
@@ -1013,12 +1064,18 @@ class PublicController extends Controller
                             }
                         }
                     }
+
+                    // Homme du match
+                    if ($match->homme_du_match_id === $joueur->id) {
+                        $statsCompetition['homme_du_match']++;
+                        $stats['homme_du_match']++;
+                    }
                 }
             }
 
             if ($statsCompetition['buts'] > 0 || $statsCompetition['passes_decisives'] > 0 || 
                 $statsCompetition['cartons_jaunes'] > 0 || $statsCompetition['cartons_rouges'] > 0 ||
-                $statsCompetition['matchs_gardien'] > 0) {
+                $statsCompetition['matchs_gardien'] > 0 || $statsCompetition['homme_du_match'] > 0) {
                 $stats['competitions'][] = $statsCompetition;
             }
         }
@@ -1062,6 +1119,7 @@ class PublicController extends Controller
                 'matchs_gardien' => 0,
                 'arrets' => 0,
                 'clean_sheets' => 0,
+                'homme_du_match' => 0,
             ];
 
             // Matchs de poules
@@ -1117,6 +1175,12 @@ class PublicController extends Controller
                                 $stats['clean_sheets']++;
                             }
                         }
+                    }
+
+                    // Homme du match
+                    if ($match->homme_du_match_id === $joueur->id) {
+                        $statsCompetition['homme_du_match']++;
+                        $stats['homme_du_match']++;
                     }
                 }
             }
@@ -1177,13 +1241,19 @@ class PublicController extends Controller
                                 }
                             }
                         }
+
+                        // Homme du match
+                        if ($match->homme_du_match_id === $joueur->id) {
+                            $statsCompetition['homme_du_match']++;
+                            $stats['homme_du_match']++;
+                        }
                     }
                 }
             }
 
             if ($statsCompetition['buts'] > 0 || $statsCompetition['passes_decisives'] > 0 || 
                 $statsCompetition['cartons_jaunes'] > 0 || $statsCompetition['cartons_rouges'] > 0 ||
-                $statsCompetition['matchs_gardien'] > 0) {
+                $statsCompetition['matchs_gardien'] > 0 || $statsCompetition['homme_du_match'] > 0) {
                 $stats['competitions'][] = $statsCompetition;
             }
         }

@@ -28,6 +28,9 @@ interface Equipe {
     nom: string;
     logo?: string;
     description?: string;
+    maillot_domicile?: string;
+    maillot_exterieur?: string;
+    maillot_3eme?: string;
     rivales?: { id: number; nom: string }[];
     joueurs?: Joueur[];
 }
@@ -45,6 +48,9 @@ type FormData = {
     nom: string;
     logo: string;
     description: string;
+    maillot_domicile: string;
+    maillot_exterieur: string;
+    maillot_3eme: string;
     rivales: number[];
     players: PlayerForm[];
 };
@@ -60,6 +66,9 @@ export default function EquipesEdit({ equipe, postes = [] as Poste[], equipes = 
         nom: equipe.nom,
         logo: equipe.logo || '',
         description: equipe.description || '',
+        maillot_domicile: equipe.maillot_domicile || '',
+        maillot_exterieur: equipe.maillot_exterieur || '',
+        maillot_3eme: equipe.maillot_3eme || '',
         rivales: (equipe.rivales ?? []).map(r => r.id),
         players: (equipe.joueurs ?? []).map((j): PlayerForm => ({
             id: j.id,
@@ -70,6 +79,49 @@ export default function EquipesEdit({ equipe, postes = [] as Poste[], equipes = 
             description: j.description ?? null,
         })),
     });
+
+    const [maillotDomicilePreview, setMaillotDomicilePreview] = React.useState<string>(equipe.maillot_domicile || '');
+    const [maillotExterieurPreview, setMaillotExterieurPreview] = React.useState<string>(equipe.maillot_exterieur || '');
+    const [maillot3emePreview, setMaillot3emePreview] = React.useState<string>(equipe.maillot_3eme || '');
+
+    const handleMaillotDomicileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const result = event.target?.result as string;
+                setData('maillot_domicile', result);
+                setMaillotDomicilePreview(result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleMaillotExterieurChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const result = event.target?.result as string;
+                setData('maillot_exterieur', result);
+                setMaillotExterieurPreview(result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleMaillot3emeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const result = event.target?.result as string;
+                setData('maillot_3eme', result);
+                setMaillot3emePreview(result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const [newPlayerName, setNewPlayerName] = React.useState('');
     const [newPlayerPosteId, setNewPlayerPosteId] = React.useState<number | ''>(equipe.joueurs?.[0]?.poste?.id ? '' : '');
@@ -178,6 +230,51 @@ export default function EquipesEdit({ equipe, postes = [] as Poste[], equipes = 
                                 />
                                 {data.logo && <img src={data.logo} alt="Aperçu du logo" className="mt-2 h-16 w-16 rounded object-cover" />}
                                 {errors.logo && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.logo}</p>}
+                            </div>
+
+                            <div>
+                                <label htmlFor="maillot_domicile" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Maillot domicile (optionnel)</label>
+                                <input
+                                    id="maillot_domicile"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleMaillotDomicileChange}
+                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                />
+                                {maillotDomicilePreview && (
+                                    <img src={maillotDomicilePreview} alt="Aperçu maillot domicile" className="mt-2 h-32 w-auto rounded object-contain" />
+                                )}
+                                {errors.maillot_domicile && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.maillot_domicile}</p>}
+                            </div>
+
+                            <div>
+                                <label htmlFor="maillot_exterieur" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Maillot extérieur (optionnel)</label>
+                                <input
+                                    id="maillot_exterieur"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleMaillotExterieurChange}
+                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                />
+                                {maillotExterieurPreview && (
+                                    <img src={maillotExterieurPreview} alt="Aperçu maillot extérieur" className="mt-2 h-32 w-auto rounded object-contain" />
+                                )}
+                                {errors.maillot_exterieur && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.maillot_exterieur}</p>}
+                            </div>
+
+                            <div>
+                                <label htmlFor="maillot_3eme" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Maillot 3ème (optionnel)</label>
+                                <input
+                                    id="maillot_3eme"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleMaillot3emeChange}
+                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                />
+                                {maillot3emePreview && (
+                                    <img src={maillot3emePreview} alt="Aperçu maillot 3ème" className="mt-2 h-32 w-auto rounded object-contain" />
+                                )}
+                                {errors.maillot_3eme && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.maillot_3eme}</p>}
                             </div>
 
                             <div className="flex items-center justify-end gap-3">

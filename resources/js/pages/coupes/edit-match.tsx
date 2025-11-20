@@ -13,6 +13,7 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
     is_fake: match.is_fake ?? false,
     tirs_au_but_home: match.tirs_au_but_home ?? null,
     tirs_au_but_away: match.tirs_au_but_away ?? null,
+    homme_du_match_id: match.homme_du_match_id ?? '',
   });
   const [cartonHome, setCartonHome] = React.useState<{ joueur_id: number | ''; type: 'jaune' | 'rouge' | ''; minute: number | '' }>({ joueur_id: '', type: '', minute: '' });
   const [cartonAway, setCartonAway] = React.useState<{ joueur_id: number | ''; type: 'jaune' | 'rouge' | ''; minute: number | '' }>({ joueur_id: '', type: '', minute: '' });
@@ -69,6 +70,7 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
       is_fake: !!data.is_fake,
       tirs_au_but_home: data.tirs_au_but_home === null || data.tirs_au_but_home === '' ? null : Number(data.tirs_au_but_home),
       tirs_au_but_away: data.tirs_au_but_away === null || data.tirs_au_but_away === '' ? null : Number(data.tirs_au_but_away),
+      homme_du_match_id: data.homme_du_match_id ? Number(data.homme_du_match_id) : null,
     }));
     form.put(`/dashboard/coupe-matchs/${match.id}`, { 
       preserveScroll: true,
@@ -140,6 +142,20 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
           </div>
           <div>
             <label className="inline-flex items-center gap-2"><input type="checkbox" checked={!!form.data.is_fake} onChange={(e)=> form.setData('is_fake', e.target.checked)} /> Faux match (exempt)</label>
+          </div>
+          <div>
+            <label className="block text-sm">Homme du match (optionnel)</label>
+            <select
+              value={form.data.homme_du_match_id as any}
+              onChange={(e) => form.setData('homme_du_match_id', e.target.value ? Number(e.target.value) : '')}
+              className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            >
+              <option value="">Aucun</option>
+              {[...homePlayers, ...awayPlayers].map((j: any) => (
+                <option key={j.id} value={j.id}>{j.nom}</option>
+              ))}
+            </select>
+            {form.errors.homme_du_match_id && <p className="mt-1 text-xs text-red-500">{form.errors.homme_du_match_id}</p>}
           </div>
           <div className="flex justify-end">
             <button type="submit" disabled={form.processing} className="px-4 py-2 rounded bg-indigo-600 text-white">Enregistrer</button>

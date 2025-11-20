@@ -28,6 +28,9 @@ class EquipeController extends Controller
             'nom' => 'required|string|max:255',
             'logo' => 'nullable|string',
             'description' => 'nullable|string',
+            'maillot_domicile' => 'nullable|string',
+            'maillot_exterieur' => 'nullable|string',
+            'maillot_3eme' => 'nullable|string',
             'rivales' => 'nullable|array',
             'rivales.*' => 'exists:equipes,id',
         ]);
@@ -528,6 +531,9 @@ class EquipeController extends Controller
             'nom' => 'required|string|max:255',
             'logo' => 'nullable|string',
             'description' => 'nullable|string',
+            'maillot_domicile' => 'nullable|string',
+            'maillot_exterieur' => 'nullable|string',
+            'maillot_3eme' => 'nullable|string',
             'rivales' => 'nullable|array',
             'rivales.*' => 'exists:equipes,id',
             'players' => 'array',
@@ -543,7 +549,7 @@ class EquipeController extends Controller
         // Récupérer les anciennes rivales avant la mise à jour
         $anciennesRivalesIds = $equipe->rivales->pluck('id')->toArray();
 
-        $equipe->update($request->only('nom', 'logo', 'description'));
+        $equipe->update($request->only('nom', 'logo', 'description', 'maillot_domicile', 'maillot_exterieur', 'maillot_3eme'));
 
         // Gestion de la synchronisation des rivales (relation bidirectionnelle)
         $nouvellesRivalesIds = !empty($validated['rivales']) 

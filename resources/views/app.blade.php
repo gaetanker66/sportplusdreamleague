@@ -31,6 +31,7 @@
         </style>
 
         <title inertia>{{ config('app.name', 'Sport Plus Dream League') }}</title>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         {{-- Utiliser le logo depuis resources/images via une route Laravel --}}
         <link rel="icon" href="{{ route('logo') }}" type="image/svg+xml">

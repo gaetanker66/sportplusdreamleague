@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
+import * as React from 'react';
 import { TomSelectMulti } from '@/components/tomselect';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -23,8 +24,54 @@ export default function EquipesCreate({ equipes = [] }: Props) {
         nom: '',
         logo: '',
         description: '',
+        maillot_domicile: '',
+        maillot_exterieur: '',
+        maillot_3eme: '',
         rivales: [] as number[],
     });
+
+    const [maillotDomicilePreview, setMaillotDomicilePreview] = React.useState<string>('');
+    const [maillotExterieurPreview, setMaillotExterieurPreview] = React.useState<string>('');
+    const [maillot3emePreview, setMaillot3emePreview] = React.useState<string>('');
+
+    const handleMaillotDomicileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const result = event.target?.result as string;
+                setData('maillot_domicile', result);
+                setMaillotDomicilePreview(result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleMaillotExterieurChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const result = event.target?.result as string;
+                setData('maillot_exterieur', result);
+                setMaillotExterieurPreview(result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleMaillot3emeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const result = event.target?.result as string;
+                setData('maillot_3eme', result);
+                setMaillot3emePreview(result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -104,6 +151,51 @@ export default function EquipesCreate({ equipes = [] }: Props) {
                                     <img src={data.logo} alt="Aperçu du logo" className="mt-2 h-16 w-16 rounded object-cover" />
                                 )}
                                 {errors.logo && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.logo}</p>}
+                            </div>
+
+                            <div>
+                                <label htmlFor="maillot_domicile" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Maillot domicile (optionnel)</label>
+                                <input
+                                    id="maillot_domicile"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleMaillotDomicileChange}
+                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                />
+                                {maillotDomicilePreview && (
+                                    <img src={maillotDomicilePreview} alt="Aperçu maillot domicile" className="mt-2 h-32 w-auto rounded object-contain" />
+                                )}
+                                {errors.maillot_domicile && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.maillot_domicile}</p>}
+                            </div>
+
+                            <div>
+                                <label htmlFor="maillot_exterieur" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Maillot extérieur (optionnel)</label>
+                                <input
+                                    id="maillot_exterieur"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleMaillotExterieurChange}
+                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                />
+                                {maillotExterieurPreview && (
+                                    <img src={maillotExterieurPreview} alt="Aperçu maillot extérieur" className="mt-2 h-32 w-auto rounded object-contain" />
+                                )}
+                                {errors.maillot_exterieur && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.maillot_exterieur}</p>}
+                            </div>
+
+                            <div>
+                                <label htmlFor="maillot_3eme" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Maillot 3ème (optionnel)</label>
+                                <input
+                                    id="maillot_3eme"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleMaillot3emeChange}
+                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                />
+                                {maillot3emePreview && (
+                                    <img src={maillot3emePreview} alt="Aperçu maillot 3ème" className="mt-2 h-32 w-auto rounded object-contain" />
+                                )}
+                                {errors.maillot_3eme && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.maillot_3eme}</p>}
                             </div>
 
                             <div className="flex items-center justify-end gap-3">

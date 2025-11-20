@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Trophy, Users2, Briefcase, Palette, Crown, Settings, ArrowRightLeft } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Trophy, Users2, Briefcase, Palette, Crown, Settings, ArrowRightLeft, Newspaper } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const allMainNavItems: NavItem[] = [
@@ -45,6 +45,11 @@ const allMainNavItems: NavItem[] = [
         title: 'Transferts',
         href: '/dashboard/transferts',
         icon: ArrowRightLeft,
+    },
+    {
+        title: 'Actualités',
+        href: '/dashboard/actualites',
+        icon: Newspaper,
     },
     {
         title: 'Coupes',

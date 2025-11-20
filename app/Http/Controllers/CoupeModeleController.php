@@ -45,7 +45,7 @@ class CoupeModeleController extends Controller
 
         CoupeModele::create($validated);
 
-        return redirect()->route('coupe-modeles.index')->with('success', 'Modèle de coupe créé avec succès.');
+        return redirect()->route('dashboard.coupe-modeles.index')->with('success', 'Modèle de coupe créé avec succès.');
     }
 
     /**
@@ -84,7 +84,7 @@ class CoupeModeleController extends Controller
 
         $coupeModele->update($validated);
 
-        return redirect()->route('coupe-modeles.index')->with('success', 'Modèle de coupe mis à jour avec succès.');
+        return redirect()->route('dashboard.coupe-modeles.index')->with('success', 'Modèle de coupe mis à jour avec succès.');
     }
 
     /**
@@ -99,7 +99,7 @@ class CoupeModeleController extends Controller
 
         $coupeModele->delete();
 
-        return redirect()->route('coupe-modeles.index')->with('success', 'Modèle de coupe supprimé avec succès.');
+        return redirect()->route('dashboard.coupe-modeles.index')->with('success', 'Modèle de coupe supprimé avec succès.');
     }
 
     /**

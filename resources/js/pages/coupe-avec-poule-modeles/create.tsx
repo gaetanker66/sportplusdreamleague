@@ -39,7 +39,7 @@ export default function CoupeAvecPouleModeleCreate() {
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Nouveau Modèle de Coupe avec Poules</h1>
                     <Link 
-                        href="/coupe-avec-poule-modeles" 
+                        href="/dashboard/coupe-avec-poule-modeles" 
                         className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
                     >
                         Retour
@@ -48,7 +48,7 @@ export default function CoupeAvecPouleModeleCreate() {
 
                 <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
                     <div className="p-6">
-                        <form onSubmit={(e) => { e.preventDefault(); post('/coupe-avec-poule-modeles'); }} className="space-y-6">
+                        <form onSubmit={(e) => { e.preventDefault(); post('/dashboard/coupe-avec-poule-modeles'); }} className="space-y-6">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Nom du modèle

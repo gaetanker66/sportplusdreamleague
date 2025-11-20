@@ -13,6 +13,7 @@ class MatchModel extends Model
         'gardien_home_id', 'gardien_away_id',
         'arrets_home', 'arrets_away',
         'score_home', 'score_away', 'termine',
+        'homme_du_match_id',
     ];
 
     protected $casts = [
@@ -42,6 +43,11 @@ class MatchModel extends Model
     public function awayEquipe()
     {
         return $this->belongsTo(Equipe::class, 'equipe_away_id');
+    }
+
+    public function hommeDuMatch()
+    {
+        return $this->belongsTo(Joueur::class, 'homme_du_match_id');
     }
 
     public function recalculeScore(): void
