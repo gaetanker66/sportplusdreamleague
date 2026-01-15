@@ -41,7 +41,12 @@ class CoupeController extends Controller
             'victoire_uniquement' => 'boolean',
         ]);
         $coupe = Coupe::create($request->only('nom','nombre_equipes','coupe_modele_id','matchs_aleatoires','nombre_matchs','victoire_uniquement'));
-        $coupe->equipes()->sync($request->input('equipes', []));
+        $equipes = $request->input('equipes', []);
+        $syncData = [];
+        foreach ($equipes as $index => $equipeId) {
+            $syncData[$equipeId] = ['ordre' => $index + 1];
+        }
+        $coupe->equipes()->sync($syncData);
         return redirect()->route('dashboard.coupes.edit', $coupe)->with('success', 'Coupe créée avec succès.');
     }
 
@@ -49,7 +54,10 @@ class CoupeController extends Controller
     {
         // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
         $coupe->load([
-            'equipes' => function($q) { $q->select('equipes.id', 'equipes.nom'); },
+            'equipes' => function($q) { 
+                $q->select('equipes.id', 'equipes.nom')
+                  ->orderBy('coupe_equipe.ordre'); 
+            },
             'rounds.matchs.homeEquipe' => function($q) { $q->select('equipes.id', 'equipes.nom'); },
             'rounds.matchs.awayEquipe' => function($q) { $q->select('equipes.id', 'equipes.nom'); },
             'rounds.matchs.matchRetour.homeEquipe' => function($q) { $q->select('equipes.id', 'equipes.nom'); },
@@ -70,14 +78,17 @@ class CoupeController extends Controller
         foreach ($coupe->rounds as $r) { $r->matchs()->delete(); }
         $coupe->rounds()->delete();
 
-        $equipes = $coupe->equipes()->pluck('equipes.id', 'equipes.id')->keys()->all();
+        // Récupérer les équipes dans l'ordre défini si matchs_aleatoires est false
+        if ($coupe->matchs_aleatoires) {
+            $equipes = $coupe->equipes()->pluck('equipes.id')->all();
+            shuffle($equipes);
+        } else {
+            // Respecter l'ordre défini dans la table pivot
+            $equipes = $coupe->equipes()->orderBy('coupe_equipe.ordre')->pluck('equipes.id')->all();
+        }
+        
         $n = count($equipes);
         if ($n < 2) return back()->withErrors(['equipes' => 'Sélectionnez au moins 2 équipes.']);
-        
-        // Mélanger les équipes seulement si matchs_aleatoires est true
-        if ($coupe->matchs_aleatoires) {
-            shuffle($equipes);
-        }
 
         // Arrondir à la puissance de 2 SUPÉRIEURE et gérer les byes
         $m = 1; while ($m < $n) { $m *= 2; } // ex: 6 -> 8
@@ -258,7 +269,12 @@ class CoupeController extends Controller
         ]);
         $coupe->update($request->only('nom','nombre_equipes'));
         if ($request->has('equipes')) {
-            $coupe->equipes()->sync($request->input('equipes', []));
+            $equipes = $request->input('equipes', []);
+            $syncData = [];
+            foreach ($equipes as $index => $equipeId) {
+                $syncData[$equipeId] = ['ordre' => $index + 1];
+            }
+            $coupe->equipes()->sync($syncData);
         }
         return back()->with('success','Coupe mise à jour.');
     }

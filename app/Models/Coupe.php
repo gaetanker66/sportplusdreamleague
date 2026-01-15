@@ -15,7 +15,10 @@ class Coupe extends Model
 
     public function equipes()
     {
-        return $this->belongsToMany(Equipe::class, 'coupe_equipe')->withTimestamps();
+        return $this->belongsToMany(Equipe::class, 'coupe_equipe')
+            ->withPivot('ordre')
+            ->withTimestamps()
+            ->orderBy('coupe_equipe.ordre');
     }
 
     public function rounds()

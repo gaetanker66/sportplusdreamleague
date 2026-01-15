@@ -21,7 +21,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function CoupeModeleCreate() {
     const { data, setData, post, processing, errors } = useForm({
         nom: '',
-        logo: '',
+        logo: null as File | null,
         description: '',
         actif: true,
     });
@@ -31,10 +31,10 @@ export default function CoupeModeleCreate() {
     const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            setData('logo', file);
             const reader = new FileReader();
             reader.onload = (event) => {
                 const result = event.target?.result as string;
-                setData('logo', result);
                 setLogoPreview(result);
             };
             reader.readAsDataURL(file);
@@ -43,7 +43,9 @@ export default function CoupeModeleCreate() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/dashboard/coupe-modeles');
+        post('/dashboard/coupe-modeles', {
+            forceFormData: true,
+        });
     };
 
     return (

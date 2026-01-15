@@ -68,8 +68,4 @@ class Joueur extends Model
         return $this->equipe_id;
     }
 
-    public function actualites()
-    {
-        return $this->belongsToMany(Actualite::class, 'actualite_joueur')->withTimestamps();
-    }
 }

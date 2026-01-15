@@ -13,6 +13,20 @@ export default function CoupeEdit({ coupe, equipes }: {
   const toggleEquipe = (id: number) => {
     setSelection((prev)=> prev.includes(id) ? prev.filter(x=>x!==id) : (prev.length >= (coupe.nombre_equipes || 0) ? prev : [...prev, id]));
   };
+  const handleMoveUp = (index: number) => {
+    if (index > 0) {
+      const newEquipes = [...selection];
+      [newEquipes[index - 1], newEquipes[index]] = [newEquipes[index], newEquipes[index - 1]];
+      setSelection(newEquipes);
+    }
+  };
+  const handleMoveDown = (index: number) => {
+    if (index < selection.length - 1) {
+      const newEquipes = [...selection];
+      [newEquipes[index], newEquipes[index + 1]] = [newEquipes[index + 1], newEquipes[index]];
+      setSelection(newEquipes);
+    }
+  };
   const saveSelection = () => {
     router.put(`/dashboard/coupes/${coupe.id}`, { equipes: selection }, { preserveScroll: true });
   };
@@ -76,14 +90,40 @@ export default function CoupeEdit({ coupe, equipes }: {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {selection.map((id)=> {
+                {selection.map((id, index)=> {
                   const e = equipes.find(eq => eq.id === id);
                   if(!e) return null;
                   return (
                     <tr key={id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="px-4 py-2">{ e.logo ? <img src={e.logo} className="h-8 w-8 rounded object-cover" /> : <span className="h-8 w-8 rounded bg-gray-200 dark:bg-gray-700 inline-block" /> }</td>
-                      <td className="px-4 py-2 text-sm">{e.nom}</td>
-                      <td className="px-4 py-2"><button type="button" onClick={()=> setSelection(prev=> prev.filter(x=> x!==id))} className="px-2.5 py-1.5 rounded text-white bg-red-600 hover:bg-red-700">Retirer</button></td>
+                      <td className="px-4 py-2 text-sm">#{index + 1} {e.nom}</td>
+                      <td className="px-4 py-2">
+                        <div className="flex items-center gap-2">
+                          {!coupe.rounds?.length && (
+                            <>
+                              <button 
+                                type="button" 
+                                onClick={() => handleMoveUp(index)}
+                                disabled={index === 0}
+                                className="px-2 py-1 rounded text-white bg-gray-500 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                title="Monter"
+                              >
+                                ↑
+                              </button>
+                              <button 
+                                type="button" 
+                                onClick={() => handleMoveDown(index)}
+                                disabled={index === selection.length - 1}
+                                className="px-2 py-1 rounded text-white bg-gray-500 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                title="Descendre"
+                              >
+                                ↓
+                              </button>
+                            </>
+                          )}
+                          <button type="button" onClick={()=> setSelection(prev=> prev.filter(x=> x!==id))} className="px-2.5 py-1.5 rounded text-white bg-red-600 hover:bg-red-700">Retirer</button>
+                        </div>
+                      </td>
                     </tr>
                   );
                 })}

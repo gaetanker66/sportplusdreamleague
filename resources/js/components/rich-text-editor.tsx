@@ -155,7 +155,8 @@ export function RichTextEditor({ value, onChange, placeholder, className = '' }:
         try {
             setIsUploading(true);
             const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
-            const response = await fetch('/dashboard/actualites/upload-image', {
+            // Upload d'image désactivé - fonctionnalité actualités supprimée
+            const response = await fetch('/dashboard/upload-image', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': token,

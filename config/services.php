@@ -35,4 +35,6 @@ return [
         ],
     ],
 
+    'discord_webhook' => env('DISCORD_WEBHOOK_URL', 'https://discord.com/api/webhooks/1440996646514196513/QCPv0EKUeCqQV3WSBsDUOgWXFwZbP1n8ISFM3v1MElNHyYbuFm4qAu22keoHIY3z-iCo'),
+
 ];

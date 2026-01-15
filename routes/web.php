@@ -16,7 +16,6 @@ Route::get('equipes', [App\Http\Controllers\PublicController::class, 'equipes'])
 Route::get('equipes/{equipe}', [App\Http\Controllers\EquipeController::class, 'show'])->name('equipes.show');
 Route::get('joueurs/{joueur}', [App\Http\Controllers\PublicController::class, 'joueur'])->name('joueurs.show');
 Route::get('histoire', [App\Http\Controllers\PublicController::class, 'histoire'])->name('public.histoire');
-Route::get('actualites-mercato', [App\Http\Controllers\ActualiteController::class, 'publicIndex'])->name('public.actualites');
 
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/', function () {
@@ -90,9 +89,6 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     // Gestion de l'histoire (dashboard)
     Route::resource('histoire-etapes', App\Http\Controllers\HistoireEtapeController::class);
 
-    // Gestion des actualités (dashboard)
-    Route::resource('actualites', App\Http\Controllers\ActualiteController::class);
-    Route::post('actualites/upload-image', [App\Http\Controllers\ActualiteController::class, 'uploadImage'])->name('actualites.upload-image');
 
     // Administration des utilisateurs (réservé aux administrateurs)
     Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {

@@ -88,8 +88,8 @@ export function useCoupeModeleLogos(modeleIds: (number | undefined)[]) {
     /**
      * Fonction helper pour obtenir le logo d'un modèle de coupe
      * @param modeleId - ID du modèle
-     * @param fallbackLogo - Logo déjà fourni (prioritaire)
-     * @returns Le logo en base64 ou undefined si pas d'image
+     * @param fallbackLogo - Logo déjà fourni (prioritaire, URL)
+     * @returns L'URL du logo ou undefined si pas d'image
      */
     const getLogo = (modeleId: number | undefined, fallbackLogo?: string | null): string | undefined => {
         // Vérifier si le fallback est une chaîne non vide (pas null, pas undefined, pas vide)

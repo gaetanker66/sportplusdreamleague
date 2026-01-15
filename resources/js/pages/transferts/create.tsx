@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { TomSelectSingle as TomSingle } from '@/components/tomselect';
 import * as React from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -55,21 +56,17 @@ export default function TransfertsCreate({ joueurs = [], equipes = [] }: { joueu
                     <div className="p-6">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
-                                <label htmlFor="joueur_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Joueur *</label>
-                                <select
-                                    id="joueur_id"
-                                    value={data.joueur_id}
-                                    onChange={(e) => setData('joueur_id', e.target.value)}
-                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    required
-                                >
-                                    <option value="">Sélectionnez un joueur</option>
-                                    {joueurs.map((joueur) => (
-                                        <option key={joueur.id} value={joueur.id}>
-                                            {joueur.nom} {joueur.equipe ? `(${joueur.equipe.nom})` : ''}
-                                        </option>
-                                    ))}
-                                </select>
+                                <label htmlFor="joueur_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Joueur *</label>
+                                <TomSingle
+                                    options={joueurs.map(j => ({ 
+                                        value: j.id, 
+                                        label: `${j.nom}${j.equipe ? ` (${j.equipe.nom})` : ''}` 
+                                    }))}
+                                    value={data.joueur_id || ''}
+                                    onChange={(val) => setData('joueur_id', val || '')}
+                                    placeholder="Rechercher un joueur..."
+                                    allowEmpty={false}
+                                />
                                 {errors.joueur_id && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.joueur_id}</p>}
                                 {selectedJoueur && selectedJoueur.equipe && (
                                     <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
@@ -79,23 +76,16 @@ export default function TransfertsCreate({ joueurs = [], equipes = [] }: { joueu
                             </div>
 
                             <div>
-                                <label htmlFor="nouvelle_equipe_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nouvelle Équipe *</label>
-                                <select
-                                    id="nouvelle_equipe_id"
-                                    value={data.nouvelle_equipe_id}
-                                    onChange={(e) => setData('nouvelle_equipe_id', e.target.value)}
-                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    required
-                                >
-                                    <option value="">Sélectionnez une équipe</option>
-                                    {equipes
+                                <label htmlFor="nouvelle_equipe_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nouvelle Équipe *</label>
+                                <TomSingle
+                                    options={equipes
                                         .filter(equipe => !selectedJoueur || equipe.id !== selectedJoueur.equipe?.id)
-                                        .map((equipe) => (
-                                            <option key={equipe.id} value={equipe.id}>
-                                                {equipe.nom}
-                                            </option>
-                                        ))}
-                                </select>
+                                        .map(e => ({ value: e.id, label: e.nom }))}
+                                    value={data.nouvelle_equipe_id || ''}
+                                    onChange={(val) => setData('nouvelle_equipe_id', val || '')}
+                                    placeholder="Rechercher une équipe..."
+                                    allowEmpty={false}
+                                />
                                 {errors.nouvelle_equipe_id && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.nouvelle_equipe_id}</p>}
                             </div>
 

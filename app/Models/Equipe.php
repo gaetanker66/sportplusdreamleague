@@ -39,10 +39,6 @@ class Equipe extends Model
             ->withTimestamps();
     }
 
-    public function actualites()
-    {
-        return $this->belongsToMany(Actualite::class, 'actualite_equipe')->withTimestamps();
-    }
 }
 
 

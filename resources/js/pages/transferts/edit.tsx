@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { TomSelectSingle as TomSingle } from '@/components/tomselect';
 import * as React from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -59,16 +60,15 @@ export default function TransfertsEdit({ transfert, joueurs = [], equipes = [] }
                     <div className="p-6">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
-                                <label htmlFor="joueur_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Joueur *</label>
-                                <select
-                                    id="joueur_id"
-                                    value={data.joueur_id}
-                                    onChange={(e) => setData('joueur_id', e.target.value)}
-                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    disabled
-                                >
-                                    <option value={transfert.joueur.id}>{transfert.joueur.nom}</option>
-                                </select>
+                                <label htmlFor="joueur_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Joueur *</label>
+                                <TomSingle
+                                    options={[{ value: transfert.joueur.id, label: transfert.joueur.nom }]}
+                                    value={data.joueur_id || ''}
+                                    onChange={() => {}}
+                                    placeholder="Joueur"
+                                    allowEmpty={false}
+                                    disabled={true}
+                                />
                                 {errors.joueur_id && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.joueur_id}</p>}
                                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                                     <span className="font-semibold">Note:</span> Il n'est pas possible de changer le joueur d'un transfert existant.
@@ -87,20 +87,14 @@ export default function TransfertsEdit({ transfert, joueurs = [], equipes = [] }
                             </div>
 
                             <div>
-                                <label htmlFor="nouvelle_equipe_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nouvelle Équipe *</label>
-                                <select
-                                    id="nouvelle_equipe_id"
-                                    value={data.nouvelle_equipe_id}
-                                    onChange={(e) => setData('nouvelle_equipe_id', e.target.value)}
-                                    className="mt-1 block w-full px-3 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    required
-                                >
-                                    {equipes.map((equipe) => (
-                                        <option key={equipe.id} value={equipe.id}>
-                                            {equipe.nom}
-                                        </option>
-                                    ))}
-                                </select>
+                                <label htmlFor="nouvelle_equipe_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nouvelle Équipe *</label>
+                                <TomSingle
+                                    options={equipes.map(e => ({ value: e.id, label: e.nom }))}
+                                    value={data.nouvelle_equipe_id || ''}
+                                    onChange={(val) => setData('nouvelle_equipe_id', val || '')}
+                                    placeholder="Rechercher une équipe..."
+                                    allowEmpty={false}
+                                />
                                 {errors.nouvelle_equipe_id && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.nouvelle_equipe_id}</p>}
                             </div>
 

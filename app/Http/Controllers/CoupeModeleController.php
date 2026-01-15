@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CoupeModele;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class CoupeModeleController extends Controller
@@ -13,8 +14,7 @@ class CoupeModeleController extends Controller
      */
     public function index()
     {
-        // Optimisation : ne pas charger les logos pour éviter l'épuisement mémoire
-        $modeles = CoupeModele::select('id', 'nom', 'description', 'actif', 'created_at', 'updated_at')
+        $modeles = CoupeModele::select('id', 'nom', 'logo', 'description', 'actif', 'created_at', 'updated_at')
             ->orderBy('nom')
             ->get();
         
@@ -38,10 +38,17 @@ class CoupeModeleController extends Controller
     {
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
-            'logo' => 'nullable|string',
+            'logo' => 'nullable|image|max:4096',
             'description' => 'nullable|string',
             'actif' => 'boolean',
         ]);
+
+        if ($request->hasFile('logo')) {
+            $path = $request->file('logo')->store('coupe-modeles', 'public');
+            $validated['logo'] = $path;
+        } else {
+            unset($validated['logo']);
+        }
 
         CoupeModele::create($validated);
 
@@ -77,10 +84,21 @@ class CoupeModeleController extends Controller
     {
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
-            'logo' => 'nullable|string',
+            'logo' => 'nullable|image|max:4096',
             'description' => 'nullable|string',
             'actif' => 'boolean',
         ]);
+
+        if ($request->hasFile('logo')) {
+            // Supprimer l'ancien logo s'il existe
+            if ($coupeModele->logo && Storage::disk('public')->exists($coupeModele->logo)) {
+                Storage::disk('public')->delete($coupeModele->logo);
+            }
+            $path = $request->file('logo')->store('coupe-modeles', 'public');
+            $validated['logo'] = $path;
+        } else {
+            unset($validated['logo']);
+        }
 
         $coupeModele->update($validated);
 
@@ -95,6 +113,11 @@ class CoupeModeleController extends Controller
         // Vérifier s'il y a des coupes qui utilisent ce modèle
         if ($coupeModele->coupes()->count() > 0) {
             return back()->with('error', 'Ce modèle ne peut pas être supprimé car il est utilisé par des coupes.');
+        }
+
+        // Supprimer le logo s'il existe
+        if ($coupeModele->logo && Storage::disk('public')->exists($coupeModele->logo)) {
+            Storage::disk('public')->delete($coupeModele->logo);
         }
 
         $coupeModele->delete();

@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, useForm, router } from '@inertiajs/react';
 import { toast } from 'sonner';
+import { TomSelectSingle as TomSingle } from '@/components/tomselect';
 import * as React from 'react';
 
 export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens = [], homePlayers = [], awayPlayers = [] }: { match: any; homeGardiens?: {id:number; nom:string}[]; awayGardiens?: {id:number; nom:string}[]; homePlayers?: {id:number; nom:string}[]; awayPlayers?: {id:number; nom:string}[] }) {
@@ -98,19 +99,25 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm">Gardien domicile</label>
-              <select value={form.data.gardien_home_id as any} onChange={(e)=> form.setData('gardien_home_id', e.target.value ? Number(e.target.value) : '')} className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                <option value="">-</option>
-                {homeGardiens?.map((j:any)=> (<option key={j.id} value={j.id}>{j.nom}</option>))}
-              </select>
+              <label className="block text-sm mb-1">Gardien domicile</label>
+              <TomSingle
+                options={homeGardiens?.map((j:any) => ({ value: j.id, label: j.nom })) || []}
+                value={form.data.gardien_home_id || ''}
+                onChange={(val) => form.setData('gardien_home_id', val ? Number(val) : '')}
+                placeholder="Rechercher un gardien..."
+                allowEmpty
+              />
               {form.errors.gardien_home_id && <p className="mt-1 text-xs text-red-500">{form.errors.gardien_home_id}</p>}
             </div>
             <div>
-              <label className="block text-sm">Gardien extérieur</label>
-              <select value={form.data.gardien_away_id as any} onChange={(e)=> form.setData('gardien_away_id', e.target.value ? Number(e.target.value) : '')} className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                <option value="">-</option>
-                {awayGardiens?.map((j:any)=> (<option key={j.id} value={j.id}>{j.nom}</option>))}
-              </select>
+              <label className="block text-sm mb-1">Gardien extérieur</label>
+              <TomSingle
+                options={awayGardiens?.map((j:any) => ({ value: j.id, label: j.nom })) || []}
+                value={form.data.gardien_away_id || ''}
+                onChange={(val) => form.setData('gardien_away_id', val ? Number(val) : '')}
+                placeholder="Rechercher un gardien..."
+                allowEmpty
+              />
               {form.errors.gardien_away_id && <p className="mt-1 text-xs text-red-500">{form.errors.gardien_away_id}</p>}
             </div>
           </div>
@@ -144,17 +151,14 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
             <label className="inline-flex items-center gap-2"><input type="checkbox" checked={!!form.data.is_fake} onChange={(e)=> form.setData('is_fake', e.target.checked)} /> Faux match (exempt)</label>
           </div>
           <div>
-            <label className="block text-sm">Homme du match (optionnel)</label>
-            <select
-              value={form.data.homme_du_match_id as any}
-              onChange={(e) => form.setData('homme_du_match_id', e.target.value ? Number(e.target.value) : '')}
-              className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-            >
-              <option value="">Aucun</option>
-              {[...homePlayers, ...awayPlayers].map((j: any) => (
-                <option key={j.id} value={j.id}>{j.nom}</option>
-              ))}
-            </select>
+            <label className="block text-sm mb-1">Homme du match (optionnel)</label>
+            <TomSingle
+              options={[...homePlayers, ...awayPlayers].map((j: any) => ({ value: j.id, label: j.nom }))}
+              value={form.data.homme_du_match_id || ''}
+              onChange={(val) => form.setData('homme_du_match_id', val ? Number(val) : '')}
+              placeholder="Rechercher un joueur..."
+              allowEmpty
+            />
             {form.errors.homme_du_match_id && <p className="mt-1 text-xs text-red-500">{form.errors.homme_du_match_id}</p>}
           </div>
           <div className="flex justify-end">
@@ -183,11 +187,14 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Ajouter carton - {match.home_equipe?.nom}</h3>
             <form onSubmit={addCartonHome} className="space-y-3">
               <div>
-                <label className="block text-xs text-gray-600 dark:text-gray-400">Joueur</label>
-                <select value={cartonHome.joueur_id as any} onChange={(e) => setCartonHome({ ...cartonHome, joueur_id: e.target.value ? Number(e.target.value) : '' })} className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                  <option value="">-</option>
-                  {homePlayers.map(p => <option key={p.id} value={p.id}>{p.nom}</option>)}
-                </select>
+                <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Joueur</label>
+                <TomSingle
+                  options={homePlayers.map(p => ({ value: p.id, label: p.nom }))}
+                  value={cartonHome.joueur_id || ''}
+                  onChange={(val) => setCartonHome({ ...cartonHome, joueur_id: val ? Number(val) : '' })}
+                  placeholder="Rechercher un joueur..."
+                  allowEmpty
+                />
               </div>
               <div>
                 <label className="block text-xs text-gray-600 dark:text-gray-400">Type</label>
@@ -221,11 +228,14 @@ export default function CoupeMatchEdit({ match, homeGardiens = [], awayGardiens 
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Ajouter carton - {match.away_equipe?.nom}</h3>
             <form onSubmit={addCartonAway} className="space-y-3">
               <div>
-                <label className="block text-xs text-gray-600 dark:text-gray-400">Joueur</label>
-                <select value={cartonAway.joueur_id as any} onChange={(e) => setCartonAway({ ...cartonAway, joueur_id: e.target.value ? Number(e.target.value) : '' })} className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-                  <option value="">-</option>
-                  {awayPlayers.map(p => <option key={p.id} value={p.id}>{p.nom}</option>)}
-                </select>
+                <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Joueur</label>
+                <TomSingle
+                  options={awayPlayers.map(p => ({ value: p.id, label: p.nom }))}
+                  value={cartonAway.joueur_id || ''}
+                  onChange={(val) => setCartonAway({ ...cartonAway, joueur_id: val ? Number(val) : '' })}
+                  placeholder="Rechercher un joueur..."
+                  allowEmpty
+                />
               </div>
               <div>
                 <label className="block text-xs text-gray-600 dark:text-gray-400">Type</label>
@@ -283,18 +293,25 @@ function AddGoals({ title, teamId, matchId, players, opponentPlayers }: { title:
       <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">{title}</h3>
       <form onSubmit={submit} className="space-y-3">
         <div>
-          <label className="block text-xs text-gray-600 dark:text-gray-400">Buteur</label>
-          <select value={form.buteur_id as any} onChange={(e)=> setForm({ ...form, buteur_id: e.target.value ? Number(e.target.value) : '' })} className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-            <option value="">-</option>
-            {(form.type === 'csc' ? opponentPlayers : players).map(p => <option key={p.id} value={p.id}>{p.nom}</option>)}
-          </select>
+          <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Buteur</label>
+          <TomSingle
+            key={`but-${form.type}`}
+            options={(form.type === 'csc' ? opponentPlayers : players).map(p => ({ value: p.id, label: p.nom }))}
+            value={form.buteur_id || ''}
+            onChange={(val) => setForm({ ...form, buteur_id: val ? Number(val) : '' })}
+            placeholder="Rechercher un joueur..."
+            allowEmpty
+          />
         </div>
         <div>
-          <label className="block text-xs text-gray-600 dark:text-gray-400">Passeur (optionnel)</label>
-          <select value={form.passeur_id as any} onChange={(e)=> setForm({ ...form, passeur_id: e.target.value ? Number(e.target.value) : '' })} className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
-            <option value="">-</option>
-            {players.map(p => <option key={p.id} value={p.id}>{p.nom}</option>)}
-          </select>
+          <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Passeur (optionnel)</label>
+          <TomSingle
+            options={players.map(p => ({ value: p.id, label: p.nom }))}
+            value={form.passeur_id || ''}
+            onChange={(val) => setForm({ ...form, passeur_id: val ? Number(val) : '' })}
+            placeholder="Rechercher un joueur..."
+            allowEmpty
+          />
         </div>
         <div>
           <label className="block text-xs text-gray-600 dark:text-gray-400">Minute</label>

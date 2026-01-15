@@ -35,7 +35,7 @@ interface Props {
 export default function CoupeModeleEdit({ modele }: Props) {
     const { data, setData, put, processing, errors } = useForm({
         nom: modele.nom,
-        logo: modele.logo || '',
+        logo: null as File | null,
         description: modele.description || '',
         actif: modele.actif,
     });
@@ -45,10 +45,10 @@ export default function CoupeModeleEdit({ modele }: Props) {
     const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            setData('logo', file);
             const reader = new FileReader();
             reader.onload = (event) => {
                 const result = event.target?.result as string;
-                setData('logo', result);
                 setLogoPreview(result);
             };
             reader.readAsDataURL(file);
@@ -57,7 +57,9 @@ export default function CoupeModeleEdit({ modele }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/dashboard/coupe-modeles/${modele.id}`);
+        put(`/dashboard/coupe-modeles/${modele.id}`, {
+            forceFormData: true,
+        });
     };
 
     return (
