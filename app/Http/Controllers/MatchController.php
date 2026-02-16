@@ -159,7 +159,7 @@ class MatchController extends Controller
         $validated = $request->validate([
             'joueur_id' => 'required|exists:joueurs,id',
             'type' => 'required|in:jaune,rouge',
-            'minute' => 'nullable|string|max:10',
+            'minute' => 'nullable|integer|min:0|max:130',
         ]);
         
         // Déterminer l'équipe du joueur au moment du match en utilisant les transferts
