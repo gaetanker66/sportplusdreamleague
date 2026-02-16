@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import { TomSelectSingle as TomSingle } from '@/components/tomselect';
 import * as React from 'react';
 
+const inputSelectClass = 'mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md disabled:opacity-60';
+
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Saisons', href: '/dashboard/saisons' },
@@ -319,26 +321,31 @@ export default function MatchEdit({ match, homeGardiens, awayGardiens, homePlaye
                                 <form onSubmit={addButHome} className="space-y-3">
                                     <div>
                                         <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Buteur</label>
-                                        <TomSingle
-                                            key={`but-home-${butHome.type}`}
-                                            options={(butHome.type === 'csc' ? awayPlayers : homePlayers).map(p => ({ value: p.id, label: p.nom }))}
+                                        <select
+                                            disabled={readOnly}
                                             value={butHome.buteur_id || ''}
-                                            onChange={(val) => setButHome({ ...butHome, buteur_id: val ? Number(val) : '' })}
-                                            placeholder="Rechercher un joueur..."
-                                            allowEmpty
-                                            className={readOnly ? 'opacity-60' : ''}
-                                        />
+                                            onChange={(e) => setButHome({ ...butHome, buteur_id: e.target.value ? Number(e.target.value) : '' })}
+                                            className={`${inputSelectClass} ${readOnly ? 'opacity-60' : ''}`}
+                                        >
+                                            <option value="">Rechercher un joueur...</option>
+                                            {(butHome.type === 'csc' ? awayPlayers : homePlayers).map((p) => (
+                                                <option key={p.id} value={p.id}>{p.nom}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Passeur (optionnel)</label>
-                                        <TomSingle
-                                            options={homePlayers.map(p => ({ value: p.id, label: p.nom }))}
+                                        <select
+                                            disabled={readOnly}
                                             value={butHome.passeur_id || ''}
-                                            onChange={(val) => setButHome({ ...butHome, passeur_id: val ? Number(val) : '' })}
-                                            placeholder="Rechercher un joueur..."
-                                            allowEmpty
-                                            className={readOnly ? 'opacity-60' : ''}
-                                        />
+                                            onChange={(e) => setButHome({ ...butHome, passeur_id: e.target.value ? Number(e.target.value) : '' })}
+                                            className={`${inputSelectClass} ${readOnly ? 'opacity-60' : ''}`}
+                                        >
+                                            <option value="">—</option>
+                                            {homePlayers.map((p) => (
+                                                <option key={p.id} value={p.id}>{p.nom}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-600 dark:text-gray-400">Minute</label>
@@ -380,26 +387,31 @@ export default function MatchEdit({ match, homeGardiens, awayGardiens, homePlaye
                                 <form onSubmit={addButAway} className="space-y-3">
                                     <div>
                                         <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Buteur</label>
-                                        <TomSingle
-                                            key={`but-away-${butAway.type}`}
-                                            options={(butAway.type === 'csc' ? homePlayers : awayPlayers).map(p => ({ value: p.id, label: p.nom }))}
+                                        <select
+                                            disabled={readOnly}
                                             value={butAway.buteur_id || ''}
-                                            onChange={(val) => setButAway({ ...butAway, buteur_id: val ? Number(val) : '' })}
-                                            placeholder="Rechercher un joueur..."
-                                            allowEmpty
-                                            className={readOnly ? 'opacity-60' : ''}
-                                        />
+                                            onChange={(e) => setButAway({ ...butAway, buteur_id: e.target.value ? Number(e.target.value) : '' })}
+                                            className={`${inputSelectClass} ${readOnly ? 'opacity-60' : ''}`}
+                                        >
+                                            <option value="">Rechercher un joueur...</option>
+                                            {(butAway.type === 'csc' ? homePlayers : awayPlayers).map((p) => (
+                                                <option key={p.id} value={p.id}>{p.nom}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Passeur (optionnel)</label>
-                                        <TomSingle
-                                            options={awayPlayers.map(p => ({ value: p.id, label: p.nom }))}
+                                        <select
+                                            disabled={readOnly}
                                             value={butAway.passeur_id || ''}
-                                            onChange={(val) => setButAway({ ...butAway, passeur_id: val ? Number(val) : '' })}
-                                            placeholder="Rechercher un joueur..."
-                                            allowEmpty
-                                            className={readOnly ? 'opacity-60' : ''}
-                                        />
+                                            onChange={(e) => setButAway({ ...butAway, passeur_id: e.target.value ? Number(e.target.value) : '' })}
+                                            className={`${inputSelectClass} ${readOnly ? 'opacity-60' : ''}`}
+                                        >
+                                            <option value="">—</option>
+                                            {awayPlayers.map((p) => (
+                                                <option key={p.id} value={p.id}>{p.nom}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-600 dark:text-gray-400">Minute</label>

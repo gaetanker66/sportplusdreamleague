@@ -294,24 +294,29 @@ function AddGoals({ title, teamId, matchId, players, opponentPlayers }: { title:
       <form onSubmit={submit} className="space-y-3">
         <div>
           <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Buteur</label>
-          <TomSingle
-            key={`but-${form.type}`}
-            options={(form.type === 'csc' ? opponentPlayers : players).map(p => ({ value: p.id, label: p.nom }))}
+          <select
             value={form.buteur_id || ''}
-            onChange={(val) => setForm({ ...form, buteur_id: val ? Number(val) : '' })}
-            placeholder="Rechercher un joueur..."
-            allowEmpty
-          />
+            onChange={(e) => setForm({ ...form, buteur_id: e.target.value ? Number(e.target.value) : '' })}
+            className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          >
+            <option value="">Rechercher un joueur...</option>
+            {(form.type === 'csc' ? opponentPlayers : players).map((p) => (
+              <option key={p.id} value={p.id}>{p.nom}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Passeur (optionnel)</label>
-          <TomSingle
-            options={players.map(p => ({ value: p.id, label: p.nom }))}
+          <select
             value={form.passeur_id || ''}
-            onChange={(val) => setForm({ ...form, passeur_id: val ? Number(val) : '' })}
-            placeholder="Rechercher un joueur..."
-            allowEmpty
-          />
+            onChange={(e) => setForm({ ...form, passeur_id: e.target.value ? Number(e.target.value) : '' })}
+            className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          >
+            <option value="">—</option>
+            {players.map((p) => (
+              <option key={p.id} value={p.id}>{p.nom}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="block text-xs text-gray-600 dark:text-gray-400">Minute</label>

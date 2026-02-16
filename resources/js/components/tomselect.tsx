@@ -16,56 +16,57 @@ export function TomSelectSingle({ options, value, onChange, placeholder, allowEm
 }) {
     const selectRef = React.useRef<HTMLSelectElement | null>(null);
     const tsRef = React.useRef<TomSelect | null>(null);
+    const id = React.useId();
 
+    // Options uniquement au montage (deps [] = options figées au 1er rendu). On ne met jamais à jour
+    // les options après, pour éviter que le select du buteur soit touché quand on change le passeur.
     React.useEffect(() => {
         if (!selectRef.current) return;
+        const opts = options;
         tsRef.current = new TomSelect(selectRef.current, {
             placeholder,
             allowEmptyOption: allowEmpty,
             plugins: ['clear_button'],
             onChange: (val: string) => onChange(val),
         });
+        if (allowEmpty) {
+            tsRef.current.addOption({ value: '', text: placeholder ?? '—' });
+        }
+        opts.forEach((option) => {
+            tsRef.current?.addOption({ value: String(option.value), text: option.label });
+        });
+        const initialVal = value === '' ? '' : String(value);
+        if (initialVal && opts.some((o) => String(o.value) === initialVal)) {
+            tsRef.current.setValue(initialVal, true);
+        }
         return () => {
             tsRef.current?.destroy();
             tsRef.current = null;
         };
+        // Intentionnel : options/valeur initiale figées au montage pour éviter effets croisés buteur/passeur
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Mettre à jour les options quand elles changent
+    // Synchroniser uniquement la valeur (jamais les options après le montage)
     React.useEffect(() => {
-        if (tsRef.current && selectRef.current) {
-            // Supprimer toutes les options existantes
-            tsRef.current.clearOptions();
-            // Ajouter les nouvelles options
-            if (allowEmpty) {
-                tsRef.current.addOption({ value: '', text: placeholder ?? '—' });
-            }
-            options.forEach(option => {
-                tsRef.current?.addOption({ value: String(option.value), text: option.label });
-            });
-            // Réinitialiser la valeur si elle n'est plus dans les options
-            const currentValue = String(value);
-            const optionExists = options.some(o => String(o.value) === currentValue) || (allowEmpty && value === '');
-            if (!optionExists && tsRef.current) {
-                tsRef.current.setValue('', true);
-            }
-        }
-    }, [options, allowEmpty, placeholder]);
-
-    React.useEffect(() => {
-        if (tsRef.current) {
-            tsRef.current.setValue(value === '' ? '' : String(value), true);
-            if (disabled) {
-                tsRef.current.disable();
-            } else {
-                tsRef.current.enable();
-            }
+        if (!tsRef.current) return;
+        tsRef.current.setValue(value === '' ? '' : String(value), true);
+        if (disabled) {
+            tsRef.current.disable();
+        } else {
+            tsRef.current.enable();
         }
     }, [value, disabled]);
 
     const baseClasses = 'w-full';
     return (
-        <select ref={selectRef} defaultValue={value === '' ? '' : String(value)} disabled={disabled} className={`${baseClasses} ${className}`}>
+        <select
+            id={id}
+            ref={selectRef}
+            defaultValue={value === '' ? '' : String(value)}
+            disabled={disabled}
+            className={`${baseClasses} ${className}`}
+        >
             {allowEmpty && <option value="">{placeholder ?? '—'}</option>}
             {options.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
